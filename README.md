@@ -1,4 +1,4 @@
-adk
+Anthony Development Kit
 ===
 
-adk
+ADK is a PHP Library with MVC Support and mashups.
