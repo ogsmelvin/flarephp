@@ -298,7 +298,8 @@ class Mvc
         $html->set('uri', A::$uri)
             ->set('request', $this->_request)
             ->set('session', A::$session)
-            ->set('js', new Javascript());
+            ->set('js', new Javascript())
+            ->set('config', A::$config);
         if($data){
             $html->set('data', new Data($data));
         }
