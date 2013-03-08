@@ -127,10 +127,12 @@ class Adk
     public static function db($name = 'default', $config = null)
     {
         if(!isset(self::$_db[$name])){
-            if(!$config && !isset(self::$config->database[$name])){
-                throw new Exception("Database configuration is not defined");
+            if(!$config){
+                if(!isset(self::$config->database[$name])){
+                    throw new Exception("No database configuration found");
+                }
+                $config = self::$config->database[$name];
             }
-            $config = self::$config->database[$name];
             $config['driver'] = strtolower($config['driver']);
             $dns = $config['driver'].':host='.$config['host'].';dbname='.$config['dbname'];
             $pdo = "\\ADK\\Db\\Sql\\Drivers\\".ucwords($config['driver']);
