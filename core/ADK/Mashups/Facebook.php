@@ -2,7 +2,6 @@
 
 namespace ADK\Mashups;
 
-use ADK\Mashups\Facebook\User;
 use ADK\Http\Curl;
 use \Exception;
 use ADK\Adk as A;
@@ -58,7 +57,7 @@ class Facebook
 
     /**
      * 
-     * @var \ADK\Mashups\Facebook\User
+     * @var string
      */
     private $_user = null;
 
@@ -75,6 +74,34 @@ class Facebook
         $this->setAppSecret($appSecret);
         $this->setFileUpload($fileUpload);
         $this->setAccessToken();
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    private function _parseSignedRequest()
+    {
+        $s_request = A::$request->request('signed_request');
+        if(!$s_request){
+            return;
+        }
+        
+        list($encoded_sig, $payload) = explode('.', $s_request, 2); 
+        $sig = $this->_base64UrlDecode($encoded_sig);
+        $data = json_decode($this->_base64UrlDecode($payload), true);
+
+        $this->_user = isset($data['user_id']) ? $data['user_id'] : null;
+    }
+
+    /**
+     * 
+     * @param string $input
+     * @return string
+     */
+    private function _base64UrlDecode($input)
+    {
+        return base64_decode(strtr($input, '-_', '+/'));
     }
 
     /**
@@ -132,20 +159,14 @@ class Facebook
      */
     public function setAccessToken($token = null)
     {
-        if($token){
-            $this->_accessToken = (string) $token;
-            return $this;
-        }
-
-        if(A::$session->has('fb_'.$this->_appId.'_token')){
-            $this->_accessToken = A::$session->get('fb_'.$this->_appId.'_token');
-            $this->_user = new User($this);
-            return $this;
-        }
-
         $code = A::$request->get('code');
         $state = A::$request->get('state');
-        if(($code && $state) 
+        if($token){
+            $this->_accessToken = (string) $token;
+            A::$session->set('fb_'.$this->_appId.'_token', $this->_accessToken);
+        } else if(A::$session->has('fb_'.$this->_appId.'_token')){
+            $this->_accessToken = A::$session->get('fb_'.$this->_appId.'_token');
+        } else if(($code && $state) 
             && strcmp($state, A::$session->get('fb_'.$this->_appId.'_state')) === 0){
 
             $result = $this->_curl
@@ -163,8 +184,9 @@ class Facebook
             parse_str($result, $params);
             $this->_accessToken = $params['access_token'];
             A::$session->set('fb_'.$this->_appId.'_token', $params['access_token']);
-            $this->_user = new User($this);
         }
+
+        $this->_parseSignedRequest();
         return $this;
     }
 
@@ -233,10 +255,21 @@ class Facebook
 
     /**
      * 
-     * @return \ADK\Mashups\Facebook\User
+     * @return string|null
      */
     public function getUser()
     {
         return $this->_user;
+    }
+
+    /**
+     * 
+     * @param string $userId
+     * @return \ADK\Mashups\Facebook
+     */
+    public function setUser($userId)
+    {
+        $this->_user = (string) $userId;
+        return $this;
     }
 }
