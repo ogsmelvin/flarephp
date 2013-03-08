@@ -225,6 +225,9 @@ class Facebook
      */
     public function getAccessToken()
     {
+        if(!$this->_accessToken){
+            return A::$session->get('fb_'.$this->_appId.'_token');
+        }
         return $this->_accessToken;
     }
 
