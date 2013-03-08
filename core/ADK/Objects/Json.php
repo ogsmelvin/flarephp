@@ -3,6 +3,7 @@
 namespace ADK\Objects;
 
 use \ArrayObject;
+use \Exception;
 
 /**
  * 

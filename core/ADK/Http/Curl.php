@@ -2,12 +2,18 @@
 
 namespace ADK\Http;
 
+use ADK\Objects\Json;
+use ADK\Objects\Xml;
+use \Exception;
+use ADK\Adk as A;
+
 if(!function_exists('curl_init')){
     display_error('CURL is not supported by your server');
 }
 
-use ADK\Objects\Json;
-use ADK\Objects\Xml;
+if(!function_exists('http_build_url')){
+    A::helper('url');
+}
 
 /**
  * 
@@ -42,6 +48,24 @@ class Curl
 
     /**
      * 
+     * @var string
+     */
+    private $_error = null;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_method = 'GET';
+
+    /**
+     * 
+     * @var string
+     */
+    private $_url = null;
+
+    /**
+     * 
      * @param string $url
      */
     public function __construct($url = null)
@@ -56,6 +80,7 @@ class Curl
      */
     public function setUrl($url)
     {
+        $this->_url = $url;
         curl_setopt($this->_curl, CURLOPT_URL, $url);
         return $this;
     }
@@ -67,6 +92,16 @@ class Curl
      */
     public function setRequestMethod($method)
     {
+        $method = strtoupper($method);
+        if($method === self::POST){
+            $this->_method = self::POST;
+            curl_setopt($this->_curl, CURLOPT_POST, true);
+        } else if($method === self::GET){
+            $this->_method = self::GET;
+            curl_setopt($this->_curl, CURLOPT_POST, false);
+        } else {
+            throw new Exception("Invalid request method");
+        }
         return $this;
     }
 
@@ -103,7 +138,10 @@ class Curl
      */
     public function setOption($key, $value)
     {
-        curl_setopt($this->_curl, $key, $value)
+        if($key === CURLOPT_URL){
+            $this->_url = $value;
+        }
+        curl_setopt($this->_curl, $key, $value);
         return $this;
     }
 
@@ -114,6 +152,9 @@ class Curl
      */
     public function setOptions($options)
     {
+        if(isset($options[CURLOPT_URL])){
+            $this->_url = $options[CURLOPT_URL];
+        }
         curl_setopt_array($this->_curl, $options);
         return $this;
     }
@@ -124,8 +165,33 @@ class Curl
      */
     public function execute()
     {
+        $this->_prepare();
         curl_exec($this->_curl);
+        if(curl_errno($this->_curl)){
+            $this->_error = curl_error($this->_curl);
+        }
         return $this;
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    private function _prepare()
+    {
+        if($this->_method === self::POST){
+            curl_setopt($this->_curl, CURLOPT_POSTFIELDS, $this->_params);
+        } else if($this->_method === self::GET){
+            $url = parse_url($this->_url);
+            if(!isset($url['query'])){
+                $url['query'] = http_build_query($this->_params);
+            }
+            $this->_url = http_build_url($url);
+            $this->setOption(CURLOPT_URL, $this->_url);
+        } else {
+            throw new Exception("Invalid request method");
+        }
+        return;
     }
 
     /**
@@ -134,8 +200,59 @@ class Curl
      */
     public function getContent()
     {
+        $this->_prepare();
         curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
-        return (string) curl_exec($this->_curl);
+        $return = (string) curl_exec($this->_curl);
+        if(curl_errno($this->_curl)){
+            $this->_error = curl_error($this->_curl);
+        }
+        return $return;
+    }
+
+    /**
+     * 
+     * @return string|null
+     */
+    public function getUrl()
+    {
+        return $this->_url;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function getParam($key)
+    {
+        return isset($this->_params[$key]) ? $this->_params[$key] : null;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->_params;
+    }
+
+    /**
+     * 
+     * @return string|null
+     */
+    public function getError()
+    {
+        return $this->_error;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasError()
+    {
+        return !empty($this->_error);
     }
 
     /**

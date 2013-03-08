@@ -118,6 +118,38 @@ class Session
     /**
      * 
      * @param string $key
+     * @param mixed $value
+     * @return \ADK\Http\Session
+     */
+    public function set($key, $value)
+    {
+        $this->__set($key, $value);
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return $this->__get($key);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return boolean
+     */
+    public function has($key)
+    {
+        return $this->__isset($key);
+    }
+
+    /**
+     * 
+     * @param string $key
      * @return void
      */
     public function __isset($key)

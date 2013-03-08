@@ -8,6 +8,7 @@ use ADK\Http\Request;
 use ADK\Http\Response;
 use ADK\Http\Session;
 use ADK\Http\Uri;
+use \ReflectionClass;
 use \Exception;
 
 /**
@@ -64,6 +65,12 @@ class Adk
      * @var boolean
      */
     private static $_init = false;
+
+    /**
+     * 
+     * @var array
+     */
+    private static $_mashups = array();
 
     /**
      *
@@ -161,13 +168,23 @@ class Adk
     /**
      *
      * @param string $mashup
+     * @param array $config
      * @return mixed
      */
-    public static function mashup($mashup)
+    public static function mashup($mashup, $config = null)
     {
-        $mashup = "\\ADK\\Mashups\\{$mashup}";
-        $mashup = new $mashup();
-        return $mashup;
+        if(!isset(self::$_mashups[$mashup])){
+            if(!$config){
+                if(!isset(self::$config->mashups[$mashup])){
+                    throw new Exception("Config for mashup '{$mashup}' is not defined");
+                }
+                $config = self::$config->mashups[$mashup];
+            }
+
+            $ref = new ReflectionClass("\\ADK\\Mashups\\".ucwords($mashup));
+            self::$_mashups[$mashup] = $ref->newInstanceArgs($config);
+        }
+        return self::$_mashups[$mashup];
     }
 
     /**
