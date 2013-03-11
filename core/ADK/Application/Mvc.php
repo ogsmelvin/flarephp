@@ -224,6 +224,7 @@ class Mvc
             exit;
         }
 
+        require $this->_modulesDirectory.$this->_request->getModule().'/controller.php';
         require $path;
         $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getController();
         $this->_controller = new $controller;
@@ -250,6 +251,7 @@ class Mvc
             return;
         }
 
+        $this->_controller->init();
         $view = $this->_controller->{$this->_request->getAction()}($this->_request);
         if($view instanceof Html){
             A::$response->setHeader('Content-Type', 'text/html');
@@ -262,6 +264,7 @@ class Mvc
         }
         
         A::$response->setBody($view)->send();
+        $this->_controller->complete();
         $this->_dispatched = true;
     }
 
