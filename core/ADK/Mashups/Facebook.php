@@ -213,6 +213,22 @@ class Facebook
         return $this->_signedRequest;
     }
 
+
+    public function feed()
+    {
+        
+    }
+
+    public function comment()
+    {
+
+    }
+
+    public function like()
+    {
+
+    }
+    
     /**
      * 
      * @param string $id
@@ -282,15 +298,20 @@ class Facebook
      * @param int $page
      * @return \ADK\Objects\Json
      */
-    public function getFriends($fields = array(), $limit = null, $page = null)
+    public function getFriends($fields = array(), $limit = 0, $page = 0, $order = null)
     {
         if(!$fields){
             $fields = array('uid', 'first_name', 'last_name', 'profile_url');
         }
         $fql = "SELECT ".implode(',', $fields)." FROM user "
             ."WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = ".$this->getUser().")";
-        $page = (int) ($page <= 1 ? 0 : ($page - 1));
-        $fql .= " LIMIT ".($page * $limit).",".(int) $limit;
+        if($limit){
+            $page = (int) ($page <= 1 || !$page ? 0 : ($page - 1));
+            $fql .= " LIMIT ".($page * $limit).",".(int) $limit;
+        }
+        if($order){
+            $fql .= " ORDER BY ".(string) $order;
+        }
         $data = $this->_curl
             ->setUrl(self::API_HOST.'fql')
             ->setParam('access_token', $this->getAccessToken())

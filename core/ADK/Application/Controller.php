@@ -9,6 +9,8 @@ namespace ADK\Application;
  */
 abstract class Controller
 {
+    public function __construct(){}
+
     /**
      * 
      * @return void
