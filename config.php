@@ -10,6 +10,7 @@ define('APP_MODULES_DIR', APP_DIR.'modules/');
 define('APP_MODELS_DIR', APP_DIR.'models/');
 define('APP_HELPERS_DIR', APP_DIR.'helpers/');
 define('APP_CORE_DIR', dirname(APP_DIR).'/adk/core/');
+define('APP_TITLE', 'HALALAN 2013');
 
 /**
  *
@@ -29,14 +30,14 @@ $config['timezone'] = 'Asia/Manila';
  * just give a value NULL
  * @var int
  */
-$config['time_limit'] = 0;
+$config['time_limit'] = null;
 
 /**
  * To return it to its default value
  * just give a value NULL
  * @var string
  */
-$config['memory_limit'] = '128M';
+$config['memory_limit'] = null;
 
 /**
  *
@@ -126,7 +127,8 @@ $config['router'] = array(
  */
 $config['autoload'] = array(
     'helpers'   => array('text', 'view'),
-    'models'    => array()
+    'models'    => array(),
+    'database'  => 'default'
 );
 
 /**
