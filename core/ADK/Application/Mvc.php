@@ -224,7 +224,7 @@ class Mvc
             exit;
         }
 
-        require $this->_modulesDirectory.$this->_request->getModule().'/controller.php';
+        require $this->_modulesDirectory.$this->_request->getModule().'/bootstrap.php';
         require $path;
         $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getController();
         $this->_controller = new $controller;
@@ -252,7 +252,7 @@ class Mvc
         }
 
         $this->_controller->init();
-        $view = $this->_controller->{$this->_request->getAction()}($this->_request);
+        $view = $this->_controller->{$this->_request->getAction()}($this->_request, A::$response);
         if($view instanceof Html){
             A::$response->setHeader('Content-Type', 'text/html');
         } else if($view instanceof \ADK\Objects\Xml){
