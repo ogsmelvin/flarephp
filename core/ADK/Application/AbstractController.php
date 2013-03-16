@@ -2,6 +2,8 @@
 
 namespace ADK\Application;
 
+use ADK\Http\Request;
+use ADK\Http\Response;
 use ADK\Adk as A;
 
 /**
@@ -25,15 +27,34 @@ abstract class AbstractController
 
     /**
      * 
+     * @var \ADK\Http\Request
+     */
+    protected $request;
+
+    /**
+     * 
+     * @var \ADK\Http\Response
+     */
+    protected $response;
+
+    /**
+     * 
      * @var \ADK\Http\Uri
      */
     protected $uri;
 
-    public function __construct()
+    /**
+     * 
+     * @param \ADK\Http\Request $request
+     * @param \ADK\Http\Response $response
+     */
+    public function __construct(Request &$request, Response &$response)
     {
         $this->session = & A::$session;
         $this->config = & A::$config;
         $this->uri = & A::$uri;
+        $this->request = & $request;
+        $this->response = & $response;
 
         if($this->config->autoload['database']){
             $this->setDb($this->config->autoload['database']);
@@ -44,7 +65,7 @@ abstract class AbstractController
      * 
      * @param string $mashup
      * @param string $shortKey
-     * @return mixed
+     * @return void
      */
     public function setMashup($mashup, $shortKey = null)
     {
@@ -55,7 +76,6 @@ abstract class AbstractController
             return $this->{$shortKey};
         }
         $this->{$shortKey} = A::mashup($mashup);
-        return $this->{$shortKey};
     }
 
     /**

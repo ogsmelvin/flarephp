@@ -227,7 +227,7 @@ class Mvc
         require $this->_modulesDirectory.$this->_request->getModule().'/bootstrap.php';
         require $path;
         $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getController();
-        $this->_controller = new $controller;
+        $this->_controller = new $controller($this->_request, A::$response);
         if(!method_exists($this->_controller, $this->_request->getAction())){
             A::$response->setBody("404 page")
                 ->setCode(404)
@@ -252,7 +252,7 @@ class Mvc
         }
 
         $this->_controller->init();
-        $view = $this->_controller->{$this->_request->getAction()}($this->_request, A::$response);
+        $view = $this->_controller->{$this->_request->getAction()}();
         if($view instanceof Html){
             A::$response->setHeader('Content-Type', 'text/html');
         } else if($view instanceof \ADK\Objects\Xml){
