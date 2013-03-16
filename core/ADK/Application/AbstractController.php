@@ -46,7 +46,7 @@ abstract class AbstractController
      * @param string $shortKey
      * @return mixed
      */
-    public function mashup($mashup, $shortKey = null)
+    public function setMashup($mashup, $shortKey = null)
     {
         if(!$shortKey){
             $shortKey = $mashup;
