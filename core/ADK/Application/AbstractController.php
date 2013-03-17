@@ -2,7 +2,7 @@
 
 namespace ADK\Application;
 
-use ADK\Http\Request;
+use ADK\Application\Http\Request;
 use ADK\Http\Response;
 use ADK\Adk as A;
 
@@ -27,7 +27,7 @@ abstract class AbstractController
 
     /**
      * 
-     * @var \ADK\Http\Request
+     * @var \ADK\Application\Http\Request
      */
     protected $request;
 
@@ -45,7 +45,7 @@ abstract class AbstractController
 
     /**
      * 
-     * @param \ADK\Http\Request $request
+     * @param \ADK\Application\Http\Request $request
      * @param \ADK\Http\Response $response
      */
     public function __construct(Request &$request, Response &$response)
