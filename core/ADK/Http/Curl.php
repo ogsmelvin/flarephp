@@ -66,6 +66,12 @@ class Curl
 
     /**
      * 
+     * @var array
+     */
+    private $_httpHeaders = array();
+
+    /**
+     * 
      * @param string $url
      */
     public function __construct($url = null)
@@ -107,6 +113,16 @@ class Curl
 
     /**
      * 
+     * @param string|array $type
+     * @return \ADK\Http\Curl
+     */
+    public function setContentType($type)
+    {
+        return $this->setOption(CURLOPT_HTTPHEADER, $type);
+    }
+
+    /**
+     * 
      * @param array $params
      * @return \ADK\Http\Curl
      */
@@ -140,6 +156,11 @@ class Curl
     {
         if($key === CURLOPT_URL){
             $this->_url = $value;
+        } else if($key === CURLOPT_HTTPHEADER){
+            if(is_string($value)){
+                $value = (array) $value;
+                $this->_httpHeaders = $value;
+            }
         }
         curl_setopt($this->_curl, $key, $value);
         return $this;
