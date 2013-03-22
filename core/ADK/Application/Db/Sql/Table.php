@@ -3,7 +3,7 @@
 namespace ADK\Application\Db\Sql;
 
 use ADK\Application\Db\Sql\AbstractTable;
-use ADK\Adk as A;
+use ADK\Db\Sql\Query\ARQuery;
 
 /**
  * 
@@ -14,28 +14,54 @@ class Table extends AbstractTable
 {
     /**
      * 
-     * @var PDO
+     * @param string $query
+     * @param array $bindings
+     * @return \ADK\Db\Sql\Query\Query
      */
-    private $_adapter;
-
-    public function __construct()
+    public function sql($query = null, $bindings = null)
     {
-        $this->_setup();
+        return $this->_adapter->sql($query, $bindings);
     }
 
-    protected function _setup()
+    /**
+     * 
+     * @param array $data
+     * @param boolean $check_columns
+     * @return \ADK\Db\Sql\Query\ARQuery
+     */
+    public function insert($data = array(), $check_columns = true)
     {
-        $this->_adapter = & A::db();
-        if(!isset($this->_table)){
-
-        }
-        if(!isset($this->_primaryKey)){
-            $this->_primaryKey = $this->_adapter->getPrimaryKey($table);
-        }
+        return $this->_adapter->insert($this->_table, $data, $check_columns);
     }
 
-    public function getAdapter()
+    /**
+     * 
+     * @param string|array $select
+     * @return \ADK\Db\Sql\Query\ARQuery
+     */
+    public function select($select)
     {
-        return $this->_adapter;
+        return $this->_adapter->select($select)
+            ->from($this->_table);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @param boolean $check_columns
+     * @return \ADK\Db\Sql\Query\ARQuery
+     */
+    public function update($data = array(), $check_columns = true)
+    {
+        return $this->_adapter->update($this->_table, $data, $check_columns);
+    }
+
+    /**
+     * 
+     * @return \ADK\Db\Sql\Query\ARQuery
+     */
+    public function delete()
+    {
+        return $this->_adapter->delete($this->_table);
     }
 }
