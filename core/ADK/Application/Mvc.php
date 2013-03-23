@@ -60,6 +60,12 @@ class Mvc
 
     /**
      * 
+     * @var array
+     */
+    private static $_models = array();
+
+    /**
+     * 
      * @var mixed
      */
     private $_controller = null;
@@ -160,6 +166,27 @@ class Mvc
                 .str_replace(array("Models\\", "\\"), array('', '/'), $class)
                 .'.php';
         }
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param boolean $instance
+     * @return mixed|void
+     */
+    public function model($name, $instance = true)
+    {
+        $name = "Models\\{$name}";
+        if(!isset(self::$_models[$name])){
+            if($instance){
+                self::$_models[$name] = new $name();
+            } else {
+                self::$_models[$name] = true;
+            }
+        } else if(self::$_models[$name] === true && $instance === true){
+            self::$_models[$name] = new $name();
+        }
+        return self::$_models[$name];
     }
 
     /**

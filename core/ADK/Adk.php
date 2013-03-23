@@ -124,7 +124,7 @@ class Adk
      * @param array $config
      * @return PDO
      */
-    public static function db($name = 'default', $config = null)
+    public static function & db($name = 'default', $config = null)
     {
         if(!isset(self::$_db[$name])){
             if(!$config){

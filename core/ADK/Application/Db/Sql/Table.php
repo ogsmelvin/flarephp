@@ -39,7 +39,7 @@ class Table extends AbstractTable
      * @param string|array $select
      * @return \ADK\Db\Sql\Query\ARQuery
      */
-    public function select($select)
+    public function select($select = '*')
     {
         return $this->_adapter->select($select)
             ->from($this->_table);

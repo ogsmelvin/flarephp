@@ -44,7 +44,7 @@ abstract class AbstractTable
     {
         $this->_adapter = & A::db();
         if(!isset($this->_table)){
-
+            throw new Exception('Table must be set');
         }
         if(!isset($this->_primaryKey)){
             $this->_primaryKey = $this->_adapter->getPrimaryKey($table);
@@ -103,6 +103,9 @@ abstract class AbstractTable
      */
     public function getPrimaryKey()
     {
+        if(isset($this->_primaryKey)){
+            return $this->_primaryKey;
+        }
         return $this->_adapter->getPrimaryKey($this->_table);
     }
 }
