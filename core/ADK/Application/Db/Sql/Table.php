@@ -41,8 +41,13 @@ class Table extends AbstractTable
      */
     public function select($select = '*')
     {
-        return $this->_adapter->select($select)
-            ->from($this->_table);
+        $sql = $this->_adapter->select($select);
+        if(isset($this->_alias)){
+            $sql->from(array($this->_alias => $this->_table));
+        } else {
+            $sql->from($this->_table);
+        }
+        return $sql;
     }
 
     /**

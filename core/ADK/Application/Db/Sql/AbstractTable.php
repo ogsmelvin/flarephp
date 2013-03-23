@@ -29,6 +29,12 @@ abstract class AbstractTable
      * 
      * @var string
      */
+    protected $_alias;
+
+    /**
+     * 
+     * @var string
+     */
     protected $_primaryKey;
 
     public function __construct()

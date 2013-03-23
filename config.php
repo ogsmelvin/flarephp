@@ -128,7 +128,8 @@ $config['router'] = array(
 $config['autoload'] = array(
     'helpers'   => array('text', 'view'),
     'models'    => array(),
-    'database'  => 'default'
+    'database'  => 'default',
+    'mashups' => array()
 );
 
 /**
@@ -172,6 +173,14 @@ $config['mashups'] = array(
      */
     'paypal'    => array(
 
+    ),
+
+    /**
+     * 
+     */
+    'textmagic' => array(
+        'username' => '',
+        'password' => ''
     )
 );
 
