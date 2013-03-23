@@ -118,6 +118,9 @@ class Curl
      */
     public function setContentType($type)
     {
+        if(strpos($type, 'Content-Type: ') !== 0){
+            $type = 'Content-Type: '.$type;
+        }
         return $this->setOption(CURLOPT_HTTPHEADER, $type);
     }
 
