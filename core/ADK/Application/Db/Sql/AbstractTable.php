@@ -114,4 +114,39 @@ abstract class AbstractTable
         }
         return $this->_adapter->getPrimaryKey($this->_table);
     }
+
+    /**
+     * 
+     * @param int $limit
+     * @param int $page
+     * @return \ADK\Db\Sql\Results\Collection
+     */
+    public function getAll($limit = null, $page = null)
+    {
+        $sql = $this->select()
+            ->from($this->_table);
+        if($limit){
+            $sql->limit($limit);
+        }
+        if($page){
+            $sql->page($page);
+        }
+        return $sql->getCollection();
+    }
+
+    /**
+     * 
+     * @param string|int $value
+     * @param strign $column
+     * @return stdClass
+     */
+    public function find($value, $column = null)
+    {
+        $sql = $this->select()
+            ->from($this->_table);
+        if(!$column){
+            $column = $this->getPrimaryKey();
+        }
+        return $sql->where($column, $value)->getOne();
+    }
 }
