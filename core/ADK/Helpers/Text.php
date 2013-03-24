@@ -18,6 +18,7 @@ if(!function_exists('format_number')){
 
     /**
      * 
+     * @author anthony
      * @param string|int $number
      * @param string $thousand_sep
      * @param string $dec_sep
@@ -33,6 +34,7 @@ if(!function_exists('format_date')){
     
     /**
      * Format date from MySql format to word format
+     * @author anthony
      * @param string $date
      * @param string $format
      * @return string
@@ -64,6 +66,7 @@ if(!function_exists('unique_code')){
 
     /**
      * 
+     * @author anthony
      * @param int $length
      * @return string
      */

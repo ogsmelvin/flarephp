@@ -2,6 +2,12 @@
 
 namespace ADK\Http;
 
+use ADK\Adk as A;
+
+if(!function_exists('html')){
+    A::helper('view');
+}
+
 /**
  *
  * @author anthony
@@ -143,7 +149,7 @@ class Request
     public function filterPost($key)
     {
         $value = $this->post($key);
-        if($value){
+        if($value !== null){
             $value = html($value);
         }
         return $value;
@@ -157,7 +163,7 @@ class Request
     public function filterGet($key)
     {
         $value = $this->get($key);
-        if($value){
+        if($value !== null){
             $value = html($value);
         }
         return $value;
@@ -171,7 +177,7 @@ class Request
     public function filterRequest($key)
     {
         $value = $this->request($key);
-        if($value){
+        if($value !== null){
             $value = html($value);
         }
         return $value;
@@ -185,7 +191,7 @@ class Request
     public function filterCookie($key)
     {
         $value = $this->cookie($key);
-        if($value){
+        if($value !== null){
             $value = html($value);
         }
         return $value;

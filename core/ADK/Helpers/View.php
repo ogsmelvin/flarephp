@@ -21,6 +21,7 @@ if(!function_exists('section_open')){
 
     /**
      * 
+     * @author anthony
      * @param string $name
      * @return void
      */
@@ -36,6 +37,7 @@ if(!function_exists('section_close')){
 
     /**
      * 
+     * @author anthony
      * @param string $name
      * @return void
      */
@@ -53,6 +55,7 @@ if(!function_exists('get_section')){
 
     /**
      * 
+     * @author anthony
      * @param string $name
      * @return string
      */
@@ -70,6 +73,7 @@ if(!function_exists('get_sections')){
 
     /**
      * 
+     * @author anthony
      * @return array
      */
     function get_sections()
@@ -83,6 +87,7 @@ if(!function_exists('html_select_day')){
 
     /**
      * 
+     * @author anthony
      * @return string
      */
     function html_select_day()
@@ -100,6 +105,7 @@ if(!function_exists('html_select_month')){
 
     /**
      * 
+     * @author anthony
      * @return string
      */
     function html_select_month()
@@ -124,6 +130,7 @@ if(!function_exists('html_select_province')){
 
     /**
      * 
+     * @author anthony
      * @return string
      */
     function html_select_province()
@@ -218,6 +225,7 @@ if(!function_exists('html_select_year')){
 
     /**
      * 
+     * @author anthony
      * @return string
      */
     function html_select_year()
