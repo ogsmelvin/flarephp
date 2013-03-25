@@ -183,7 +183,7 @@ class Adk
                 $config = self::$config->mashups[$mashup];
             }
 
-            $ref = new ReflectionClass("\\ADK\\Mashups\\".ucwords($mashup));
+            $ref = new ReflectionClass("\\ADK\\Mashups\\".$mashup);
             self::$_mashups[$mashup] = $ref->newInstanceArgs($config);
         }
         return self::$_mashups[$mashup];
