@@ -283,6 +283,7 @@ class Mvc
         if($view instanceof Html){
             A::$response->setHeader('Content-Type', 'text/html');
         } else if($view instanceof \ADK\Objects\Xml){
+            $view = $view->asXml();
             A::$response->setHeader('Content-Type', 'text/xml');
         } else if($view instanceof \ADK\Objects\Json){
             A::$response->setHeader('Content-Type', 'application/json');
