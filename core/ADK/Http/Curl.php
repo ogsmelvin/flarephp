@@ -4,8 +4,8 @@ namespace ADK\Http;
 
 use ADK\Objects\Json;
 use ADK\Objects\Xml;
-use \Exception;
 use ADK\Adk as A;
+use \Exception;
 
 if(!function_exists('curl_init')){
     display_error('CURL is not supported by your server');

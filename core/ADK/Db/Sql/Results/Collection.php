@@ -116,7 +116,25 @@ class Collection extends ArrayObject
         foreach($this as $key => $value){
             $array[] = (array) $value;
         }
-        return new JSON($array);
+        return new Json($array);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function toXML()
+    {
+        //TODO
+    }
+
+    /**
+     * 
+     * @return \ADK\Objects\Xml
+     */
+    public function toXMLObject()
+    {
+        //TODO
     }
 
     /**
