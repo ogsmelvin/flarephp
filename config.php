@@ -129,6 +129,12 @@ $config['autoload'] = array(
     'helpers'   => array('text', 'view'),
     'models'    => array(),
     'database'  => 'default',
+
+    /**
+     * Api Services Autoload
+     * Keys are the same with the class names
+     * These keys are case sensitive
+     */
     'mashups' => array()
 );
 
@@ -155,6 +161,8 @@ $config['database'] = array(
 
 /**
  * Api Services Configuration
+ * Keys are the same with the class names
+ * These keys are case sensitive
  * @var array
  */
 $config['mashups'] = array(
@@ -162,7 +170,7 @@ $config['mashups'] = array(
     /**
      * Facebook settings
      */
-    'facebook'  => array(
+    'Facebook'  => array(
         'app_id'        => '',
         'app_secret'    => '',
         'file_upload'   => true
@@ -171,14 +179,22 @@ $config['mashups'] = array(
     /**
      * Paypal settings
      */
-    'paypal'    => array(
+    'Paypal'    => array(
 
     ),
 
     /**
      * 
      */
-    'textmagic' => array(
+    'TextMagic' => array(
+        'username' => '',
+        'password' => ''
+    ),
+
+    /**
+     * 
+     */
+    'BulkSMS' => array(
         'username' => '',
         'password' => ''
     )
