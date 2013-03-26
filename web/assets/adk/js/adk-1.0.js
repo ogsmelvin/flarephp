@@ -164,4 +164,14 @@ var Adk = {
         });
     }
 
+    $.fn.adkChart = function(options){
+        options = typeof options == "undefined" ? {} : options;
+        options.data = typeof options.data == "undefined" ? {} : options.data;
+        var table = $("<table></table>");
+        $(table).addClass("table");
+        $.each(options.data, function(key, value){
+            $(table).append("<tr></tr>");
+        });
+    }
+
 })(jQuery);

@@ -9,14 +9,14 @@ define('APP_ROOT_DIR', APP_DIR.'web/');
 define('APP_MODULES_DIR', APP_DIR.'modules/');
 define('APP_MODELS_DIR', APP_DIR.'models/');
 define('APP_HELPERS_DIR', APP_DIR.'helpers/');
-define('APP_CORE_DIR', dirname(APP_DIR).'/adk/core/');
-define('APP_TITLE', 'HALALAN 2013');
+define('APP_CORE_DIR', APP_DIR.'core/');
+define('APP_TITLE', 'ADK Demo');
 
 /**
  *
  * @var array
  */
-$config['modules'] = array('main', 'admin');
+$config['modules'] = array('main');
 
 /**
  * To return it to its default value
@@ -51,14 +51,6 @@ $config['layout'] = array(
     'main' => array(
         'auto'      => true,
         'layout'    => 'main'
-    ),
-
-    /**
-     * View Layout settings for admin module
-     */
-    'admin' => array(
-        'auto'      => true,
-        'layout'    => 'admin'
     )
 );
 
@@ -68,7 +60,7 @@ $config['layout'] = array(
  */
 $config['session'] = array(
     'auto_start'        => true,
-    'namespace'         => 'election.dev'
+    'namespace'         => 'adk_demo'
 );
 
 /**
@@ -128,7 +120,7 @@ $config['router'] = array(
 $config['autoload'] = array(
     'helpers'   => array('text', 'view'),
     'models'    => array(),
-    'database'  => 'default',
+    'database'  => null,
 
     /**
      * Api Services Autoload
@@ -149,9 +141,9 @@ $config['database'] = array(
      */
     'default' => array(
         'host'      => 'localhost',
-        'username'  => 'technoc9_dev',
-        'password'  => 'vRavpq-e}QTA',
-        'dbname'    => 'technoc9_election_2013',
+        'username'  => 'adk_demo',
+        'password'  => 'tontonskie',
+        'dbname'    => 'sample',
         'driver'    => 'mysql',
         'options'   => array(
             PDO::ATTR_PERSISTENT => true
