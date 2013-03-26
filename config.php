@@ -93,7 +93,7 @@ $config['router'] = array(
      * If you want to set your own error controllers
      * :module => :controller
      * this will automatically use 'errorAction' method
-     * Just extend 'Lazarus_Controller_Error
+     * Just extend 'ErrorController'
      * and override 'errorAction' method.
      *
      * ex.
@@ -118,8 +118,15 @@ $config['router'] = array(
  * @var array
  */
 $config['autoload'] = array(
+
     'helpers'   => array('text', 'view'),
-    'database'  => null,
+
+    /**
+     * 
+     * Only one database can be set 
+     * for autoload
+     */
+    'database'  => 'default',
 
     /**
      * Api Services Autoload
@@ -172,22 +179,6 @@ $config['mashups'] = array(
      */
     'Paypal'    => array(
 
-    ),
-
-    /**
-     * 
-     */
-    'TextMagic' => array(
-        'username' => '',
-        'password' => ''
-    ),
-
-    /**
-     * 
-     */
-    'BulkSMS' => array(
-        'username' => '',
-        'password' => ''
     )
 );
 
