@@ -62,7 +62,7 @@ class Mvc
      * 
      * @var array
      */
-    private static $_models = array();
+    // private static $_models = array();
 
     /**
      * 
@@ -174,20 +174,20 @@ class Mvc
      * @param boolean $instance
      * @return mixed|void
      */
-    public function model($name, $instance = true)
-    {
-        $name = "Models\\{$name}";
-        if(!isset(self::$_models[$name])){
-            if($instance){
-                self::$_models[$name] = new $name();
-            } else {
-                self::$_models[$name] = true;
-            }
-        } else if(self::$_models[$name] === true && $instance === true){
-            self::$_models[$name] = new $name();
-        }
-        return self::$_models[$name];
-    }
+    // public function model($name, $instance = true)
+    // {
+    //     $name = "Models\\{$name}";
+    //     if(!isset(self::$_models[$name])){
+    //         if($instance){
+    //             self::$_models[$name] = new $name();
+    //         } else {
+    //             self::$_models[$name] = true;
+    //         }
+    //     } else if(self::$_models[$name] === true && $instance === true){
+    //         self::$_models[$name] = new $name();
+    //     }
+    //     return self::$_models[$name];
+    // }
 
     /**
      * 

@@ -119,7 +119,6 @@ $config['router'] = array(
  */
 $config['autoload'] = array(
     'helpers'   => array('text', 'view'),
-    'models'    => array(),
     'database'  => null,
 
     /**
