@@ -16,6 +16,40 @@ if(!function_exists('html')){
 class Request
 {
     /**
+     * 
+     * @var boolean
+     */
+    protected $_autoXssFilter = false;
+
+    /**
+     * 
+     * @param boolean
+     * @return \ADK\Http\Request
+     */
+    public function setAutoFilter($switch)
+    {
+        $this->_autoXssFilter = (boolean) $switch;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string|array $var
+     * @return string|array
+     */
+    protected function _filter($var)
+    {
+        if(is_string($var)){
+            return html($var);
+        }
+
+        foreach($var as &$val){
+            $val = $this->_filter($val);
+        }
+        return $var;
+    }
+
+    /**
      *
      * @param string $key
      * @param mixed $default
@@ -24,10 +58,20 @@ class Request
     public function post($key = null, $default = null)
     {
         if($key === null){
-            return !empty($_POST) ? $_POST : $default;
+            if(!empty($_POST)){
+                if($this->_autoXssFilter){
+                    return $this->_filter($_POST);
+                }
+                return $_POST;
+            }
+        } else if(isset($_POST[$key])){
+            if($this->_autoXssFilter){
+                return $this->_filter($_POST[$key]);
+            }
+            return $_POST[$key];
         }
 
-        return isset($_POST[$key]) ? $_POST[$key] : $default;
+        return $default;
     }
 
     /**
@@ -39,10 +83,20 @@ class Request
     public function get($key = null, $default = null)
     {
         if($key === null){
-            return !empty($_GET) ? $_GET : $default;
+            if(!empty($_GET)){
+                if($this->_autoXssFilter){
+                    return $this->_filter($_GET);
+                }
+                return $_GET;
+            }
+        } else if(isset($_GET[$key])){
+            if($this->_autoXssFilter){
+                return $this->_filter($_GET[$key]);
+            }
+            return $_GET[$key];
         }
 
-        return isset($_GET[$key]) ? $_GET[$key] : $default;
+        return $default;
     }
 
     /**
@@ -54,10 +108,20 @@ class Request
     public function server($key = null, $default = null)
     {
         if($key === null){
-            return !empty($_SERVER) ? $_SERVER : $default;
+            if(!empty($_SERVER)){
+                if($this->_autoXssFilter){
+                    return $this->_filter($_SERVER);
+                }
+                return $_SERVER;
+            }
+        } else if(isset($_SERVER[$key])){
+            if($this->_autoXssFilter){
+                return $this->_filter($_SERVER[$key]);
+            }
+            return $_SERVER[$key];
         }
 
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : $default;
+        return $default;
     }
 
     /**
@@ -105,10 +169,20 @@ class Request
     public function cookie($key = null, $default = null)
     {
         if($key === null){
-            return !empty($_COOKIE) ? $_COOKIE : $default;
+            if(!empty($_COOKIE)){
+                if($this->_autoXssFilter){
+                    return $this->_filter($_COOKIE);
+                }
+                return $_COOKIE;
+            }
+        } else if(isset($_COOKIE[$key])){
+            if($this->_autoXssFilter){
+                return $this->_filter($_COOKIE[$key]);
+            }
+            return $_COOKIE[$key];
         }
 
-        return isset($_COOKIE[$key]) ? $_COOKIE[$key] : $default;
+        return $default;
     }
 
     /**
@@ -120,10 +194,20 @@ class Request
     public function request($key = null, $default = null)
     {
         if($key === null){
-            return !empty($_REQUEST) ? $_REQUEST : $default;
+            if(!empty($_REQUEST)){
+                if($this->_autoXssFilter){
+                    return $this->_filter($_REQUEST);
+                }
+                return $_REQUEST;
+            }
+        } else if(isset($_REQUEST[$key])){
+            if($this->_autoXssFilter){
+                return $this->_filter($_REQUEST[$key]);
+            }
+            return $_REQUEST[$key];
         }
 
-        return isset($_REQUEST[$key]) ? $_REQUEST[$key] : $default;
+        return $default;
     }
 
     /**
@@ -149,8 +233,8 @@ class Request
     public function filterPost($key)
     {
         $value = $this->post($key);
-        if($value !== null){
-            $value = html($value);
+        if(!$this->_autoXssFilter && $value !== null){
+            $value = $this->_filter($value);
         }
         return $value;
     }
@@ -163,8 +247,8 @@ class Request
     public function filterGet($key)
     {
         $value = $this->get($key);
-        if($value !== null){
-            $value = html($value);
+        if(!$this->_autoXssFilter && $value !== null){
+            $value = $this->_filter($value);
         }
         return $value;
     }
@@ -177,8 +261,8 @@ class Request
     public function filterRequest($key)
     {
         $value = $this->request($key);
-        if($value !== null){
-            $value = html($value);
+        if(!$this->_autoXssFilter && $value !== null){
+            $value = $this->_filter($value);
         }
         return $value;
     }
@@ -191,8 +275,8 @@ class Request
     public function filterCookie($key)
     {
         $value = $this->cookie($key);
-        if($value !== null){
-            $value = html($value);
+        if(!$this->_autoXssFilter && $value !== null){
+            $value = $this->_filter($value);
         }
         return $value;
     }
