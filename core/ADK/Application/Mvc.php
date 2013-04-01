@@ -234,6 +234,9 @@ class Mvc
         $action = $action === null ? A::$config->router['default_action'] : $action;
 
         $this->_request = new Request();
+        if(isset(A::$config->auto_xss_filtering)){
+            $this->_request->setAutoFilter(true);
+        }
         $this->_request->setModule($module)
             ->setController($controller)
             ->setAction($action);

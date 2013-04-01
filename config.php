@@ -11,7 +11,7 @@ define('APP_MODELS_DIR', APP_DIR.'models/');
 define('APP_HELPERS_DIR', APP_DIR.'helpers/');
 define('APP_CORE_DIR', APP_DIR.'core/');
 define('APP_TITLE', 'ADK Demo');
-//comment
+
 /**
  *
  * @var array
@@ -38,6 +38,12 @@ $config['time_limit'] = null;
  * @var string
  */
 $config['memory_limit'] = null;
+
+/**
+ * 
+ * @var boolean
+ */
+$config['auto_xss_filtering'] = false;
 
 /**
  *
