@@ -85,7 +85,7 @@ abstract class AbstractController
      */
     public function setDb($key = 'default')
     {
-        $this->db = A::db($key);
+        $this->db = & A::db($key);
     }
 
     /**
