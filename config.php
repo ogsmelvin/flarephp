@@ -46,6 +46,12 @@ $config['memory_limit'] = null;
 $config['auto_xss_filtering'] = false;
 
 /**
+ * 
+ * @var boolean
+ */
+$config['auto_gzip'] = false;
+
+/**
  *
  * @var array
  */
@@ -125,7 +131,7 @@ $config['router'] = array(
  */
 $config['autoload'] = array(
 
-    'helpers'   => array('text', 'view'),
+    'helpers'   => array(),
 
     /**
      * 
