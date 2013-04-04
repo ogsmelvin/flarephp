@@ -173,17 +173,17 @@ class Adk
      * @param array $config
      * @return mixed
      */
-    public static function mashup($mashup, $config = null)
+    public static function service($mashup, $config = null)
     {
         if(!isset(self::$_mashups[$mashup])){
             if(!$config){
-                if(!isset(self::$config->mashups[$mashup])){
+                if(!isset(self::$config->services[$mashup])){
                     throw new Exception("Config for mashup '{$mashup}' is not defined");
                 }
-                $config = self::$config->mashups[$mashup];
+                $config = self::$config->services[$mashup];
             }
 
-            $ref = new ReflectionClass("\\ADK\\Mashups\\".$mashup);
+            $ref = new ReflectionClass("\\ADK\\Services\\".$mashup);
             self::$_mashups[$mashup] = $ref->newInstanceArgs($config);
         }
         return self::$_mashups[$mashup];

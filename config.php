@@ -146,7 +146,7 @@ $config['autoload'] = array(
      * Keys are the same with the class names
      * These keys are case sensitive
      */
-    'mashups' => array()
+    'services' => array()
 );
 
 /**
@@ -171,15 +171,15 @@ $config['database'] = array(
 );
 
 /**
- * Api Services Configuration
+ * Api Mashups Configuration
  * Keys are the same with the class names
  * These keys are case sensitive
  * @var array
  */
-$config['mashups'] = array(
+$config['services'] = array(
 
     /**
-     * Facebook settings
+     * ADK\Services\Facebook settings
      */
     'Facebook'  => array(
         'app_id'        => '',
@@ -188,10 +188,11 @@ $config['mashups'] = array(
     ),
 
     /**
-     * Paypal settings
+     * ADK\Services\Sms\OneWaySMS settings
      */
-    'Paypal'    => array(
-
+    'OneWaySMS' = array(
+        'username' => '',
+        'password' => ''
     )
 );
 

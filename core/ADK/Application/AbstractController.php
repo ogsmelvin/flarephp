@@ -67,7 +67,7 @@ abstract class AbstractController
      * @param string $shortKey
      * @return void
      */
-    public function setMashup($mashup, $shortKey = null)
+    public function setService($mashup, $shortKey = null)
     {
         if(!$shortKey){
             $shortKey = $mashup;
@@ -75,7 +75,7 @@ abstract class AbstractController
         if(isset($this->{$shortKey})){
             return $this->{$shortKey};
         }
-        $this->{$shortKey} = A::mashup($mashup);
+        $this->{$shortKey} = A::service($mashup);
     }
 
     /**

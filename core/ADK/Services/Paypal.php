@@ -1,6 +1,6 @@
 <?php
 
-namespace ADK\Mashups;
+namespace ADK\Services;
 
 /**
  * 

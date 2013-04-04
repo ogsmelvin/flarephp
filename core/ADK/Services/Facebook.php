@@ -1,6 +1,6 @@
 <?php
 
-namespace ADK\Mashups;
+namespace ADK\Services;
 
 use ADK\Objects\Json;
 use ADK\Http\Curl;
@@ -347,7 +347,7 @@ class Facebook
     /**
      * 
      * @param string $token
-     * @return \ADK\Mashups\Facebook
+     * @return \ADK\Services\Facebook
      */
     public function setAccessToken($token = null)
     {
@@ -391,7 +391,7 @@ class Facebook
     /**
      * 
      * @param boolean $upload
-     * @return \ADK\Mashups\Facebook
+     * @return \ADK\Services\Facebook
      */
     public function setFileUpload($upload)
     {
@@ -402,7 +402,7 @@ class Facebook
     /**
      * 
      * @param string $id
-     * @return \ADK\Mashups\Facebook
+     * @return \ADK\Services\Facebook
      */
     public function setAppId($id)
     {
@@ -413,7 +413,7 @@ class Facebook
     /**
      * 
      * @param string $secret
-     * @return \ADK\Mashups\Facebook
+     * @return \ADK\Services\Facebook
      */
     public function setAppSecret($secret)
     {
@@ -463,7 +463,7 @@ class Facebook
     /**
      * 
      * @param string $userId
-     * @return \ADK\Mashups\Facebook
+     * @return \ADK\Services\Facebook
      */
     public function setUser($userId)
     {

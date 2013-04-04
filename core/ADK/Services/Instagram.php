@@ -1,13 +1,13 @@
 <?php
 
-namespace ADK\Mashups;
+namespace ADK\Services;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Twitter
+class Instagram
 {
     /**
      * 
@@ -15,6 +15,6 @@ class Twitter
      */
     public function __construct(array $config)
     {
-
+        
     }
 }
