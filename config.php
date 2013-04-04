@@ -190,7 +190,7 @@ $config['services'] = array(
     /**
      * ADK\Services\Sms\OneWaySMS settings
      */
-    'OneWaySMS' = array(
+    'OneWaySMS' => array(
         'username' => '',
         'password' => ''
     )
