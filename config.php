@@ -137,6 +137,7 @@ $config['autoload'] = array(
      * 
      * Only one database can be set 
      * for autoload
+     * Set an empty value to turn off autoload of database
      */
     'database'  => 'default',
 

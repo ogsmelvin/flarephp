@@ -33,6 +33,7 @@ class Uri
      *
      * @var string
      */
+
     private $_uri;
 
     /**
@@ -58,6 +59,8 @@ class Uri
      * @var string
      */
     private $_currentUrl;
+
+
 
     /**
      * 
@@ -109,6 +112,7 @@ class Uri
         } else {
             $this->_baseUrl = $this->_protocol.$this->_host.':'.$this->_port.$this->_baseUrl;
         }
+
         $this->_currentUrl = $this->_baseUrl.ltrim($uri, '/');
         if(!empty($_SERVER['QUERY_STRING'])){
             $this->_fullUrl = $this->_currentUrl.'?'.$_SERVER['QUERY_STRING'];
@@ -118,6 +122,8 @@ class Uri
         unset($uri, $search);
         return $this;
     }
+
+
 
     /**
      * 
@@ -150,6 +156,8 @@ class Uri
         return $this->_segments;
     }
 
+
+
     /**
      * 
      * @return string
@@ -171,6 +179,8 @@ class Uri
         }
         return null;
     }
+
+
 
     /**
      *
@@ -248,10 +258,11 @@ class Uri
      * 
      * @return void
      */
-    public function requireHttps()
+    public function requireHttps($code = 301)
     {
         if(!$this->isHttps()){
             $url = 'https://'.$this->_host;
+            //TODO: what if not port 80
             // if($this->_port != '80' ){
             //     $url .= ':'.$this->_port;
             // }
@@ -259,7 +270,7 @@ class Uri
             if(!empty($_SERVER['QUERY_STRING'])){
                 $url .= '?'.$_SERVER['QUERY_STRING'];
             }
-            A::$response->redirect($url);
+            A::$response->redirect($url, $code);
         }
         return;
     }

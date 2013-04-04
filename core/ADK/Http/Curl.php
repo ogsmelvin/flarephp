@@ -190,6 +190,7 @@ class Curl
     public function execute()
     {
         $this->_prepare();
+        curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, false);
         curl_exec($this->_curl);
         if(curl_errno($this->_curl)){
             $this->_error = curl_error($this->_curl);
