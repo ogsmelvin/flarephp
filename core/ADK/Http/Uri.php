@@ -105,7 +105,7 @@ class Uri
         }
 
         $this->_host = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
-        if($this->_port == '80'){
+        if($this->_port == '80' || $this->_protocol == 'https://'){
             $this->_baseUrl = $this->_protocol.$this->_host.$this->_baseUrl;
         } else {
             $this->_baseUrl = $this->_protocol.$this->_host.':'.$this->_port.$this->_baseUrl;
