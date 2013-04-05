@@ -76,7 +76,21 @@ class Curl
      */
     public function __construct($url = null)
     {
+        $this->open($url);
+    }
+
+    /**
+     * 
+     * @param string $url
+     * @return \ADK\Http\Curl
+     */
+    public function open($url = null)
+    {
         $this->_curl = curl_init($url);
+        if($url){
+            $this->_url = $url;
+        }
+        return $this;
     }
 
     /**
@@ -146,6 +160,16 @@ class Curl
     public function setParam($key, $value)
     {
         $this->_params[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 
+     * @return \ADK\Http\Curl
+     */
+    public function clearParams()
+    {
+        $this->_params = array();
         return $this;
     }
 
@@ -282,12 +306,21 @@ class Curl
 
     /**
      * 
-     * @return \ADK\Http\Curl
+     * @return void
      */
     public function close()
     {
         curl_close($this->_curl);
-        return $this;
+    }
+
+    /**
+     * 
+     * @return \ADK\Http\Curl
+     */
+    public function reset()
+    {
+        $this->close();
+        return $this->open();
     }
 
     /**

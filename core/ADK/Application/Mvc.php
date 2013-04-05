@@ -282,6 +282,7 @@ class Mvc
         }
 
         $this->_controller->init();
+        $this->_controller->preDispatch();
         $view = $this->_controller->{$this->_request->getAction()}();
         if($view instanceof Html){
             A::$response->setHeader('Content-Type', 'text/html');
@@ -294,6 +295,7 @@ class Mvc
             //TODO
         }
         
+        $this->_controller->postDispatch();
         A::$response->setBody($view)->send();
         $this->_controller->complete();
         $this->_dispatched = true;

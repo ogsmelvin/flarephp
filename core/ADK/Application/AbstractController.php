@@ -63,19 +63,19 @@ abstract class AbstractController
 
     /**
      * 
-     * @param string $mashup
+     * @param string $service
      * @param string $shortKey
      * @return void
      */
-    public function setService($mashup, $shortKey = null)
+    public function setService($service, $shortKey = null)
     {
         if(!$shortKey){
-            $shortKey = $mashup;
+            $shortKey = $service;
         }
         if(isset($this->{$shortKey})){
             return $this->{$shortKey};
         }
-        $this->{$shortKey} = A::service($mashup);
+        $this->{$shortKey} = A::service($service);
     }
 
     /**
@@ -132,4 +132,16 @@ abstract class AbstractController
      * @return void
      */
     abstract public function complete();
+
+    /**
+     * 
+     * @return void
+     */
+    public function preDispatch(){}
+
+    /**
+     * 
+     * @return void
+     */
+    public function postDispatch(){}
 }

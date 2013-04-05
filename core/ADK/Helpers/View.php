@@ -228,10 +228,10 @@ if(!function_exists('html_select_year')){
      * @author anthony
      * @return string
      */
-    function html_select_year()
+    function html_select_year($start = 1994, $end = 1920)
     {
         $string = "<option value=''>Year</option>";
-        foreach(range(1994, 1920) as $year){
+        foreach(range((int) $start, (int) $end) as $year){
             $string .= "<option value='{$year}'>{$year}</option>";
         }
         return $string;
