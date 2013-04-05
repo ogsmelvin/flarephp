@@ -60,8 +60,6 @@ class Uri
      */
     private $_currentUrl;
 
-
-
     /**
      * 
      * @var string
@@ -122,8 +120,6 @@ class Uri
         unset($uri, $search);
         return $this;
     }
-
-
 
     /**
      * 
