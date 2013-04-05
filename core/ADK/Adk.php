@@ -111,7 +111,7 @@ class Adk
 
         if(!empty(self::$config->autoload['helpers'])){
             foreach(self::$config->autoload['helpers'] as $helper){
-                self::helper($helper);
+                self::mvc()->helper($helper);
             }
         }
         
