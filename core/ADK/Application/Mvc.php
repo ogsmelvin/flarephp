@@ -48,6 +48,12 @@ class Mvc
 
     /**
      * 
+     * @var string
+     */
+    private $_helpersDirectory = null;
+
+    /**
+     * 
      * @var array
      */
     private $_modulesList = array();
@@ -123,6 +129,17 @@ class Mvc
     public function setLayoutsDirectory($directory)
     {
         $this->_layoutsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $directory
+     * @return \ADK\Application\Mvc
+     */
+    public function setHelpersDirectory($directory)
+    {
+        $this->_helpersDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
     }
 
@@ -343,5 +360,20 @@ class Mvc
             $html->setLayout($layout);
         }
         return $html;
+    }
+
+    /**
+     *
+     * @param string $helper
+     * @return void
+     */
+    public function helper($helper)
+    {
+        $helper = ucwords(strtolower($helper));
+        if(file_exists(ADK_DIR.'ADK/Helpers/'.$helper.'.php')){
+            require_once ADK_DIR.'ADK/Helpers/'.$helper.'.php';
+        } else if(file_exists($this->_helpersDirectory.$helper.'.php')){
+            require_once $this->_helpersDirectory.$helper.'.php';
+        }
     }
 }

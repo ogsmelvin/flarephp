@@ -4,6 +4,10 @@ namespace ADK\UI;
 
 use ADK\Adk as A;
 
+if(!function_exists('http_build_url')){
+    A::mvc()->helper('url');
+}
+
 /**
  * 
  * @author anthony
@@ -52,11 +56,6 @@ class Pagination
      * @var string
      */
     private $_size = null;
-
-    public function __construct()
-    {
-        A::helper('Url');
-    }
 
     /**
      * 

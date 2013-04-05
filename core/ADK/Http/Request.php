@@ -5,7 +5,7 @@ namespace ADK\Http;
 use ADK\Adk as A;
 
 if(!function_exists('html')){
-    A::helper('view');
+    A::mvc()->helper('view');
 }
 
 /**

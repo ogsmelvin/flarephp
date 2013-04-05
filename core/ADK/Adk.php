@@ -188,15 +188,4 @@ class Adk
         }
         return self::$_services[$service];
     }
-
-    /**
-     *
-     * @param string $helper
-     * @return void
-     */
-    public static function helper($helper)
-    {
-        $helper = ucwords(strtolower($helper));
-        require_once ADK_DIR.'ADK/Helpers/'.$helper.'.php';
-    }
 }

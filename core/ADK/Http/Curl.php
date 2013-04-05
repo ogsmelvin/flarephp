@@ -12,7 +12,7 @@ if(!function_exists('curl_init')){
 }
 
 if(!function_exists('http_build_url')){
-    A::helper('url');
+    A::mvc()->helper('url');
 }
 
 /**

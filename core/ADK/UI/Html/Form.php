@@ -6,7 +6,7 @@ use ADK\Adk as A;
 use \Exception;
 
 if(!function_exists('adk_encrypt')){
-    A::helper('encrypt');
+    A::mvc()->helper('encrypt');
 }
 
 /**

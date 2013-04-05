@@ -42,3 +42,4 @@ if(!function_exists('adk_decrypt')){
         return $sResult;
     }
 }
+

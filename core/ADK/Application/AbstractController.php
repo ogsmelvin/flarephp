@@ -90,6 +90,16 @@ abstract class AbstractController
 
     /**
      * 
+     * @param string $helper
+     * @return void
+     */
+    public function setHelper($helper)
+    {
+        A::mvc()->helper($helper);
+    }
+
+    /**
+     * 
      * @param string $key
      * @return void
      */
