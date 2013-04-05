@@ -33,7 +33,6 @@ class Uri
      *
      * @var string
      */
-
     private $_uri;
 
     /**
