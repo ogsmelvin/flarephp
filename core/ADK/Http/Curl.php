@@ -66,9 +66,21 @@ class Curl
 
     /**
      * 
+     * @var boolean
+     */
+    private $_autoReset = true;
+
+    /**
+     * 
      * @var array
      */
     private $_httpHeaders = array();
+
+    /**
+     * 
+     * @var string
+     */
+    private $_errorCode = null;
 
     /**
      * 
@@ -77,6 +89,17 @@ class Curl
     public function __construct($url = null)
     {
         $this->open($url);
+    }
+
+    /**
+     * 
+     * @param boolean $switch
+     * @return \ADK\Http\Curl
+     */
+    public function setAutoReset($switch)
+    {
+        $this->_autoReset = (boolean) $switch;
+        return $this;
     }
 
     /**
@@ -216,8 +239,11 @@ class Curl
         $this->_prepare();
         curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, false);
         curl_exec($this->_curl);
-        if(curl_errno($this->_curl)){
+        if($this->_errorCode = curl_errno($this->_curl)){
             $this->_error = curl_error($this->_curl);
+        }
+        if($this->_autoReset){
+            $this->reset();
         }
         return $this;
     }
@@ -252,8 +278,11 @@ class Curl
         $this->_prepare();
         curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
         $return = (string) curl_exec($this->_curl);
-        if(curl_errno($this->_curl)){
+        if($this->_errorCode = curl_errno($this->_curl)){
             $this->_error = curl_error($this->_curl);
+        }
+        if($this->_autoReset){
+            $this->reset();
         }
         return $return;
     }
@@ -297,20 +326,20 @@ class Curl
 
     /**
      * 
-     * @return boolean
+     * @return string|null
      */
-    public function hasError()
+    public function getErrorCode()
     {
-        return !empty($this->_error);
+        return $this->_errorCode;
     }
 
     /**
      * 
-     * @return void
+     * @return boolean
      */
-    public function close()
+    public function hasError()
     {
-        curl_close($this->_curl);
+        return !empty($this->_error) || !empty($this->_errorCode);
     }
 
     /**
@@ -319,7 +348,7 @@ class Curl
      */
     public function reset()
     {
-        $this->close();
+        curl_close($this->_curl);
         return $this->open();
     }
 

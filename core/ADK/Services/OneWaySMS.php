@@ -43,6 +43,30 @@ class OneWaySMS
 
     /**
      * 
+     * @var array
+     */
+    private static $_errorMessages = array(
+        'send_sms' => array(
+            '-100' => 'apipassname or apipassword is invalid',
+            '-200' => 'senderid parameter is invalid',
+            '-300' => 'mobileno parameter is invalid',
+            '-400' => 'languagetype is invalid',
+            '-500' => 'Invalid characters in message',
+            '-600' => 'Insufficient credit balance'
+        ),
+        'transaction_status' => array(
+            //0 Success receive on mobile handset
+            '100' => 'Message delivered to Telco',
+            '-100' => 'mtid invalid / not found',
+            '-200' => 'Message sending fail'
+        ),
+        'credit_balance' => array(
+            '-100' => 'apipassname or apipassword is invalid'
+        )
+    );
+
+    /**
+     * 
      * @param string $username
      * @param string $password
      */
@@ -58,16 +82,17 @@ class OneWaySMS
      * @param string $from
      * @param string $to
      * @param string $message
+     * @param int $languagetype
      * @return string|null
      */
-    public function send($from, $to, $message)
+    public function send($from, $to, $message, $languagetype = 1)
     {
         $this->_error = array();
         $result = $this->_curl
             ->setParam('senderid', $from)
             ->setParam('mobileno', $to)
             ->setParam('message', $message)
-            ->setParam('languagetype', 1)
+            ->setParam('languagetype', $languagetype)
             ->setParam('apiusername', $this->_username)
             ->setParam('apipassword', $this->_password)
             ->setUrl(self::API_HOST.'api.aspx')
@@ -75,45 +100,80 @@ class OneWaySMS
 
         if($this->_curl->hasError()){
             $this->_error = array(
-                'code' => '',
+                'code' => $this->_curl->getErrorCode(),
                 'message' => $this->_curl->getError()
             );
             $result = null;
         } else if($result < 0){
-            $this->_setError($result);
+            $this->_setError('send_sms', $result);
             $result = null;
         }
-
-        $this->_curl->reset();
         return $result;
     }
 
     /**
      * 
-     * @var string
+     * @param string $mtid
+     * @return boolean
+     */
+    public function getTransactionStatus($mtid)
+    {
+        $this->_error = array();
+        $result = $this->_curl
+            ->setParam('mtid', $mtid)
+            ->setUrl(self::API_HOST.'bulktrx.aspx')
+            ->getContent();
+
+        if($this->_curl->hasError()){
+            $this->_error = array(
+                'code' => $this->_curl->getErrorCode(),
+                'message' => $this->_curl->getError()
+            );
+            return false;
+        } else if($result != 0){
+            $this->_setError('transaction_status', $result);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @return int
+     */
+    public function getCreditBalance()
+    {
+        $this->_error = array();
+        $result = $this->_curl
+            ->setParam('apiusername', $this->_username)
+            ->setParam('apipassword', $this->_password)
+            ->setUrl(self::API_HOST.'bulkcredit.aspx')
+            ->getContent();
+
+        if($this->_curl->hasError()){
+            $this->_error = array(
+                'code' => $this->_curl->getErrorCode(),
+                'message' => $this->_curl->getError()
+            );
+            return null;
+        } else if($result < 0){
+            $this->_setError('credit_balance', $result);
+            return null;
+        }
+        return (int) $result;
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $code
      * @return void
      */
-    private function _setError($code)
+    private function _setError($type, $code)
     {
         $this->_error = array('code' => $code);
-        // -100 apipassname or apipassword is invalid
-        // -200 senderid parameter is invalid
-        // -300 mobileno parameter is invalid
-        // -400 languagetype is invalid
-        // -500 Invalid characters in message
-        // -600 Insufficient credit balance
-        if($this->_error['code'] == '-100'){
-            $this->_error['message'] = 'apipassname or apipassword is invalid';
-        } else if($this->_error['code'] == '-200'){
-            $this->_error['message'] = 'senderid parameter is invalid';
-        } else if($this->_error['code'] == '-300'){
-            $this->_error['message'] = 'mobileno parameter is invalid';
-        } else if($this->_error['code'] == '-400'){
-            $this->_error['message'] = 'languagetype is invalid';
-        } else if($this->_error['code'] == '-500'){
-            $this->_error['message'] = 'Invalid characters in message';
-        } else if($this->_error['code'] == '-600'){
-            $this->_error['message'] = 'Insufficient credit balance';
+        if(isset(self::$_errorMessages[$type][$code])){
+            $this->_error['message'] = self::$_errorMessages[$type][$code];
         }
     }
 
