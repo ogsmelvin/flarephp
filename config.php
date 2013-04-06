@@ -171,6 +171,16 @@ $config['database'] = array(
 );
 
 /**
+ * NO Sql databases
+ * Keys are the same with the class names
+ * These keys are case sensitive
+ * @var array
+ */
+$config['nosql'] = array(
+    'Mongodb' => array()
+);
+
+/**
  * Api Mashups Configuration
  * Keys are the same with the class names
  * These keys are case sensitive

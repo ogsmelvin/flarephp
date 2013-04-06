@@ -72,9 +72,6 @@ abstract class AbstractController
         if(!$shortKey){
             $shortKey = $service;
         }
-        if(isset($this->{$shortKey})){
-            return $this->{$shortKey};
-        }
         $this->{$shortKey} = A::service($service);
     }
 
