@@ -30,6 +30,7 @@ $mvc = A::mvc();
 $mvc->setModules($config['modules'])
     ->setModulesDirectory(APP_MODULES_DIR)
     ->setModelsDirectory(APP_MODELS_DIR)
+    ->setHelpersDirectory(APP_HELPERS_DIR)
     ->setLayoutsDirectory(APP_DIR.'layouts')
     ->setControllersDirectory('controllers')
     ->setViewsDirectory('views')
