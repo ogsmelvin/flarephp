@@ -108,12 +108,6 @@ class Adk
         } else {
             throw new Exception("Config[session][namespace] must be set");
         }
-
-        if(!empty(self::$config->autoload['helpers'])){
-            foreach(self::$config->autoload['helpers'] as $helper){
-                self::mvc()->helper($helper);
-            }
-        }
         
         self::$_init = true;
     }

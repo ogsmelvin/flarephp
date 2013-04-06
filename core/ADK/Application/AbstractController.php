@@ -5,6 +5,7 @@ namespace ADK\Application;
 use ADK\Application\Http\Request;
 use ADK\Http\Response;
 use ADK\Adk as A;
+use \Exception;
 
 /**
  * 
@@ -45,6 +46,12 @@ abstract class AbstractController
 
     /**
      * 
+     * @var array
+     */
+    private $_services = array();
+
+    /**
+     * 
      * @param \ADK\Application\Http\Request $request
      * @param \ADK\Http\Response $response
      */
@@ -59,6 +66,22 @@ abstract class AbstractController
         if($this->config->autoload['database']){
             $this->setDb($this->config->autoload['database']);
         }
+
+        if(!empty($this->config->autoload['helpers'])){
+            foreach($this->config->autoload['helpers'] as $helper){
+                $this->setHelper($helper);
+            }
+        }
+
+        if(!empty($this->config->autoload['services'])){
+            foreach($this->config->autoload['services'] as $service){
+                if(!is_array($service)){
+                    $this->setService($service);
+                } else if(isset($service[0], $service[1])){
+                    $this->setService($service[0], $service[1]);
+                }
+            }
+        }
     }
 
     /**
@@ -72,7 +95,24 @@ abstract class AbstractController
         if(!$shortKey){
             $shortKey = $service;
         }
-        $this->{$shortKey} = A::service($service);
+        if(A::service($service)){
+            $this->_services[$shortKey] = $service;
+        } else {
+            display_error("Error initializing service '{$service}'");
+        }
+    }
+
+    /**
+     * 
+     * @param string $service
+     * @return mixed
+     */
+    public function getService($service)
+    {
+        if(!isset($this->_services[$service])){
+            display_error("'{$service}' was not set");
+        }
+        return A::service($this->_services[$service]);
     }
 
     /**
