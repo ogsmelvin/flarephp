@@ -61,6 +61,12 @@ class Adk
     private static $_db = array();
 
     /**
+     * 
+     * @var array
+     */
+    private static $_ns = array();
+
+    /**
      *
      * @var boolean
      */
@@ -141,12 +147,25 @@ class Adk
     }
 
     /**
-     *
+     * 
+     * @param string $key
+     * @param array $config
      * @return mixed
      */
-    public static function ns()
+    public static function & ns($key, $config = null)
     {
+        if(!isset(self::$_ns[$key])){
+            if(!$config){
+                if(!isset(self::$config->nosql[$key])){
+                    throw new Exception("Config for service '{$key}' is not defined");
+                }
+                $config = self::$config->nosql[$key];
+            }
 
+            $ref = new ReflectionClass("\\ADK\\Db\\Nosql\\".$key);
+            self::$_ns[$key] = $ref->newInstanceArgs($config);
+        }
+        return self::$_ns[$key];
     }
 
     /**

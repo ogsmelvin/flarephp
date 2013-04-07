@@ -95,10 +95,12 @@ abstract class AbstractController
         if(!$shortKey){
             $shortKey = $service;
         }
-        if(A::service($service)){
-            $this->_services[$shortKey] = $service;
-        } else {
-            display_error("Error initializing service '{$service}'");
+        if(!isset($this->_services[$shortKey])){
+            if(A::service($service)){
+                $this->_services[$shortKey] = $service;
+            } else {
+                display_error("Error initializing service '{$service}'");
+            }
         }
     }
 
@@ -142,7 +144,14 @@ abstract class AbstractController
      */
     public function setNosql($key)
     {
-        $this->{$key} = A::ns($key);
+        $tmpKey = strtolower($key);
+        if(!isset($this->{$tmpKey})){
+            $ns = & A::ns($key);
+            if(!$ns){
+                display_error("Initialize nosql '{$key}' failed");
+            }
+            $this->{$tmpKey} = & $ns;
+        }
     }
 
     /**
