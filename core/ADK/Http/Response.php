@@ -104,6 +104,16 @@ class Response
 
     /**
      *
+     * @param string $type
+     * @return \ADK\Http\Response
+     */
+    public function setContentType($type)
+    {
+        return $this->setHeader('Content-Type', $type);
+    }
+
+    /**
+     *
      * @param string $view
      * @return \ADK\Http\Response
      */
