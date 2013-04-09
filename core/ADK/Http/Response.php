@@ -161,6 +161,28 @@ class Response
     }
 
     /**
+     * 
+     * @param string $path
+     * @param string $filename
+     * @return void
+     */
+    public function download($path, $filename = null)
+    {
+        //TODO
+    }
+
+    /**
+     * 
+     * @param string $code
+     * @param string $view
+     * @return void
+     */
+    public function error($code, $view = null)
+    {
+        //TODO
+    }
+
+    /**
      *
      * @return int
      */

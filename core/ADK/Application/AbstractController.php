@@ -168,17 +168,6 @@ abstract class AbstractController
 
     /**
      * 
-     * @param string $name
-     * @param boolean $instance
-     * @return mixed|boolean
-     */
-    // public function model($name, $instance = true)
-    // {
-    //     return A::mvc()->model($name, $instance);
-    // }
-
-    /**
-     * 
      * @return void
      */
     abstract public function init();

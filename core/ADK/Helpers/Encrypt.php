@@ -4,7 +4,8 @@ if(!function_exists('adk_encrypt')){
 
     /**
      * 
-     * @param string $key
+     * @param string $sData
+     * @param string $sKey
      * @return string
      */
     function adk_encrypt($sData, $sKey)
@@ -16,8 +17,7 @@ if(!function_exists('adk_encrypt')){
             $sChar    = chr(ord($sChar) + ord($sKeyChar));
             $sResult .= $sChar;
         }
-        $sBase64 = base64_encode($sResult);
-        return strtr($sBase64, '+/', '-_');
+        return strtr(base64_encode($sResult), '+/', '-_');
     }
 }
 
@@ -31,8 +31,7 @@ if(!function_exists('adk_decrypt')){
      */
     function adk_decrypt($sData, $sKey)
     {
-        $sResult = '';
-        $sData   = $this->decode_base64($sData);
+        $sData = base64_decode(strtr($sData, '-_', '+/'));
         for($i = 0; $i < strlen($sData); $i++){
             $sChar    = substr($sData, $i, 1);
             $sKeyChar = substr($sKey, ($i % strlen($sKey)) - 1, 1);
