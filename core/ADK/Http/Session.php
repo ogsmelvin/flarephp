@@ -19,6 +19,12 @@ class Session
 
     /**
      * 
+     * @var string
+     */
+    private static $_keySettings = '__adk_session';
+
+    /**
+     * 
      * @var boolean
      */
     private $_started = false;
@@ -49,7 +55,9 @@ class Session
     {
         session_start();
         if(!isset($_SESSION[$this->_name])){
-            $_SESSION[$this->_name] = array();
+            $_SESSION[$this->_name] = array(
+                self::$_keySettings => array()
+            );
         }
         $this->_started = true;
         return $this;
@@ -95,7 +103,7 @@ class Session
         if(!$this->_started){
             throw new Exception("Session must be started first");
         }
-        if(!isset($_SESSION[$this->_name][$key])){
+        if(!isset($_SESSION[$this->_name][$key]) || $key === self::$_keySettings){
             return null;
         }
         return $_SESSION[$this->_name][$key];
@@ -111,6 +119,8 @@ class Session
     {
         if(!$this->_started){
             throw new Exception("Session must be started first");
+        } else if(strpos($key, '_') === 0){
+            throw new Exception("Key must not have '_' ( underscore )");
         }
         $_SESSION[$this->_name][$key] = $value;
     }
@@ -125,6 +135,18 @@ class Session
     {
         $this->__set($key, $value);
         return $this;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param int $seconds
+     * @param boolean $auto_destroy
+     * @return \ADK\Http\Session
+     */
+    public function setExpiration($key, $seconds = 1800)
+    {
+        $_SESSION[$this->_name][self::$_keySettings][$key] = (int) $seconds;
     }
 
     /**
