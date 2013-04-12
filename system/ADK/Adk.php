@@ -88,11 +88,6 @@ class Adk
         if(self::$_init){
             return;
         }
-        spl_autoload_register(function($class){
-            if(strpos($class, 'ADK') === 0){
-                require ADK_DIR.str_replace("\\", '/', $class).'.php';
-            }
-        });
         self::$config = Config::load($config_file);
         if(self::$config->time_limit !== null){
             set_time_limit(self::$config->time_limit);

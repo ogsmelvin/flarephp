@@ -61,3 +61,9 @@ if(!function_exists('display_error')){
 if(!class_exists("\\ADK\\Adk")){
     require ADK_DIR.'ADK/Adk.php';
 }
+
+spl_autoload_register(function($class){
+    if(strpos($class, 'ADK') === 0){
+        require ADK_DIR.str_replace("\\", '/', $class).'.php';
+    }
+});

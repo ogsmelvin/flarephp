@@ -119,7 +119,7 @@ class Session
     {
         if(!$this->_started){
             throw new Exception("Session must be started first");
-        } else if(strpos($key, '_') === 0){
+        } else if(strpos($key, '__') === 0){
             throw new Exception("Key must not have '_' ( underscore )");
         }
         $_SESSION[$this->_name][$key] = $value;

@@ -66,9 +66,15 @@ class Mvc
 
     /**
      * 
-     * @var array
+     * @var string
      */
-    // private static $_models = array();
+    private $_appDirectory = null;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_sysDirectory = null;
 
     /**
      * 
@@ -145,6 +151,28 @@ class Mvc
 
     /**
      * 
+     * @param string $directory
+     * @return \ADK\Application\Mvc
+     */
+    public function setAppDirectory($directory)
+    {
+        $this->_appDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $directory
+     * @return \ADK\Application\Mvc
+     */
+    public function setSystemDirectory($directory)
+    {
+        $this->_sysDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+        return $this;
+    }
+
+    /**
+     * 
      * @param array $modules
      * @return \ADK\Application\Mvc
      */
@@ -184,27 +212,6 @@ class Mvc
                 .'.php';
         }
     }
-
-    /**
-     * 
-     * @param string $name
-     * @param boolean $instance
-     * @return mixed|void
-     */
-    // public function model($name, $instance = true)
-    // {
-    //     $name = "Models\\{$name}";
-    //     if(!isset(self::$_models[$name])){
-    //         if($instance){
-    //             self::$_models[$name] = new $name();
-    //         } else {
-    //             self::$_models[$name] = true;
-    //         }
-    //     } else if(self::$_models[$name] === true && $instance === true){
-    //         self::$_models[$name] = new $name();
-    //     }
-    //     return self::$_models[$name];
-    // }
 
     /**
      * 
@@ -375,5 +382,28 @@ class Mvc
         } else if(file_exists($this->_helpersDirectory.$helper.'.php')){
             require_once $this->_helpersDirectory.$helper.'.php';
         }
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    public function start()
+    {
+        if($this->_dispatched){
+            throw new Exception("Application is already started");
+        } else if(!$this->_appDirectory){
+            throw new Exception("App Directory and System Directory must be set");
+        }
+        A::init(require $this->_appDirectory.'config/config.php');
+        $this->setModules(A::$config->modules)
+            ->setModulesDirectory($this->_appDirectory.'modules')
+            ->setModelsDirectory($this->_appDirectory.'models')
+            ->setHelpersDirectory($this->_appDirectory.'helpers')
+            ->setLayoutsDirectory($this->_appDirectory.'layouts')
+            ->setControllersDirectory('controllers')
+            ->setViewsDirectory('views')
+            ->preDispatch()
+            ->dispatch();
     }
 }

@@ -4,12 +4,12 @@
  * constants
  * @var string
  */
-define('APP_DIR', dirname(__FILE__).'/');
-define('APP_ROOT_DIR', APP_DIR.'web/');
-define('APP_MODULES_DIR', APP_DIR.'modules/');
-define('APP_MODELS_DIR', APP_DIR.'models/');
-define('APP_HELPERS_DIR', APP_DIR.'helpers/');
-define('APP_CORE_DIR', APP_DIR.'core/');
+// define('APP_DIR', dirname(__FILE__).'/');
+// define('APP_ROOT_DIR', APP_DIR.'web/');
+// define('APP_MODULES_DIR', APP_DIR.'modules/');
+// define('APP_MODELS_DIR', APP_DIR.'models/');
+// define('APP_HELPERS_DIR', APP_DIR.'helpers/');
+// define('APP_CORE_DIR', APP_DIR.'core/');
 define('APP_TITLE', 'ADK Demo');
 
 /**
@@ -160,9 +160,9 @@ $config['database'] = array(
      */
     'default' => array(
         'host'      => 'localhost',
-        'username'  => 'adk_demo',
+        'username'  => 'root',
         'password'  => 'tontonskie',
-        'dbname'    => 'sample',
+        'dbname'    => 'adk_demo',
         'driver'    => 'mysql',
         'options'   => array(
             PDO::ATTR_PERSISTENT => true
