@@ -12,11 +12,20 @@ define('ADK_DIR', dirname(__FILE__).'/');
  */
 define('ADK_VERSION', '1.0');
 
-spl_autoload_register(function($class){
-    if(strpos($class, 'ADK') === 0){
-        require ADK_DIR.str_replace("\\", '/', $class).'.php';
+if(!function_exists('adk_load_class')){
+
+    /**
+     * 
+     * @param string $class
+     * @return void
+     */
+    function adk_load_class($class)
+    {
+        if(strpos($class, 'ADK') === 0){
+            require ADK_DIR.str_replace("\\", '/', $class).'.php';
+        }
     }
-});
+}
 
 if(!function_exists('debug')){
 
@@ -67,3 +76,7 @@ if(!function_exists('display_error')){
 if(!class_exists("\\ADK\\Adk")){
     require ADK_DIR.'ADK/Adk.php';
 }
+
+spl_autoload_register('adk_load_class');
+
+

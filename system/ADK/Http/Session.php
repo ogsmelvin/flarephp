@@ -105,6 +105,12 @@ class Session
         }
         if(!isset($_SESSION[$this->_name][$key]) || $key === self::$_keySettings){
             return null;
+        } else if(isset($_SESSION[$this->_name][self::$_keySettings][$key])
+            && (time() - $_SESSION[$this->_name][self::$_keySettings][$key]['create_time'] 
+                > $_SESSION[$this->_name][self::$_keySettings][$key]['expiration']))
+        {
+            unset($_SESSION[$this->_name][$key], $_SESSION[$this->_name][self::$_keySettings][$key]);
+            return null;
         }
         return $_SESSION[$this->_name][$key];
     }
@@ -120,7 +126,7 @@ class Session
         if(!$this->_started){
             throw new Exception("Session must be started first");
         } else if(strpos($key, '__') === 0){
-            throw new Exception("Key must not have '_' ( underscore )");
+            throw new Exception("Key must not have '__' ( underscore )");
         }
         $_SESSION[$this->_name][$key] = $value;
     }
@@ -141,12 +147,18 @@ class Session
      * 
      * @param string $key
      * @param int $seconds
-     * @param boolean $auto_destroy
+     * @param int $now
      * @return \ADK\Http\Session
      */
-    public function setExpiration($key, $seconds = 1800)
+    public function setExpiration($key, $seconds = 1800, $now = null)
     {
-        $_SESSION[$this->_name][self::$_keySettings][$key] = (int) $seconds;
+        if(!$now){
+            $now = time();
+        }
+        $_SESSION[$this->_name][self::$_keySettings][$key] = array(
+            'expiration' => $seconds,
+            'create_time' => $now
+        );
     }
 
     /**
@@ -154,8 +166,13 @@ class Session
      * @param string $key
      * @return mixed
      */
-    public function get($key)
+    public function get($key = null)
     {
+        if(!$key){
+            $session = $_SESSION[$this->_name];
+            unset($session[self::$_keySettings]);
+            return $session;
+        }
         return $this->__get($key);
     }
 
