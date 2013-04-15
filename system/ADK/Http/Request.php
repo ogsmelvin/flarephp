@@ -23,6 +23,12 @@ class Request
 
     /**
      * 
+     * @var string
+     */
+    protected $_csrfToken = null;
+
+    /**
+     * 
      * @param boolean
      * @return \ADK\Http\Request
      */
@@ -114,11 +120,11 @@ class Request
                 }
                 return $_SERVER;
             }
-        } else if(isset($_SERVER[$key])){
+        } else if(isset($_SERVER[strtoupper($key)])){
             if($this->_autoXssFilter){
-                return $this->_filter($_SERVER[$key]);
+                return $this->_filter($_SERVER[strtoupper($key)]);
             }
-            return $_SERVER[$key];
+            return $_SERVER[strtoupper($key)];
         }
 
         return $default;

@@ -40,7 +40,7 @@ class File
     public static function get($name)
     {
         if(!isset($_FILES[$name])){
-            throw new Exception("{$name} doesn't exists in _FILES");
+            return null;
         }
         if(!isset(self::$_instances[$name])){
             self::$_instances[$name] = new self($name);

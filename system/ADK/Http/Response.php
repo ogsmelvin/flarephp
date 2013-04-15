@@ -88,6 +88,12 @@ class Response
     protected $_code = 200;
 
     /**
+     * 
+     * @var string
+     */
+    private $_contentType = null;
+
+    /**
      *
      * @param string $key
      * @param string $value
@@ -109,7 +115,26 @@ class Response
      */
     public function setContentType($type)
     {
+        $this->_contentType = $type;
         return $this->setHeader('Content-Type', $type);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getContentType()
+    {
+        if(!$this->_contentType){
+            foreach(headers_list() as $header){
+                $header = strtolower($header);
+                if(strpos($header, 'content-type') === 0){
+                    return trim(str_replace('content-type: ', '', $header));
+                }
+            }
+            return null;
+        }
+        return $this->_contentType;
     }
 
     /**

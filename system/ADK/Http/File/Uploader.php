@@ -33,12 +33,13 @@ class Uploader
      * 
      * @param \ADK\Http\File|string|array $file
      */
-    public function __construct($file = null)
+    public function __construct($files = array())
     {
-        if(is_array($file)){
-            $this->addFiles($file);
-        } else if(is_string($file) || $file instanceof File){
-            $this->addFile($file);
+        if(!empty($files)){
+            if(is_array($files)){
+                $this->addFiles($files);
+            }
+            throw new Exception("Must be an array");
         }
     }
 
@@ -150,7 +151,7 @@ class Uploader
             if(!isset($this->_files[$name])){
                 throw new Exception("_FILE[{$name}] doesn't exists");
             }
-            $details[$name] = $this->_upload($name, $this->_files[$name]);
+            $details = $this->_upload($name, $this->_files[$name]);
         }
         return $details;
     }
@@ -164,7 +165,8 @@ class Uploader
     private function _upload($key, $file)
     {
         if(!$this->valid($key, $error)){
-            display_error($error);
+            $this->_error[$key] = $error;
+            return false;
         }
 
         $rule = $this->_upload[$key];
@@ -178,8 +180,11 @@ class Uploader
         }
 
         if(!move_uploaded_file($file->getTempname(), $rule['path'].$new)){
-            display_error("Failed to upload {$new}");
+            // display_error("Failed to upload {$new}");
+            $this->_error[$key] = "Failed to upload {$new}";
+            return false;
         }
+
         return array(
             'filename' => $new,
             'path' => $rule['path'].$new,
@@ -291,5 +296,18 @@ class Uploader
         }
         $this->_set($file, $name, $value);
         return $this;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return string|array|null
+     */
+    public function getError($key = null)
+    {
+        if($key === null){
+            return $this->_error;
+        }
+        return isset($this->_error[$key]) ? $this->_error[$key] : null;
     }
 }

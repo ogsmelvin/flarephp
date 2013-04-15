@@ -308,15 +308,18 @@ class Mvc
         $this->_controller->init();
         $this->_controller->preDispatch();
         $view = $this->_controller->{$this->_request->getAction()}();
-        if($view instanceof Html){
-            A::$response->setHeader('Content-Type', 'text/html');
-        } else if($view instanceof \ADK\Objects\Xml){
-            $view = $view->asXml();
-            A::$response->setHeader('Content-Type', 'text/xml');
-        } else if($view instanceof \ADK\Objects\Json){
-            A::$response->setHeader('Content-Type', 'application/json');
-        } else if($view instanceof \ADK\Objects\Image){
-            //TODO
+
+        if(!A::$response->getContentType()){
+            if($view instanceof Html){
+                A::$response->setContentType('text/html');
+            } else if($view instanceof \ADK\Objects\Xml){
+                $view = $view->asXml();
+                A::$response->setContentType('text/xml');
+            } else if($view instanceof \ADK\Objects\Json){
+                A::$response->setContentType('application/json');
+            } else if($view instanceof \ADK\Objects\Image){
+                //TODO
+            }
         }
         
         $this->_controller->postDispatch();

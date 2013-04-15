@@ -159,6 +159,7 @@ class Session
             'expiration' => $seconds,
             'create_time' => $now
         );
+        return $this;
     }
 
     /**
