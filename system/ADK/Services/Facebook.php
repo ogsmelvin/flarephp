@@ -296,6 +296,7 @@ class Facebook
      * @param array $fields
      * @param int $limit
      * @param int $page
+     * @param string $order
      * @return \ADK\Objects\Json
      */
     public function getFriends($fields = array(), $limit = 0, $page = 0, $order = null)
