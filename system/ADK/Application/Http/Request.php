@@ -47,7 +47,11 @@ class Request extends ParentRequest
      */
     public function setController($controller)
     {
-        $this->_controller = ucwords(urldecode($controller)).'Controller';
+        $sections = explode('_', urldecode($controller));
+        foreach($sections as &$section){
+            $section = ucwords($section);
+        }
+        $this->_controller = implode('_', $sections).'_Controller';
         return $this;
     }
 
@@ -58,7 +62,7 @@ class Request extends ParentRequest
      */
     public function setAction($action)
     {
-        $this->_action = urldecode($action).'Action';
+        $this->_action = urldecode($action).'_action';
         return $this;
     }
 

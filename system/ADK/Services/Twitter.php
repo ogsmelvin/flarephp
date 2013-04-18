@@ -15,6 +15,11 @@ class Twitter
      */
     public function __construct(array $config)
     {
+        
+    }
+
+    public function search($name)
+    {
 
     }
 }

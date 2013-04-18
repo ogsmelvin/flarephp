@@ -4,9 +4,9 @@ namespace Main\Controllers;
 
 use Main\Controller;
 
-class IndexController extends Controller
+class Index_Controller extends Controller
 {
-    public function indexAction()
+    public function index_action()
     {
         $data = array();
         return $this->view('index', $data);

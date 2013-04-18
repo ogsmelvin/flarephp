@@ -206,10 +206,10 @@ class Mvc
      */
     public function autoloadModel($class)
     {
-        if(strpos($class, 'Models') === 0){
-            require $this->_modelsDirectory
-                .str_replace(array("Models\\", "\\"), array('', '/'), $class)
-                .'.php';
+        $class = explode("\\", strtolower($class));
+        if(isset($class[1]) && $class[1] == 'Models'){
+            $className = array_pop($class);
+            require $this->_modulesDirectory.implode("/", $class)."/".ucwords($className).'.php';
         }
     }
 
@@ -269,7 +269,7 @@ class Mvc
             .$this->_request->getModule()
             .'/'
             .$this->_controllersDirectory
-            .$this->_request->getController()
+            .strtolower(urldecode($controller))
             .'.php';
         if(!file_exists($path)){
             A::$response->setBody("404 page")
@@ -401,7 +401,7 @@ class Mvc
         A::init(require $this->_appDirectory.'config/config.php');
         $this->setModules(A::$config->modules)
             ->setModulesDirectory($this->_appDirectory.'modules')
-            ->setModelsDirectory($this->_appDirectory.'models')
+            ->setModelsDirectory('models')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
             ->setLayoutsDirectory($this->_appDirectory.'layouts')
             ->setControllersDirectory('controllers')
