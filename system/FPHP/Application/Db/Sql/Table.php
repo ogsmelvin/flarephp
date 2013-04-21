@@ -2,16 +2,76 @@
 
 namespace FPHP\Application\Db\Sql;
 
-use FPHP\Application\Db\Sql\AbstractTable;
 use FPHP\Db\Sql\Query\ARQuery;
+use FPHP\Fphp as A;
+use \Exception;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Table extends AbstractTable
+abstract class Table
 {
+    /**
+     * 
+     * @var string
+     */
+    protected static $table;
+
+    /**
+     * 
+     * @var string
+     */
+    protected static $primaryKey;
+
+    /**
+     * 
+     * @var PDO
+     */
+    protected $_adapter;
+
+    /**
+     * 
+     * @var \FPHP\Application\Db\Sql\Table
+     */
+    protected static $_instance;
+
+    /**
+     * 
+     * @var string
+     */
+    protected static $alias;
+
+    protected function __construct()
+    {
+        $this->_setup();
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    protected function _setup()
+    {
+        $this->_adapter = & A::db();
+        if(empty(static::$table)){
+            throw new Exception('Table must be set');
+        }
+        if(empty(static::$primaryKey)){
+            static::$primaryKey = $this->_adapter->getPrimaryKey(static::$table);
+        }
+    }
+
+    /**
+     * 
+     * @return PDO
+     */
+    public function getAdapter()
+    {
+        return $this->_adapter;
+    }
+
     /**
      * 
      * @param string $query
@@ -20,7 +80,7 @@ class Table extends AbstractTable
      */
     public function sql($query = null, $bindings = null)
     {
-        return $this->_adapter->sql($query, $bindings);
+        return self::query()->sql($query, $bindings);
     }
 
     /**
@@ -31,7 +91,7 @@ class Table extends AbstractTable
      */
     public function insert($data = array(), $check_columns = true)
     {
-        return $this->_adapter->insert($this->_table, $data, $check_columns);
+        return self::query()->insert(static::$table, $data, $check_columns);
     }
 
     /**
@@ -41,11 +101,11 @@ class Table extends AbstractTable
      */
     public function select($select = '*')
     {
-        $sql = $this->_adapter->select($select);
-        if(isset($this->_alias)){
-            $sql->from(array($this->_alias => $this->_table));
+        $sql = self::query()->select($select);
+        if(isset(static::$alias)){
+            $sql->from(array(static::$alias => static::$table));
         } else {
-            $sql->from($this->_table);
+            $sql->from(static::$table);
         }
         return $sql;
     }
@@ -56,9 +116,9 @@ class Table extends AbstractTable
      * @param boolean $check_columns
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    public function update($data = array(), $check_columns = true)
+    public static function update($data = array(), $check_columns = true)
     {
-        return $this->_adapter->update($this->_table, $data, $check_columns);
+        return self::query()->update(static::$table, $data, $check_columns);
     }
 
     /**
@@ -67,6 +127,64 @@ class Table extends AbstractTable
      */
     public function delete()
     {
-        return $this->_adapter->delete($this->_table);
+        return self::query()->delete(static::$table);
+    }
+
+    /**
+     * 
+     * @return \FPHP\Application\Db\Sql\Table
+     */
+    public static function query()
+    {
+        $instance = new static;
+        // debug(get_class($instance));
+        return $instance->getAdapter();
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function getPrimaryKey()
+    {
+        if(isset(static::$primaryKey)){
+            return static::$primaryKey;
+        }
+        return self::query()->getPrimaryKey(static::$table);
+    }
+
+    /**
+     * 
+     * @param int $limit
+     * @param int $page
+     * @return \FPHP\Db\Sql\Results\Collection
+     */
+    public static function getAll($limit = null, $page = null)
+    {
+        $sql = self::query()->select()
+            ->from(static::$table);
+        if($limit){
+            $sql->limit($limit);
+        }
+        if($page){
+            $sql->page($page);
+        }
+        return $sql->getCollection();
+    }
+
+    /**
+     * 
+     * @param string|int $value
+     * @param strign $column
+     * @return stdClass
+     */
+    public static function find($value, $column = null)
+    {
+        $sql = self::query()->select()
+            ->from(static::$table);
+        if(!$column){
+            $column = self::getPrimaryKey();
+        }
+        return $sql->where($column, $value)->getOne();
     }
 }

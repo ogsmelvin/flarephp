@@ -207,7 +207,7 @@ class Mvc
     public function autoloadModel($class)
     {
         $class = explode("\\", strtolower($class));
-        if(isset($class[1]) && $class[1] == 'Models'){
+        if(isset($class[1]) && $class[1] == 'models'){
             $className = array_pop($class);
             require $this->_modulesDirectory.implode("/", $class)."/".ucwords($className).'.php';
         }
