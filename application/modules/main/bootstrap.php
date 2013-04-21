@@ -2,7 +2,7 @@
 
 namespace Main;
 
-use ADK\Application\AbstractController;
+use FPHP\Application\AbstractController;
 
 class Controller extends AbstractController
 {
