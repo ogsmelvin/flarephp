@@ -665,8 +665,13 @@ class ARQuery
             $count = (int) $count['total'];
         }
         $this->select($select)
-            ->limit($limit)
-            ->offset($offset);
+            ->limit($limit);
+        if($offset){
+            $this->offset($offset);
+        } else {
+            $this->offset(($this->_page - 1) * (int) $this->_limit);
+        }
+            
         $pagination = new Pagination();
         return $pagination
             ->setCurrentPage($this->_page)
@@ -800,7 +805,7 @@ class ARQuery
      */
     public function getJSONObject()
     {
-        return new JSON($this->getArray());
+        return new Json($this->getArray());
     }
 
     /**
@@ -1060,7 +1065,7 @@ class ARQuery
         if($limit){
             $this->limit($limit);
         }
-        $this->offset(($this->_page - 1) * (int) $this->_limit);
+        // $this->offset(($this->_page - 1) * (int) $this->_limit);
         return $this;
     }
 
