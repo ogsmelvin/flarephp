@@ -26,6 +26,12 @@ class ARQuery
 
     /**
      * 
+     * @var string
+     */
+    private $_table = null;
+
+    /**
+     * 
      * @var boolean
      */
     private $_checkTable = false;
@@ -214,13 +220,13 @@ class ARQuery
     private function _where($field, $value, $comparison, $condition)
     {
         $type = PDO::PARAM_STR;
-        if(is_numeric($value)){
+        if(is_float($value) || is_int($value)){
             $type = PDO::PARAM_INT;
         }
         if(is_array($value)){
             foreach($value as &$val){
                 $type = PDO::PARAM_STR;
-                if(is_numeric($val)){
+                if(is_float($value) || is_int($val)){
                     $type = PDO::PARAM_INT;
                 }
                 $val = $this->_conn->quote($val, $type);
@@ -826,8 +832,9 @@ class ARQuery
     public function update($table, $set = array(), $check_columns = true)
     {
         $this->_update = 'UPDATE '.$this->_conn->quoteIdentifier($table);
+        $this->_table = $table;
         if($check_columns){
-            $this->_checkTable = $table;
+            $this->_checkTable = true;
         }
         if($set){
             foreach($set as $key => $value){
@@ -846,7 +853,7 @@ class ARQuery
     public function set($key, $value)
     {
         $type = PDO::PARAM_STR;
-        if(is_numeric($type)){
+        if(is_float($value) || is_int($value)){
             $type = PDO::PARAM_INT;
         }
         $this->_set[$key] = $this->_conn->quote($value, $type);
@@ -863,8 +870,9 @@ class ARQuery
     public function insert($table, $set = array(), $check_columns = true)
     {
         $this->_insert = 'INSERT INTO '.$this->_conn->quoteIdentifier($table);
+        $this->_table = $table;
         if($check_columns){
-            $this->_checkTable = $table;
+            $this->_checkTable = true;
         }
         if($set){
             foreach($set as $key => $value){
@@ -896,7 +904,7 @@ class ARQuery
         $return = null;
         try {
             if(($this->_insert || $this->_update) && $this->_checkTable){
-                $columns = $this->_conn->getColumns($this->_checkTable, true);
+                $columns = $this->_conn->getColumns($this->_table, true);
                 foreach($this->_set as $k => $v){
                     if(!in_array($k, $columns)){
                         unset($this->_set[$k]);
@@ -907,7 +915,15 @@ class ARQuery
             $stmt->execute();
             $this->_conn->printError($stmt);
             if($this->_insert){
-                $return = $this->_conn->lastInsertId();
+                $return = $this->lastInsertId();
+                if($return === '0'){
+                    $pkField = $this->_conn->getPrimaryKey($this->_table);
+                    if(isset($this->_set[$pkField])){
+                        $return = $this->_set[$pkField];
+                    } else if($stmt->rowCount()){
+                        $return = true;
+                    }
+                }
             } else if($this->_update || $this->_delete){
                 $return = $stmt->rowCount();
             }
@@ -916,6 +932,15 @@ class ARQuery
             display_error($ex->getMessage());
         }
         return $return;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function lastInsertId()
+    {
+        return $this->_conn->lastInsertId();
     }
 
     /**
