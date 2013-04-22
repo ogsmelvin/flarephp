@@ -80,7 +80,7 @@ abstract class Table
      */
     public function sql($query = null, $bindings = null)
     {
-        return self::query()->sql($query, $bindings);
+        return $this->_adapter->sql($query, $bindings);
     }
 
     /**
@@ -91,7 +91,7 @@ abstract class Table
      */
     public function insert($data = array(), $check_columns = true)
     {
-        return self::query()->insert(static::$table, $data, $check_columns);
+        return $this->_adapter->insert(static::$table, $data, $check_columns);
     }
 
     /**
@@ -101,7 +101,7 @@ abstract class Table
      */
     public function select($select = '*')
     {
-        $sql = self::query()->select($select);
+        $sql = $this->_adapter->select($select);
         if(isset(static::$alias)){
             $sql->from(array(static::$alias => static::$table));
         } else {
@@ -116,9 +116,9 @@ abstract class Table
      * @param boolean $check_columns
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    public static function update($data = array(), $check_columns = true)
+    public function update($data = array(), $check_columns = true)
     {
-        return self::query()->update(static::$table, $data, $check_columns);
+        return $this->_adapter->update(static::$table, $data, $check_columns);
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class Table
      */
     public function delete()
     {
-        return self::query()->delete(static::$table);
+        return $this->_adapter->delete(static::$table);
     }
 
     /**
@@ -136,9 +136,7 @@ abstract class Table
      */
     public static function query()
     {
-        $instance = new static;
-        // debug(get_class($instance));
-        return $instance->getAdapter();
+        return new static;
     }
 
     /**
