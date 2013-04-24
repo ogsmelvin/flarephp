@@ -2,7 +2,7 @@
 
 namespace FPHP\Objects;
 
-if(extension_loaded('gd') && function_exists('gd_info')){
+if(!extension_loaded('gd') || !function_exists('gd_info')){
     display_error("GD Library is not supported");
 }
 
@@ -58,7 +58,7 @@ class Image
     public function __construct($path = null)
     {
         $image = getimagesize($path);
-        if(isset($image[2]) && in_array($image[2]), self::$_types){
+        if(isset($image[2]) && in_array($image[2], self::$_types)){
             $this->_imageType = $image[2];
         } else {
             throw new Exception("Image type is not supported");

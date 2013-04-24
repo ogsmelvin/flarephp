@@ -73,10 +73,29 @@ if(!function_exists('display_error')){
     }
 }
 
+if(!function_exists('_fphp_show_error')){
+
+    /**
+     * 
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int $errline
+     * @param array $errcontext
+     * @return void
+     */
+    function _fphp_show_error($errno, $errstr, $errfile, $errline, $errcontext)
+    {
+        display_error('Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
+    }
+}
+
+set_error_handler('_fphp_show_error');
+spl_autoload_register('fphp_load_class');
+
 if(!class_exists("\\FPHP\\Fphp")){
     require FPHP_DIR.'FPHP/Fphp.php';
 }
 
-spl_autoload_register('fphp_load_class');
 
 
