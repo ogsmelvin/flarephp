@@ -237,6 +237,18 @@ class Mvc
 
     /**
      * 
+     * @return string
+     */
+    public function getAppDirectory()
+    {
+        if(!isset($this->_appDirectory)){
+            return null;
+        }
+        return $this->_appDirectory;
+    }
+
+    /**
+     * 
      * @return \FPHP\Application\Mvc
      */
     public function preDispatch()

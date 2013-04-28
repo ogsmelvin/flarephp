@@ -168,6 +168,15 @@ abstract class AbstractController
 
     /**
      * 
+     * @return string
+     */
+    public function getAppDirectory()
+    {
+        return A::mvc()->getAppDirectory();
+    }
+
+    /**
+     * 
      * @return void
      */
     abstract public function init();
