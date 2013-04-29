@@ -51,6 +51,7 @@ class Request extends ParentRequest
         foreach($sections as &$section){
             $section = ucwords($section);
         }
+
         $this->_controller = implode('_', $sections).'_Controller';
         return $this;
     }
