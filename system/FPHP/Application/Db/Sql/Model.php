@@ -33,9 +33,9 @@ abstract class Model
 
     /**
      * 
-     * @var array
+     * @var \FPHP\Application\Db\Sql\Table
      */
-    private static $_instances = array();
+    protected static $_instance;
 
     /**
      * 
@@ -55,6 +55,9 @@ abstract class Model
     protected function _setup()
     {
         $this->_adapter = & A::db();
+        if(empty(static::$table)){
+            throw new Exception('Table must be set');
+        }
         if(empty(static::$primaryKey)){
             static::$primaryKey = $this->_adapter->getPrimaryKey(static::$table);
         }
@@ -129,16 +132,11 @@ abstract class Model
 
     /**
      * 
-     * @return \FPHP\Application\Db\Sql\Model
+     * @return \FPHP\Application\Db\Sql\Table
      */
     public static function query()
     {
-        if(empty(static::$table)){
-            throw new Exception('Table must be set');
-        } else if(!isset(self::$_instances[static::$table])){
-            self::$_instances[static::$table] = new static;
-        }
-        return self::$_instances[static::$table];
+        return new static;
     }
 
     /**
