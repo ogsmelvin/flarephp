@@ -16,6 +16,7 @@ class Response
      * @var array
      */
     public static $messages = array(
+
         // Informational 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -36,6 +37,7 @@ class Response
         303 => 'See Other',
         304 => 'Not Modified',
         305 => 'Use Proxy',
+
         // 306 is deprecated but reserved
         307 => 'Temporary Redirect',
 
@@ -233,6 +235,7 @@ class Response
             header('Location: '.$this->_headers['Location']);
             exit;
         }
+
         foreach($this->_headers as $key => $header){
             header("{$key}: {$header}");
         }
@@ -242,3 +245,4 @@ class Response
         }
     }
 }
+
