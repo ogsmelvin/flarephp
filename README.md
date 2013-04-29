@@ -1,4 +1,4 @@
-Anthony Development Kit
+Fried PHP
 ===
 
-ADK is a PHP Library with MVC Support and mashups.
+Fried PHP is a framework that supports mash ups.
