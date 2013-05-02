@@ -11,6 +11,4 @@ class Index_Controller extends Controller
         $data = array();
         return $this->view('index', $data);
     }
-
-
 }

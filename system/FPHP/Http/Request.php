@@ -76,7 +76,6 @@ class Request
             }
             return $_POST[$key];
         }
-
         return $default;
     }
 
@@ -101,7 +100,6 @@ class Request
             }
             return $_GET[$key];
         }
-
         return $default;
     }
 
@@ -126,7 +124,6 @@ class Request
             }
             return $_SERVER[strtoupper($key)];
         }
-
         return $default;
     }
 
@@ -187,7 +184,6 @@ class Request
             }
             return $_COOKIE[$key];
         }
-
         return $default;
     }
 
@@ -212,7 +208,6 @@ class Request
             }
             return $_REQUEST[$key];
         }
-
         return $default;
     }
 
@@ -227,7 +222,6 @@ class Request
         if($key === null){
             return !empty($_FILES) ? $_FILES : $default;
         }
-
         return isset($_FILES[$key]) ? $_FILES[$key] : $default;
     }
 

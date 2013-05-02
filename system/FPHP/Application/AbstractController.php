@@ -120,6 +120,36 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
+     * @return mixed
+     */
+    public function getPost($key)
+    {
+        return $this->request->post($key);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function getRequest($key)
+    {
+        return $this->request->request($key);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function getQuery($key)
+    {
+        return $this->request->get($key);
+    }
+
+    /**
+     * 
+     * @param string $key
      * @return void
      */
     public function setDb($key = 'default')
