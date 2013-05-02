@@ -401,6 +401,15 @@ class Mvc
 
     /**
      * 
+     * @return \FPHP\Application\AbstractController
+     */
+    public function getController()
+    {
+        return $this->_controller;
+    }
+
+    /**
+     * 
      * @return void
      */
     public function start()

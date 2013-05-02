@@ -2,6 +2,7 @@
 
 namespace FPHP\Application\Db\Sql;
 
+use FPHP\Application\Model as ParentModel;
 use FPHP\Db\Sql\Query\ARQuery;
 use FPHP\Fphp as A;
 use \Exception;
@@ -11,7 +12,7 @@ use \Exception;
  * @author anthony
  * 
  */
-abstract class Model
+class Model extends ParentModel
 {
     /**
      * 

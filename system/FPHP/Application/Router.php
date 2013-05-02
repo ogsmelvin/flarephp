@@ -3,6 +3,7 @@
 namespace FPHP\Application;
 
 use FPHP\Http\Uri;
+
 /**
  * 
  * @author anthony
@@ -10,6 +11,12 @@ use FPHP\Http\Uri;
  */
 class Router
 {
+    /**
+     * 
+     * @var string
+     */
+    private $_current;
+
     /**
      * 
      * @var \FPHP\Http\Uri
@@ -61,14 +68,14 @@ class Router
      */
     public function getRoute()
     {
-        return $this->_controller
+        return $this->_current;
     }
 
     /**
      * 
      * @return void
      */
-    public function clearRoutes()
+    public function clearRoutesList()
     {
         $this->_routes = array();
     }

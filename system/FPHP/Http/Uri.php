@@ -65,6 +65,12 @@ class Uri
      */
     private $_fullUrl;
 
+    /**
+     * 
+     * @var string
+     */
+    private $_moduleUrl = null;
+
     public function __construct()
     {
         $this->_setSegments();
@@ -116,6 +122,7 @@ class Uri
         } else {
             $this->_fullUrl = $this->_currentUrl;
         }
+
         unset($uri, $search);
         return $this;
     }
@@ -264,6 +271,22 @@ class Uri
             A::$response->redirect($url, $code);
         }
         return;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModuleUrl()
+    {
+        if(!$this->_moduleUrl){
+            $this->_moduleUrl = A::mvc()->getAcceptedRequest()->getModule();
+            if($this->_moduleUrl !== A::$config->router['default_module']){
+                $this->_moduleUrl .= '/';
+            }
+            $this->_moduleUrl = $this->_baseUrl.$this->_moduleUrl;
+        }
+        return $this->_moduleUrl;
     }
 
     /**
