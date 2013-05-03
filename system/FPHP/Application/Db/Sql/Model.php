@@ -89,7 +89,7 @@ class Model extends ParentModel
      */
     public function insert($data = array(), $check_columns = true)
     {
-        return $this->_adapter->insert(static::$table, $data, $check_columns);
+        return $this->_adapter->insert(static::$table, $data, $check_columns)->execute();
     }
 
     /**
@@ -116,7 +116,7 @@ class Model extends ParentModel
      */
     public function update($data = array(), $check_columns = true)
     {
-        return $this->_adapter->update(static::$table, $data, $check_columns);
+        return $this->_adapter->update(static::$table, $data, $check_columns)->execute();
     }
 
     /**
@@ -125,7 +125,7 @@ class Model extends ParentModel
      */
     public function delete()
     {
-        return $this->_adapter->delete(static::$table);
+        return $this->_adapter->delete(static::$table)->execute();
     }
 
     /**
@@ -187,5 +187,15 @@ class Model extends ParentModel
             $column = self::getPrimaryKey();
         }
         return $sql->where($column, $value)->getOne();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    public static function save($data)
+    {
+        return self::query()->insert($data)->execute();
     }
 }
