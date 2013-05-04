@@ -196,6 +196,6 @@ class Model extends ParentModel
      */
     public static function save($data)
     {
-        return self::query()->insert($data)->execute();
+        return self::query()->insert($data);
     }
 }
