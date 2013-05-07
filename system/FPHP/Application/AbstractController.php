@@ -150,6 +150,16 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
+     * @return mixed
+     */
+    public function getServer($key)
+    {
+        return $this->request->server($key);
+    }
+
+    /**
+     * 
+     * @param string $key
      * @return void
      */
     public function setDb($key = 'default')
