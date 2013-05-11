@@ -217,6 +217,17 @@ abstract class AbstractController
 
     /**
      * 
+     * @param string $url
+     * @param int $code
+     * @return void
+     */
+    public function redirect($url, $code = 302)
+    {
+        $this->response->redirect($url, $code);
+    }
+
+    /**
+     * 
      * @return void
      */
     abstract public function init();
