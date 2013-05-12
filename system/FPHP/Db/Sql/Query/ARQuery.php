@@ -223,6 +223,9 @@ class ARQuery
         if(is_float($value) || is_int($value)){
             $type = PDO::PARAM_INT;
         }
+        if($value instanceof Json || $value instanceof Xml){
+            $value = (array) $value;
+        }
         if(is_array($value)){
             foreach($value as &$val){
                 $type = PDO::PARAM_STR;
@@ -312,7 +315,7 @@ class ARQuery
      * @param array $values
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    public function whereIn($field, array $values)
+    public function whereIn($field, $values)
     {
         return $this->_where($field, $values, 'IN', 'AND');
     }
@@ -323,7 +326,7 @@ class ARQuery
      * @param array $values
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    public function orWhereIn($field, array $values)
+    public function orWhereIn($field, $values)
     {
         return $this->_where($field, $values, 'IN', 'OR');
     }
@@ -334,7 +337,7 @@ class ARQuery
      * @param array $values
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    public function orWhereNotIn($field, array $values)
+    public function orWhereNotIn($field, $values)
     {
         return $this->_where($field, $values, 'NOT IN', 'OR');
     }
@@ -345,7 +348,7 @@ class ARQuery
      * @param array $values
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    public function whereNotIn($field, array $values)
+    public function whereNotIn($field, $values)
     {
         return $this->_where($field, $values, 'NOT IN', 'AND');
     }
