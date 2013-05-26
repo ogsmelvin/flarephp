@@ -701,8 +701,9 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            if($row = $stmt->fetch(PDO::FETCH_OBJ)){
-                $result = $row;
+            if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $result = new Row($this);
+                $result->setData($row);
             }
             $stmt = null;
             unset($row);

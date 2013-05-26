@@ -54,16 +54,37 @@ class Row
      * @param string $table
      * @param string|int $id
      */
-    public function __construct(ARQuery &$query, $table, $pk, $id)
+    public function __construct(ARQuery &$query, $table = null, $pk = null, $id = null)
     {
         $this->_query = & $query;
         $this->_table = $table;
-        $this->_id = $id;
         $this->_pk = $pk;
+        $this->_id = $id;
     }
 
     /**
      * 
+     * @param string $table
+     * @return \FPHP\Db\Sql\Results\Row
+     */
+    public function setTable($table)
+    {
+        $this->_table = $table;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return \FPHP\Db\Sql\Results\Row
+     */
+    public function setPrimaryKey($key)
+    {
+        $this->_pk = $key;
+        return $this;
+    }
+
+    /**
      * 
      * @return string|int
      */
@@ -74,12 +95,24 @@ class Row
 
     /**
      * 
+     * @param string|int $id
+     * @return \FPHP\Db\Sql\Results\Row
+     */
+    public function setId($id)
+    {
+        $this->_id = $id;
+        return $this;
+    }
+
+    /**
+     * 
      * @param array $data
-     * @return void
+     * @return \FPHP\Db\Sql\Results\Row
      */
     public function setData(array $data)
     {
         $this->_data = $data;
+        return $this;
     }
 
     /**

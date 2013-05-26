@@ -176,7 +176,7 @@ class Model extends ParentModel
     /**
      * 
      * @param string|int $value
-     * @param strign $column
+     * @param string $column
      * @return stdClass
      */
     public static function find($value, $column = null)
@@ -186,7 +186,10 @@ class Model extends ParentModel
         if(!$column){
             $column = self::getPrimaryKey();
         }
-        return $sql->where($column, $value)->getOne();
+        $row = $sql->where($column, $value)->getOne();
+        $row->setTable(static::$table);
+        // $row->setId($);
+        return $row;
     }
 
     /**
