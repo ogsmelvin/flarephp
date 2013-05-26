@@ -215,6 +215,16 @@ class Session
 
     /**
      * 
+     * @param string $key
+     * @return void
+     */
+    public function remove($key)
+    {
+        $this->__unset($key);
+    }
+
+    /**
+     * 
      * @return \FPHP\Http\Session
      */
     public function destroy()
