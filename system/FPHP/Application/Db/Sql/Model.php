@@ -151,7 +151,7 @@ class Model extends ParentModel
         if(isset(static::$primaryKey)){
             return static::$primaryKey;
         }
-        return self::query()->getPrimaryKey(static::$table);
+        return self::query()->getAdapter()->getPrimaryKey(static::$table);
     }
 
     /**
@@ -179,16 +179,22 @@ class Model extends ParentModel
      * @param string $column
      * @return stdClass
      */
-    public static function find($value, $column = null)
+    public static function findOne($value, $column = null)
     {
         $sql = self::query()->select()
             ->from(static::$table);
+        $pk = self::getPrimaryKey();
         if(!$column){
-            $column = self::getPrimaryKey();
+            $column = $pk;
         }
         $row = $sql->where($column, $value)->getOne();
-        $row->setTable(static::$table);
-        // $row->setId($);
+        if($row){
+            $row->setTable(static::$table);
+            $row->setPrimaryKey($pk);
+            if($row->{$pk} !== null){
+                $row->setId($row->{$pk});
+            }
+        }
         return $row;
     }
 

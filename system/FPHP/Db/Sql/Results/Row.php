@@ -130,47 +130,30 @@ class Row
 
     /**
      * 
-     * @param array $data
-     * @return int
+     * @return array
      */
-    public function save($data)
+    public function toArray()
     {
-        if($this->_removed){
-            throw new Exception("Row has already been removed");
-        }
-        $this->_query->clear();
-        $affected = $this->_query->update($this->_table, $data)
-            ->where($this->_pk, $this->_id)
-            ->execute();
-        if($affected === 1){
-            return true;
-        } else if($affected === 0){
-            return false;
-        } else {
-            throw new Exception("Multirows are affected");
-        }
+        return $this->_data;
     }
 
     /**
      * 
+     * @param string $key
      * @return boolean
      */
-    public function remove()
+    public function __isset($key)
     {
-        if($this->_removed){
-            throw new Exception("Row has already been removed");
-        }
-        $this->_query->clear();
-        $affected = $this->_query->delete()
-            ->from($this->_table)
-            ->where($this->_pk, $this->_id)
-            ->execute();
-        if($affected === 1){
-            return true;
-        } else if($affected === 0){
-            return false;
-        } else {
-            throw new Exception("Multirows are affected");
-        }
+        return isset($this->_data[$key]);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        unset($this->_data[$key]);
     }
 }
