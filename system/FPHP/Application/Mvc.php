@@ -375,9 +375,12 @@ class Mvc
             ->set('session', A::$session)
             ->set('js', new Javascript())
             ->set('config', A::$config);
-        if($data){
-            $html->set('data', new Data($data));
+        if($data === null){
+            $data = new Data();
+        } else if(!($data instanceof Data) && is_array($data)){
+            $data = new Data($data);
         }
+        $html->set('data', $data);
         if($layout){
             $html->setLayout($layout);
         }

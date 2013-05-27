@@ -21,7 +21,7 @@ class Data
      * 
      * @param array $data
      */
-    public function __construct(array $data)
+    public function __construct(array $data = array())
     {
         $this->_data = $data;
     }

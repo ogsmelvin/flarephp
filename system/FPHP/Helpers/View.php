@@ -15,6 +15,20 @@ if(!function_exists('html')){
     }
 }
 
+if(!function_exists('render')){
+
+    /**
+     * 
+     * @param string $path
+     * @param array $data
+     * @return string
+     */
+    function render($path, $data = array())
+    {
+        return \FPHP\Fphp::mvc()->view($path, $data, false);
+    }
+}
+
 $adk_sections = array();
 
 if(!function_exists('section_open')){
