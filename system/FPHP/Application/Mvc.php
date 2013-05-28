@@ -292,7 +292,7 @@ class Mvc
 
         require $this->_modulesDirectory.$this->_request->getModule().'/bootstrap.php';
         require $path;
-        $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getController();
+        $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getControllerClassName();
         $this->_controller = new $controller($this->_request, A::$response);
         if(!method_exists($this->_controller, $this->_request->getAction())){
             A::$response->setBody("404 page")

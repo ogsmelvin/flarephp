@@ -49,11 +49,20 @@ class Request extends ParentRequest
     {
         $sections = explode('_', urldecode($controller));
         foreach($sections as &$section){
-            $section = ucwords($section);
+            $section = strtolower($section);
         }
 
-        $this->_controller = implode('_', $sections).'_Controller';
+        $this->_controller = implode('_', $sections);
         return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getControllerClassName()
+    {
+        return str_replace(' ', '_', ucwords(str_replace('_', ' ', $this->_controller))).'_Controller';
     }
 
     /**
