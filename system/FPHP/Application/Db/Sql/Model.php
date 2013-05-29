@@ -55,7 +55,11 @@ class Model extends ParentModel
      */
     protected function _setup()
     {
-        $this->_adapter = & A::db();
+        if(isset(self::appInstance()->db)){
+            $this->_adapter = & self::appInstance()->db;
+        } else {
+            display_error("No database connection");
+        }
         if(empty(static::$primaryKey)){
             static::$primaryKey = $this->_adapter->getPrimaryKey(static::$table);
         }
