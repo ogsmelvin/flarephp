@@ -122,7 +122,7 @@ abstract class AbstractController
      * @param string $key
      * @return mixed
      */
-    public function getPost($key)
+    public function getPost($key = null)
     {
         return $this->request->post($key);
     }
@@ -132,7 +132,7 @@ abstract class AbstractController
      * @param string $key
      * @return mixed
      */
-    public function getRequest($key)
+    public function getRequest($key = null)
     {
         return $this->request->request($key);
     }
@@ -142,7 +142,7 @@ abstract class AbstractController
      * @param string $key
      * @return mixed
      */
-    public function getQuery($key)
+    public function getQuery($key = null)
     {
         return $this->request->get($key);
     }
@@ -152,7 +152,7 @@ abstract class AbstractController
      * @param string $key
      * @return mixed
      */
-    public function getServer($key)
+    public function getServer($key = null)
     {
         return $this->request->server($key);
     }
