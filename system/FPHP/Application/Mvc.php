@@ -209,7 +209,7 @@ class Mvc
         $class = explode("\\", $class);
         if(isset($class[1]) && $class[1] == 'Models'){
             $className = array_pop($class);
-            require $this->_modulesDirectory.implode("/", $class)."/".$className.'.php';
+            require $this->_modulesDirectory.strtolower(implode("/", $class))."/".$className.'.php';
         }
     }
 
