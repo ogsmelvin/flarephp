@@ -139,6 +139,35 @@ class Row
 
     /**
      * 
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        $method = preg_split('/(?=[A-Z])/', $method);
+        if(isset($method[0]) && $method[0] === 'get'){
+            unset($method[0]);
+            return $this->get(strtolower(implode('_', $method)));
+        }
+        display_error("{$method} doesn't exists");
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @return mixed
+     */
+    public function get($field)
+    {
+        if(isset($this->_data[$field])){
+            return html($this->_data[$field]);
+        }
+        return null;
+    }
+
+    /**
+     * 
      * @param string $key
      * @return boolean
      */
