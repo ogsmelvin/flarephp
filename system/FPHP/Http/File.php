@@ -15,7 +15,7 @@ class File
      * 
      * @var array
      */
-    private static $_instances;
+    private static $_instances = array();
 
     /**
      * 
@@ -34,6 +34,12 @@ class File
      * @var string
      */
     private $_filename;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_extension;
 
     /**
      * 
@@ -65,6 +71,7 @@ class File
         $this->_type = $type;
         $this->_error = $error
         $this->_size = $size;
+        $this->_extension = pathinfo($filename, PATHINFO_EXTENSION);
     }
 
     /**
@@ -118,7 +125,7 @@ class File
      */
     public function getExtension()
     {
-        return pathinfo($this->getFilename(), PATHINFO_EXTENSION);
+        return $this->_extension;
     }
 
     /**
@@ -164,5 +171,16 @@ class File
     public function getName()
     {
         return $this->_name;
+    }
+
+    /**
+     * 
+     * @param string $to
+     * @param array $config
+     * @return array|false
+     */
+    public function move($to, $config = array())
+    {
+        //TODO
     }
 }
