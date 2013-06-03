@@ -25,36 +25,82 @@ class File
 
     /**
      * 
+     * @var string
+     */
+    private $_tmpname;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_filename;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_type;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_error;
+
+    /**
+     * 
+     * @var int
+     */
+    private $_size;
+
+    /**
+     * 
      * @param string $name
      */
-    private function __construct($name)
+    private function __construct($name, $filename, $tmpname, $type, $error, $size)
     {
         $this->_name = $name;
+        $this->_filename = $filename;
+        $this->_tmpname = $tmpname
+        $this->_type = $type;
+        $this->_error = $error
+        $this->_size = $size;
     }
 
     /**
      * 
      * @param string $name
-     * @return \FPHP\Http\File
+     * @return \FPHP\Http\File|array
      */
     public static function get($name)
     {
-        if(!isset($_FILES[$name])){
-            return null;
-        }
         if(!isset(self::$_instances[$name])){
-            self::$_instances[$name] = new self($name);
+            if(!isset($_FILES[$name])){
+                return null;
+            }
+            if(is_array($_FILES[$name]['name'])){
+                foreach($_FILES[$name]['name'] as $key => $file){
+                    self::$_instances[$name][] = new self(
+                        $name,
+                        $file,
+                        $_FILES[$name]['tmp_name'][$key],
+                        $_FILES[$name]['type'][$key],
+                        $_FILES[$name]['error'][$key],
+                        $_FILES[$name]['size'][$key]
+                    );
+                }
+            } else {
+                self::$_instances[$name] = new self(
+                    $name,
+                    $_FILES[$name]['name'],
+                    $_FILES[$name]['tmp_name'],
+                    $_FILES[$name]['type'],
+                    $_FILES[$name]['error'],
+                    $_FILES[$name]['size']
+                );
+            }
         }
         return self::$_instances[$name];
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    public function exists()
-    {
-        return !empty($_FILES[$this->_name]['name']);
     }
 
     /**
@@ -63,10 +109,7 @@ class File
      */
     public function getFilename()
     {
-        if(!isset($_FILES[$this->_name]['name'])){
-            return null;
-        }
-        return $_FILES[$this->_name]['name'];
+        return $this->_name;
     }
 
     /**
@@ -84,10 +127,7 @@ class File
      */
     public function getType()
     {
-        if(!isset($_FILES[$this->_name]['type'])){
-            return null;
-        }
-        return $_FILES[$this->_name]['type'];
+        return $this->_type;
     }
 
     /**
@@ -96,10 +136,7 @@ class File
      */
     public function getTempname()
     {
-        if(!isset($_FILES[$this->_name]['tmp_name'])){
-            return null;
-        }
-        return $_FILES[$this->_name]['tmp_name'];
+        return $this->_tmpname;
     }
 
     /**
@@ -108,22 +145,16 @@ class File
      */
     public function getSize()
     {
-        if(!isset($_FILES[$this->_name]['size'])){
-            return 0;
-        }
-        return (int) $_FILES[$this->_name]['size'];
+        return $this->_size;
     }
 
     /**
      * 
-     * @return array
+     * @return string
      */
     public function getError()
     {
-        if(!isset($_FILES[$this->_name]['error'])){
-            return null;
-        }
-        return $_FILES[$this->_name]['error'];
+        return $this->_error;
     }
 
     /**

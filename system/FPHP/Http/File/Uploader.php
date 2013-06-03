@@ -20,6 +20,11 @@ class Uploader
      */
     public static function upload($name, $config = array())
     {
-        $file = File::get($name)->exists();
+        $file = File::get($name);
+        // if(is_array($file)){
+        //     foreach($file as $key => $content){
+        //         move_uploaded_file($content->getTempname(), destination)
+        //     }
+        // }
     }
 }
