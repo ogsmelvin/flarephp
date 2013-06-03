@@ -77,13 +77,14 @@ class File
     /**
      * 
      * @param string $name
+     * @param mixed $default
      * @return \FPHP\Http\File|array
      */
-    public static function get($name)
+    public static function get($name, $default = null)
     {
         if(!isset(self::$_instances[$name])){
             if(!isset($_FILES[$name])){
-                return null;
+                return $default;
             }
             if(is_array($_FILES[$name]['name'])){
                 foreach($_FILES[$name]['name'] as $key => $file){

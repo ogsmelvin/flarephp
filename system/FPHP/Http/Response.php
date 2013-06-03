@@ -96,6 +96,12 @@ class Response
     private $_contentType = null;
 
     /**
+     * 
+     * @var boolean
+     */
+    protected $_sent = false;
+
+    /**
      *
      * @param string $key
      * @param string $value
@@ -224,6 +230,9 @@ class Response
      */
     public function send($output_body = true)
     {
+        if($this->_sent){
+            display_error("Response::send already executed");
+        }
         if($this->_code !== 200 && isset(self::$messages[$this->_code])){
             if(!empty($_SERVER['SERVER_PROTOCOL'])){
                 header($_SERVER['SERVER_PROTOCOL'].' '.$this->_code.' '.self::$messages[$this->_code]);
@@ -241,8 +250,16 @@ class Response
         }
 
         if($output_body){
+            if(A::$config->auto_compress && !@ini_get('zlib.output_compression')
+                && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
+                && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE){
+                if(!ob_start('ob_gzhandler')){
+                    display_error('output compression failed');
+                }
+            }
             echo $this->_body;
         }
+        $this->_sent = true;
     }
 }
 

@@ -76,10 +76,11 @@ class Html
         $data = null;
         $session = null;
         $js = null;
-        
+
         foreach($this->_data as $key => $value){
             ${$key} = $value;
         }
+
 
         ob_start();
         include $this->_contentPath;
