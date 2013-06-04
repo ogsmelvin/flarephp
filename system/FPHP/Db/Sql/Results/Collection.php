@@ -149,4 +149,20 @@ class Collection extends ArrayObject
         $tag = "\\FPHP\\UI\\Html\\{$tag}";
         return new $tag($name, $this);
     }
+
+    /**
+     * 
+     * @param callable $callback
+     * @return void
+     */
+    public function each($callback)
+    {
+        if(is_callable($callback)){
+            foreach($this as $key => &$row){
+                $callback($key, $row);
+            }
+        } else {
+            display_error("param must be callable");
+        }
+    }
 }
