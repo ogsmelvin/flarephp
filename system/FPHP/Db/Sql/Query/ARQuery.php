@@ -644,12 +644,14 @@ class ARQuery
             $stmt->execute();
             $this->_conn->printError($stmt);
             $result = new Collection($this->_conn, $stmt->rowCount());
+            $newRow = new Row($this);
             if($pagination){
                 $result->setPagination($pagination);
             }
-            while($row = $stmt->fetch(PDO::FETCH_OBJ)){
-                $result[] = $row;
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $result[] = clone $newRow->setData($row);
             }
+            unset($newRow);
             $stmt = null;
         } catch(PDOException $ex) {
             display_error($ex->getMessage());

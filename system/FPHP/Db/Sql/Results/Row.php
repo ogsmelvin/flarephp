@@ -32,12 +32,6 @@ class Row
 
     /**
      * 
-     * @var boolean
-     */
-    private $_removed = false;
-
-    /**
-     * 
      * @var string
      */
     private $_pk;
