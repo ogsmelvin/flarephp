@@ -142,7 +142,7 @@ class Row
         $method = preg_split('/(?=[A-Z])/', $method);
         if(isset($method[0]) && $method[0] === 'get'){
             unset($method[0]);
-            return $this->get(strtolower(implode('_', $method)));
+            return $this->html(strtolower(implode('_', $method)));
         }
         display_error("{$method} doesn't exists");
     }
@@ -152,7 +152,7 @@ class Row
      * @param string $field
      * @return mixed
      */
-    public function get($field)
+    public function html($field)
     {
         if(isset($this->_data[$field])){
             return html($this->_data[$field]);
