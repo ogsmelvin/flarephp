@@ -321,7 +321,7 @@ class Mvc
         $this->_controller->preDispatch();
         $view = $this->_controller->{$this->_request->getAction()}();
 
-        if(!A::$response->getContentType()){
+        if(!A::$response->hasContentType()){
             if($view instanceof Html){
                 A::$response->setContentType('text/html');
             } else if($view instanceof \FPHP\Objects\Xml){

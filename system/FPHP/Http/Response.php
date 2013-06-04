@@ -146,6 +146,15 @@ class Response
     }
 
     /**
+     * 
+     * @return boolean
+     */
+    public function hasContentType()
+    {
+        return $this->getContentType() ? true : false;
+    }
+
+    /**
      *
      * @param string $view
      * @return \FPHP\Http\Response
