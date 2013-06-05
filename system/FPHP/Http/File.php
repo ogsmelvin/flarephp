@@ -19,6 +19,15 @@ class File
 
     /**
      * 
+     * @var array
+     */
+    private static $_globalSetup = array(
+
+
+    );
+
+    /**
+     * 
      * @var string
      */
     private $_name;
@@ -61,17 +70,23 @@ class File
 
     /**
      * 
+     * @var string
+     */
+    private $_moveError = null;
+
+    /**
+     * 
      * @param string $name
      */
     private function __construct($name, $filename, $tmpname, $type, $error, $size)
     {
         $this->_name = $name;
-        $this->_filename = $filename;
         $this->_tmpname = $tmpname
         $this->_type = $type;
         $this->_error = $error
         $this->_size = $size;
-        $this->_extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $this->_filename = self::cleanFilename($filename);
+        $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
     }
 
     /**
@@ -182,6 +197,131 @@ class File
      */
     public function move($to, $config = array())
     {
-        //TODO
+        $result = false;
+        $config = !$config ? self::$_globalSetup : array_merge(self::$_globalSetup, $config);
+        $to = $this->_cleanUploadPath($to);
+        if($to){
+            if(!is_uploaded_file($this->_tmpname)){
+                $error = ( ! isset($this->_error)) ? 4 : $this->_error;
+                switch($error){
+                    case 1: // UPLOAD_ERR_INI_SIZE
+                        $this->_setMoveError('Upload file exceeds limit');
+                        break;
+                    case 2: // UPLOAD_ERR_FORM_SIZE
+                        $this->_setMoveError('Upload file exceeds form limit');
+                        break;
+                    case 3: // UPLOAD_ERR_PARTIAL
+                        $this->_setMoveError('Upload file partial');
+                        break;
+                    case 4: // UPLOAD_ERR_NO_FILE
+                        $this->_setMoveError('Upload no file selected');
+                        break;
+                    case 6: // UPLOAD_ERR_NO_TMP_DIR
+                        $this->_setMoveError('Upload no temp directory');
+                        break;
+                    case 7: // UPLOAD_ERR_CANT_WRITE
+                        $this->_setMoveError('Upload unable to write file');
+                        break;
+                    case 8: // UPLOAD_ERR_EXTENSION
+                        $this->_setMoveError('Upload stopped by extension');
+                        break;
+                    default : $this->_setMoveError('Upload no file selected');
+                        break;
+                }
+            }
+        } else {
+            $this->_setMoveError("Upload path doesn't exists or not writable");
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $error
+     * @return void
+     */
+    private function _setMoveError($error)
+    {
+        $this->_moveError = $error;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getMoveError()
+    {
+        return $this->_moveError;
+    }
+
+    /**
+     * 
+     * @param string $to
+     * @return string|boolean
+     */
+    private function _cleanUploadPath($to)
+    {
+        if(!$to) return false;
+        $moveTo = realpath($to);
+        $moveTo = $moveTo !== false ? rtrim(str_replace("\\", "/", $moveTo), "/") : rtrim($to, "/");
+
+        if(@is_dir($moveTo)){
+            $moveTo .= "/".$this->_filename;
+        }
+        return $moveTo;
+    }
+
+    /**
+     * 
+     * @param array $config
+     * @return void
+     */
+    public static function setup(array $config)
+    {
+        foreach($config as $key => $conf){
+            if(array_key_exists($key, self::$_globalSetup)){
+                self::$_globalSetup[$key] = $conf;
+            }
+        }
+    }
+
+    /**
+     * Clean the file name for security
+     *
+     * @param   string
+     * @return  string
+     */
+    public static function cleanFilename($filename)
+    {
+        $bad = array(
+                    "<!--",
+                    "-->",
+                    "'",
+                    "<",
+                    ">",
+                    '"',
+                    '&',
+                    '$',
+                    '=',
+                    ';',
+                    '?',
+                    '/',
+                    "%20",
+                    "%22",
+                    "%3c",      // <
+                    "%253c",    // <
+                    "%3e",      // >
+                    "%0e",      // >
+                    "%28",      // (
+                    "%29",      // )
+                    "%2528",    // (
+                    "%26",      // &
+                    "%24",      // $
+                    "%3f",      // ?
+                    "%3b",      // ;
+                    "%3d"       // =
+                );
+        $filename = str_replace($bad, '', $filename);
+        return stripslashes($filename);
     }
 }

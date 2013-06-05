@@ -114,6 +114,13 @@ class Fphp
                 self::$uri->requireHttps();
             }
         }
+        if(self::$config->auto_compress && !@ini_get('zlib.output_compression')
+            && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
+            && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE){
+            if(!ob_start('ob_gzhandler')){
+                display_error('output compression failed');
+            }
+        }
         self::$_init = true;
     }
 
