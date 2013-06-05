@@ -21,8 +21,8 @@ class File
      * 
      * @var array
      */
-    private static $_globalSetup = array(
-
+    private static $_config = array(
+        'overwrite' => true
 
     );
 
@@ -198,8 +198,8 @@ class File
     public function move($to, $config = array())
     {
         $result = false;
-        $config = !$config ? self::$_globalSetup : array_merge(self::$_globalSetup, $config);
-        $to = $this->_cleanUploadPath($to);
+        $config = !$config ? self::$_config : array_merge(self::$_config, $config);
+        $to = $this->_validateUploadPath($to);
         if($to){
             if(!is_uploaded_file($this->_tmpname)){
                 $error = ( ! isset($this->_error)) ? 4 : $this->_error;
@@ -228,6 +228,8 @@ class File
                     default : $this->_setMoveError('Upload no file selected');
                         break;
                 }
+            } else {
+
             }
         } else {
             $this->_setMoveError("Upload path doesn't exists or not writable");
@@ -259,16 +261,18 @@ class File
      * @param string $to
      * @return string|boolean
      */
-    private function _cleanUploadPath($to)
+    private function _validateUploadPath($to)
     {
         if(!$to) return false;
         $moveTo = realpath($to);
         $moveTo = $moveTo !== false ? rtrim(str_replace("\\", "/", $moveTo), "/") : rtrim($to, "/");
 
         if(@is_dir($moveTo)){
-            $moveTo .= "/".$this->_filename;
+            return $moveTo."/".$this->_filename;
+        } else if(@is_file($moveTo)){
+            return $moveTo;
         }
-        return $moveTo;
+        return false;
     }
 
     /**
@@ -276,13 +280,22 @@ class File
      * @param array $config
      * @return void
      */
-    public static function setup(array $config)
+    public static function setUploadConfig(array $config)
     {
         foreach($config as $key => $conf){
-            if(array_key_exists($key, self::$_globalSetup)){
-                self::$_globalSetup[$key] = $conf;
+            if(array_key_exists($key, self::$_config)){
+                self::$_config[$key] = $conf;
             }
         }
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function getUploadConfig()
+    {
+        return self::$_config;
     }
 
     /**
@@ -293,21 +306,8 @@ class File
      */
     public static function cleanFilename($filename)
     {
-        $bad = array(
-                    "<!--",
-                    "-->",
-                    "'",
-                    "<",
-                    ">",
-                    '"',
-                    '&',
-                    '$',
-                    '=',
-                    ';',
-                    '?',
-                    '/',
-                    "%20",
-                    "%22",
+        $bad = array("<!--", "-->", "'", "<", ">", '"', '&', '$', '=', ';', '?',
+                    '/', "%20", "%22",
                     "%3c",      // <
                     "%253c",    // <
                     "%3e",      // >

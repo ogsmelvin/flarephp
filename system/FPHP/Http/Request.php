@@ -3,10 +3,7 @@
 namespace FPHP\Http;
 
 use FPHP\Fphp as A;
-
-if(!function_exists('html')){
-    A::mvc()->helper('view');
-}
+use FPHP\Security;
 
 /**
  *
@@ -46,7 +43,7 @@ class Request
     protected function _filter($var)
     {
         if(is_string($var)){
-            return html($var);
+            return Security::xssClean($var);
         }
 
         foreach($var as &$val){

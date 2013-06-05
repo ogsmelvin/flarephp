@@ -68,6 +68,126 @@ if(!function_exists('debug')){
     }
 }
 
+if(!function_exists('html')){
+    
+    /**
+     * 
+     * @author anthony
+     * @param string $string
+     * @param int $flag
+     * @return string
+     */
+    function html($string)
+    {
+        return \FPHP\Security::xssClean($string);
+    }
+}
+
+if(!function_exists('render')){
+
+    /**
+     * 
+     * @param string $path
+     * @param array $data
+     * @return string
+     */
+    function render($path, $data = array())
+    {
+        return \FPHP\Fphp::mvc()->view($path, $data, false);
+    }
+}
+
+$adk_sections = array();
+
+if(!function_exists('section_open')){
+
+    /**
+     * 
+     * @author anthony
+     * @param string $name
+     * @return void
+     */
+    function section_open($name)
+    {
+        global $adk_sections;
+        $adk_sections[$name] = true;
+        ob_start();
+    }
+}
+
+if(!function_exists('section_close')){
+
+    /**
+     * 
+     * @author anthony
+     * @param string $name
+     * @return void
+     */
+    function section_close($name)
+    {
+        global $adk_sections;
+        if(!isset($adk_sections[$name])){
+            throw new Exception("{$name} is not yet open");
+        }
+        $adk_sections[$name] = (string) ob_get_clean();
+    }
+}
+
+if(!function_exists('get_section')){
+
+    /**
+     * 
+     * @author anthony
+     * @param string $name
+     * @return string
+     */
+    function get_section($name)
+    {
+        global $adk_sections;
+        if(!isset($adk_sections[$name])){
+            return null;
+        }
+        return $adk_sections[$name];
+    }
+}
+
+if(!function_exists('get_sections')){
+
+    /**
+     * 
+     * @author anthony
+     * @return array
+     */
+    function get_sections()
+    {
+        global $adk_sections;
+        return $adk_sections;
+    }
+}
+
+if(!function_exists('http_build_url')){
+
+    /**
+     * 
+     * @param array $parsed_url
+     * @return string
+     */
+    function http_build_url($parsed_url)
+    {
+        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+        $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+        $pass     = ($user || $pass) ? "$pass@" : '';
+        $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+        $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+        return "$scheme$user$pass$host$port$path$query$fragment";
+    }
+}
+
+
 if(!function_exists('display_error')){
 
     /**

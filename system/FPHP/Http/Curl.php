@@ -11,10 +11,6 @@ if(!function_exists('curl_init')){
     display_error('CURL is not supported by your server');
 }
 
-if(!function_exists('http_build_url')){
-    A::mvc()->helper('url');
-}
-
 /**
  * 
  * @author anthony
