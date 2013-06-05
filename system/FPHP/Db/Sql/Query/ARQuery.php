@@ -217,7 +217,7 @@ class ARQuery
      * @param string $condition
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    private function _where($field, $value, $comparison, $condition)
+    protected function _where($field, $value, $comparison, $condition)
     {
         $type = PDO::PARAM_STR;
         if(is_float($value) || is_int($value)){
@@ -254,7 +254,7 @@ class ARQuery
      * @param string $condition
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    private function _having($field, $value, $comparison, $condition)
+    protected function _having($field, $value, $comparison, $condition)
     {
         $this->_having[] = array();
         return $this;
@@ -357,7 +357,7 @@ class ARQuery
      *
      * @return string
      */
-    private function _compile()
+    protected function _compile()
     {
         $sql = '';
         $hasWhere = false;
@@ -448,7 +448,7 @@ class ARQuery
      * @param string $place
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    private function _like($field, $value, $comparison, $condition, $place = null)
+    protected function _like($field, $value, $comparison, $condition, $place = null)
     {
         if($place){
             if($place === 'BEFORE'){
@@ -663,7 +663,7 @@ class ARQuery
      *
      * @return \FPHP\UI\Pagination
      */
-    private function _paginate()
+    protected function _paginate()
     {
         $limit = $this->_limit;
         $offset = $this->_offset;
@@ -991,7 +991,7 @@ class ARQuery
      * @param string $type
      * @return \FPHP\Db\Sql\Query\ARQuery
      */
-    private function _join($table, $condition, $type)
+    protected function _join($table, $condition, $type)
     {
         $joinStr = '';
         if(is_string($table)){

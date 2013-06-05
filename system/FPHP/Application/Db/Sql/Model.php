@@ -3,7 +3,6 @@
 namespace FPHP\Application\Db\Sql;
 
 use FPHP\Application\Model as ParentModel;
-use FPHP\Db\Sql\Query\ARQuery;
 use FPHP\Fphp as A;
 use \Exception;
 
@@ -210,5 +209,51 @@ class Model extends ParentModel
     public static function save($data)
     {
         return self::query()->insert($data);
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @return string
+     */
+    public static function alias($field)
+    {
+        return (isset(static::$alias) ? static::$alias : static::$table).'.'.$field;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function getAlias()
+    {
+        return isset(static::$alias) ? static::$alias : static::$table;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function getTableName()
+    {
+        return static::$table;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function getTableAlias()
+    {
+        return isset(static::$alias) ? static::$table.' AS '.static::$alias : static::$table;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function getPrimaryKeyAlias()
+    {
+        return (isset(static::$alias) ? static::$alias : static::$table).'.'.self::getPrimaryKey();
     }
 }

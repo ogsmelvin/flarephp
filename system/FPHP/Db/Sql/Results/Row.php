@@ -117,7 +117,7 @@ class Row
     public function __get($key)
     {
         if(!isset($this->_data[$key])){
-            return null;
+            display_error("'{$key}' doesn't exist in the row object");
         }
         return $this->_data[$key];
     }
@@ -157,7 +157,7 @@ class Row
         if(isset($this->_data[$field])){
             return html($this->_data[$field]);
         }
-        return null;
+        display_error("'{$key}' doesn't exist in the row object");
     }
 
     /**
