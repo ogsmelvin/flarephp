@@ -109,7 +109,11 @@ class Fphp
         } else {
             throw new Exception("Config[session][namespace] must be set");
         }
-        
+        if(self::$config->auth['enable_auth']){
+            if(self::$config->auth['https']){
+                self::$uri->requireHttps();
+            }
+        }
         self::$_init = true;
     }
 
