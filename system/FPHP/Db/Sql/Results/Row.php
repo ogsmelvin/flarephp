@@ -3,6 +3,7 @@
 namespace FPHP\Db\Sql\Results;
 
 use FPHP\Db\Sql\Query\ARQuery;
+use FPHP\Security;
 use \Exception;
 
 /**
@@ -133,18 +134,36 @@ class Row
 
     /**
      * 
-     * @param string $method
-     * @param array $args
-     * @return mixed
+     * @param string $field
+     * @return int
      */
-    public function __call($method, $args)
+    public function getInt($field)
     {
-        $method = preg_split('/(?=[A-Z])/', $method);
-        if(isset($method[0]) && $method[0] === 'get'){
-            unset($method[0]);
-            return $this->html(strtolower(implode('_', $method)));
+        return intval($this->__get($field));
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param boolean $xss
+     * @return string
+     */
+    public function getString($field, $xss = true)
+    {
+        if($xss){
+            return $this->getXssClean($field);
         }
-        display_error("{$method} doesn't exists");
+        return (string) $this->__get($field);
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @return float
+     */
+    public function getFloat($field)
+    {
+        return floatval($this->getInt($field));
     }
 
     /**
@@ -152,10 +171,10 @@ class Row
      * @param string $field
      * @return mixed
      */
-    public function html($field)
+    public function getXssClean($field)
     {
         if(isset($this->_data[$field])){
-            return html($this->_data[$field]);
+            return Security::xssClean($this->_data[$field]);
         }
         display_error("'{$key}' doesn't exist in the row object");
     }
