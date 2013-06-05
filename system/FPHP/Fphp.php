@@ -109,10 +109,8 @@ class Fphp
         } else {
             throw new Exception("Config[session][namespace] must be set");
         }
-        if(self::$config->auth['enable_auth']){
-            if(self::$config->auth['https']){
-                self::$uri->requireHttps();
-            }
+        if(self::$config->require_https){
+            self::$uri->requireHttps();
         }
         if(self::$config->auto_compress && !@ini_get('zlib.output_compression')
             && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
