@@ -196,6 +196,16 @@ abstract class AbstractController
 
     /**
      * 
+     * @param boolean $switch
+     * @return void
+     */
+    public function setAutoLayout($switch)
+    {
+        $this->config->set('layout.'.$this->request->getModule().'.auto', $switch);
+    }
+
+    /**
+     * 
      * @param string $path
      * @param array $data
      * @param string|boolean $layout

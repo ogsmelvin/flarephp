@@ -89,6 +89,46 @@ class Config
     }
 
     /**
+     * 
+     * @param string $key
+     * @param mixed $value
+     * @return \FPHP\Application\Config
+     */
+    public function set($key, $value)
+    {
+        if(!$this->_config['allow_override']){
+            return;
+        }
+        $key = explode('.', $key);
+        $tmpConf = $this->_config;
+        $conf = & $tmpConf;
+        foreach($key as $k){
+            if(isset($conf[$k])) $conf = & $conf[$k];
+            else display_error("'{$key}' doesn't exists in config");
+        }
+        $conf = $value;
+        $this->_config = $tmpConf;
+        unset($tmpConf, $conf);
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        $key = explode('.', $key);
+        $conf = $this->_config;
+        foreach($key as $k){
+            if(isset($conf[$k])) $conf = $conf[$k];
+            else display_error("'{$key}' doesn't exists in config");
+        }
+        return $conf;
+    }
+
+    /**
      *
      * @param string $key
      * @return boolean
