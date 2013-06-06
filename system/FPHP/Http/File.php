@@ -239,6 +239,18 @@ class File
 
     /**
      * 
+     * @param string $base64String
+     * @param array $config
+     * @return boolean
+     */
+    public static function createFromBase64($base64String, $path, $config = array())
+    {
+        //TODO
+        return true;
+    }
+
+    /**
+     * 
      * @param string $error
      * @return void
      */
