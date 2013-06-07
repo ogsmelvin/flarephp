@@ -82,9 +82,9 @@ class File
     private function __construct($name, $filename, $tmpname, $type, $error, $size)
     {
         $this->_name = $name;
-        $this->_tmpname = $tmpname
+        $this->_tmpname = $tmpname;
         $this->_type = $type;
-        $this->_error = $error
+        $this->_error = $error;
         $this->_size = $size;
         $this->_filename = self::cleanFilename($filename);
         $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
@@ -240,6 +240,7 @@ class File
 
     /**
      * 
+     * @param string $objID
      * @param string $base64String
      * @param string $path
      * @return boolean
@@ -252,15 +253,17 @@ class File
             display_error("Invalid base64 string");
         }
 
-        $ext = explode('/', substr(substr($source[0], 0, -7), 5));
+        $type = substr(substr($source[0], 0, -7), 5);
+        $ext = explode('/', $type);
         $createpath = realpath($path);
         $createpath = $createpath !== false ? rtrim(str_replace("\\", "/", $createpath), "/") : rtrim($path, "/");
-
+        $filename = pathinfo($createpath, PATHINFO_BASENAME);
         if(@is_dir($createpath) === true){
-            $createpath .= '/'.Security::hash($source[1]).'.'.$ext;
+            $filename = Security::hash($source[1]).'.'.end($ext);
+            $createpath .= '/'.$filename;
         }
         if(file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))){
-            $result = true;
+            $result = new self(null, $filename, $filename, $type, 0,  0);
         }
         return $result;
     }
