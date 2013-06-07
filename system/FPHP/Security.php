@@ -62,7 +62,7 @@ class Security
      */
     public static function hash($str)
     {
-        return md5($str);
+        return sha1($str);
     }
 
     /**
