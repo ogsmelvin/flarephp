@@ -6,6 +6,7 @@ if(!extension_loaded('gd') || !function_exists('gd_info')){
     display_error("GD Library is not supported");
 }
 
+use FPHP\Http\File;
 use \Exception;
 
 /**
@@ -141,5 +142,16 @@ class Image
     public function resize($width, $height)
     {
         return $this->_resize($width, $height);
+    }
+
+    /**
+     * 
+     * @param string $source
+     * @param string $path
+     * @return boolean
+     */
+    public static function createFromBase64($source, $path)
+    {
+        return File::createFromBase64($source, $path);
     }
 }

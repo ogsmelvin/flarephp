@@ -2,6 +2,7 @@
 
 namespace FPHP\Http;
 
+use FPHP\Security;
 use \Exception;
 
 /**
@@ -22,8 +23,8 @@ class File
      * @var array
      */
     private static $_config = array(
-        'overwrite' => true
-
+        'overwrite' => true,
+        'filename' => ''
     );
 
     /**
@@ -240,13 +241,28 @@ class File
     /**
      * 
      * @param string $base64String
-     * @param array $config
+     * @param string $path
      * @return boolean
      */
-    public static function createFromBase64($base64String, $path, $config = array())
+    public static function createFromBase64($base64String, $path)
     {
-        //TODO
-        return true;
+        $result = false;
+        $source = explode(',', $base64String, 2);
+        if(count($source) !== 2){
+            display_error("Invalid base64 string");
+        }
+
+        $ext = explode('/', substr(substr($source[0], 0, -7), 5));
+        $createpath = realpath($path);
+        $createpath = $createpath !== false ? rtrim(str_replace("\\", "/", $createpath), "/") : rtrim($path, "/");
+
+        if(@is_dir($createpath) === true){
+            $createpath .= '/'.Security::hash($source[1]).'.'.$ext;
+        }
+        if(file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))){
+            $result = true;
+        }
+        return $result;
     }
 
     /**
@@ -280,9 +296,7 @@ class File
         $moveTo = $moveTo !== false ? rtrim(str_replace("\\", "/", $moveTo), "/") : rtrim($to, "/");
 
         if(@is_dir($moveTo)){
-            return $moveTo."/".$this->_filename;
-        } else if(@is_file($moveTo)){
-            return $moveTo;
+            return $moveTo."/";
         }
         return false;
     }

@@ -42,17 +42,3 @@ if(!function_exists('format_number')){
         return number_format($number, $decimals, $dec_sep, $thousand_sep);
     }
 }
-
-if(!function_exists('unique_code')){
-
-    /**
-     * 
-     * @author anthony
-     * @param int $length
-     * @return string
-     */
-    function unique_code($length = 8)
-    {
-        return strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, $length));
-    }
-}
