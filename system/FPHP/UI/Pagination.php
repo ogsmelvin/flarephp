@@ -227,19 +227,19 @@ class Pagination
 
         $list = '<ul>';
         if($this->_page > 1){
-            $list .= "<li><a href=\"{$url}1\">First</a></li>";
-            $list .= "<li><a href=\"{$url}".($this->_page - 1)."\">Prev</a></li>";
+            $list .= "<li><a data-page=\"1\" href=\"{$url}1\">First</a></li>";
+            $list .= "<li><a data-page=\"".($this->_page - 1)."\" href=\"{$url}".($this->_page - 1)."\">Prev</a></li>";
         }
         foreach(range($start, $end) as $page){
             if($this->_page == $page){
-                $list .= "<li class=\"active\"><a href=\"{$url}{$page}\">".$page."</a></li>";
+                $list .= "<li class=\"active\"><a data-page=\"{$page}\" href=\"{$url}{$page}\">".$page."</a></li>";
             } else {
-                $list .= "<li><a href=\"{$url}{$page}\">".$page."</a></li>";
+                $list .= "<li><a data-page=\"{$page}\" href=\"{$url}{$page}\">".$page."</a></li>";
             }
         }
         if($this->_page < $num_pages){
-            $list .= "<li><a href=\"{$url}".($this->_page + 1)."\">Next</a></li>";
-            $list .= "<li><a href=\"{$url}{$num_pages}\">Last</a></li>";
+            $list .= "<li><a data-page=\"".($this->_page + 1)."\" href=\"{$url}".($this->_page + 1)."\">Next</a></li>";
+            $list .= "<li><a data-page=\"{$num_pages}\" href=\"{$url}{$num_pages}\">Last</a></li>";
         }
         $list .= '</ul>';
         return $this->_wrap($list);

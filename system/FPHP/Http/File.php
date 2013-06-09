@@ -257,10 +257,18 @@ class File
         $ext = explode('/', $type);
         $createpath = realpath($path);
         $createpath = $createpath !== false ? rtrim(str_replace("\\", "/", $createpath), "/") : rtrim($path, "/");
-        $filename = pathinfo($createpath, PATHINFO_BASENAME);
+        
         if(@is_dir($createpath) === true){
             $filename = Security::hash($source[1]).'.'.end($ext);
             $createpath .= '/'.$filename;
+        } else {
+            $filename = pathinfo($createpath, PATHINFO_FILENAME);
+            $fileExt = pathinfo($createpath, PATHINFO_EXTENSION);
+            if(!$fileExt){
+                $createpath .= $filename.'.'.end($ext);
+            } else {
+                $createpath .= $filename.'.'.$fileExt;
+            }
         }
         if(file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))){
             $result = new self(null, $filename, $filename, $type, 0,  0);

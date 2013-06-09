@@ -6,7 +6,6 @@ if(!extension_loaded('gd') || !function_exists('gd_info')){
     display_error("GD Library is not supported");
 }
 
-use FPHP\Http\File;
 use \Exception;
 
 /**
@@ -54,15 +53,33 @@ class Image
 
     /**
      * 
+     * @var array
+     */
+    private $_fileinfo;
+
+    /**
+     * 
      * @param string $path
      */
     public function __construct($path = null)
     {
+        $realpath = realpath($path);
+        $realpath = $realpath !== false ? rtrim(str_replace("\\", "/", $realpath), "/") : rtrim($path, "/");
+        $this->_fileinfo = pathinfo($path);
         $image = getimagesize($path);
         if(isset($image[2]) && in_array($image[2], self::$_types)){
             $this->_imageType = $image[2];
+            if($this->_imageType == IMAGETYPE_JPEG){
+                $this->_image = imagecreatefromjpeg($filename);
+            } else if($this->_imageType == IMAGETYPE_GIF){
+                $this->_image = imagecreatefromgif($filename);
+            } else if($this->_imageType == IMAGETYPE_PNG){
+                $this->_image = imagecreatefrompng($filename);
+            } else {
+                display_error("Can't load image, not supported image type");
+            }
         } else {
-            throw new Exception("Image type is not supported");
+            display_error("Not a valid image type");
         }
     }
 
@@ -82,6 +99,15 @@ class Image
     public function getType()
     {
         return $this->_imageType;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->_fileinfo['filename'];
     }
 
     /**
@@ -146,12 +172,20 @@ class Image
 
     /**
      * 
-     * @param string $source
-     * @param string $path
+     * @param string $location
+     * @return \FPHP\Objects\Image
+     */
+    public function copy($location)
+    {
+        return new Image();
+    }
+
+    /**
+     * 
      * @return boolean
      */
-    public static function createFromBase64($source, $path)
+    public function save()
     {
-        return File::createFromBase64($source, $path);
+
     }
 }

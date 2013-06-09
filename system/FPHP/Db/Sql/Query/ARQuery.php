@@ -645,17 +645,15 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            if($stmt->rowCount()){
-                $result = new Collection($this->_conn, $stmt->rowCount());
-                $newRow = new Row($this);
-                if($pagination){
-                    $result->setPagination($pagination);
-                }
-                while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                    $result[] = clone $newRow->setData($row);
-                }
-                unset($newRow);
+            $result = new Collection($this->_conn, $stmt->rowCount());
+            $newRow = new Row($this);
+            if($pagination){
+                $result->setPagination($pagination);
             }
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $result[] = clone $newRow->setData($row);
+            }
+            unset($newRow);
             $stmt = null;
         } catch(PDOException $ex) {
             display_error($ex->getMessage());
@@ -756,9 +754,7 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            if($stmt->rowCount()){
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt = null;
         } catch(PDOException $ex) {
             display_error($ex->getMessage());
@@ -777,9 +773,7 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            if($stmt->rowCount()){
-                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-            }
+            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
             $stmt = null;
         } catch(PDOException $ex) {
             display_error($ex->getMessage());

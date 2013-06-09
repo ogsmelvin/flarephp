@@ -101,7 +101,7 @@ class Collection extends ArrayObject
     {
         $array = array();
         foreach($this as $key => $value){
-            $array[] = (array) $value;
+            $array[] = $value->toArray();
         }
         return json_encode($array);
     }
@@ -114,9 +114,22 @@ class Collection extends ArrayObject
     {
         $array = array();
         foreach($this as $key => $value){
-            $array[] = (array) $value;
+            $array[] = $value->toArray();
         }
         return new Json($array);
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function toArray()
+    {
+        $array = array();
+        foreach($this as $key => $value){
+            $array[] = $value->toArray();
+        }
+        return $array;
     }
 
     /**
@@ -164,5 +177,14 @@ class Collection extends ArrayObject
         } else {
             display_error("param must be callable");
         }
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isEmpty()
+    {
+        return $this->count() ? false : true;
     }
 }
