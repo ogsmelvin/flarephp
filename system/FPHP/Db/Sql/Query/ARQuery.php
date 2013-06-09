@@ -604,7 +604,9 @@ class ARQuery
      */
     public function limit($limit)
     {
-        $this->_limit = (int) $limit;
+        if($limit){
+            $this->_limit = (int) $limit;
+        }
         return $this;
     }
 
@@ -643,15 +645,17 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            $result = new Collection($this->_conn, $stmt->rowCount());
-            $newRow = new Row($this);
-            if($pagination){
-                $result->setPagination($pagination);
+            if($stmt->rowCount()){
+                $result = new Collection($this->_conn, $stmt->rowCount());
+                $newRow = new Row($this);
+                if($pagination){
+                    $result->setPagination($pagination);
+                }
+                while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    $result[] = clone $newRow->setData($row);
+                }
+                unset($newRow);
             }
-            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                $result[] = clone $newRow->setData($row);
-            }
-            unset($newRow);
             $stmt = null;
         } catch(PDOException $ex) {
             display_error($ex->getMessage());
@@ -752,7 +756,9 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if($stmt->rowCount()){
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
             $stmt = null;
         } catch(PDOException $ex) {
             display_error($ex->getMessage());
@@ -771,7 +777,9 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+            if($stmt->rowCount()){
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+            }
             $stmt = null;
         } catch(PDOException $ex) {
             display_error($ex->getMessage());
@@ -1089,9 +1097,11 @@ class ARQuery
      */
     public function page($page, $limit = null)
     {
-        $this->_page = (int) $page;
-        if(!$this->_page){
-            $this->_page = 1;
+        if($page){
+            $this->_page = (int) $page;
+            if(!$this->_page){
+                $this->_page = 1;
+            }
         }
         if($limit){
             $this->limit($limit);
