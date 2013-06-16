@@ -25,7 +25,7 @@ class Security
      * @param string $sKey
      * @return string
      */
-    public static function encrypt($sData, $sKey)
+    private static function encrypt($sData, $sKey)
     {
         $sResult = '';
         for($i = 0; $i < strlen($sData); $i++){
@@ -43,7 +43,7 @@ class Security
      * @param string $sKey
      * @return string
      */
-    public static function decrypt($sData, $sKey)
+    private static function decrypt($sData, $sKey)
     {
         $sData = base64_decode(strtr($sData, '-_', '+/'));
         for($i = 0; $i < strlen($sData); $i++){
@@ -60,7 +60,7 @@ class Security
      * @param string $key
      * @return string
      */
-    public static function hash($str)
+    public static function hash($str, $key = null)
     {
         return sha1($str);
     }
