@@ -265,6 +265,17 @@ class Mvc
             $controller = $module;
             $module = A::$config->router['default_module'];
         }
+        
+        // if(A::$config->router['url_suffix']){
+        //     if($action && A::$uri->getSuffix() !== A::$config->router['url_suffix']){
+        //         A::$response->setBody("404 page")
+        //             ->setCode(404)
+        //             ->send();
+        //         exit;
+        //     }
+
+        //     $action = rtrim($action, '.'.A::$config->router['url_suffix']);
+        // }
 
         $controller = $controller === null ? A::$config->router['default_controller'] : $controller;
         $action = $action === null ? A::$config->router['default_action'] : $action;

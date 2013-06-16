@@ -71,6 +71,12 @@ class Uri
      */
     private $_moduleUrl = null;
 
+    /**
+     * 
+     * @var string
+     */
+    private $_suffix;
+
     public function __construct()
     {
         $this->_setSegments();
@@ -102,6 +108,7 @@ class Uri
         $uri = str_replace($search, '', $_SERVER['REQUEST_URI']);
         $uri = '/'.ltrim($uri, '/');
         $this->_uri = $uri;
+        $this->_suffix = pathinfo($uri, PATHINFO_EXTENSION);
         $this->_segments = explode('/', $uri);
 
         $this->_protocol = 'http://';
@@ -156,6 +163,15 @@ class Uri
             return array_slice($this->_segments, $start);
         }
         return $this->_segments;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getSuffix()
+    {
+        return $this->_suffix;
     }
 
     /**
