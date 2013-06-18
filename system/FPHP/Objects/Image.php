@@ -182,28 +182,55 @@ class Image
      */
     public function copy($location)
     {
-        return new Image();
+        $this->saveAs($location);
+        return new Image($location);
     }
 
     /**
      * 
+     * @param int $compression
+     * @param int $permmissions
      * @return boolean
      */
-    public function save($filename, $image_type = IMAGETYPE_JPEG, $compression = 75, $permissions = null)
+    public function save($compression = 75, $permissions = null)
+    {
+        return $this->_save()
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @param int $compression
+     * @return boolean
+     */
+    public function saveAs($filename, $compression = 75)
+    {
+        return $this->_save($);
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @param string $image_type
+     * @param int $compression
+     * @param int $permissions
+     * @return boolean
+     */
+    private function _save($filename = null, $image_type = IMAGETYPE_JPEG, $compression = 75, $permissions = null)
     {
         if($image_type){
             $image_type = $this->_imageType;
         }
         if($image_type == IMAGETYPE_JPEG){
-            imagejpeg($this->image, $filename, $compression);
+            imagejpeg($this->_image, $filename, $compression);
         } else if($image_type == IMAGETYPE_GIF){
-            imagegif($this->image, $filename);         
+            imagegif($this->_image, $filename);         
         } else if($image_type == IMAGETYPE_PNG){
-            imagepng($this->image, $filename);
+            imagepng($this->_image, $filename);
         }
 
         if($permissions != null){
-            chmod($filename,$permissions);
+            chmod($filename, $permissions);
         }
-   }
+    }
 }

@@ -277,4 +277,40 @@ class Request
         }
         return $value;
     }
+
+    /**
+     * 
+     * @param boolean $checkProxy
+     * @return string
+     */
+    public function getClientIp($checkProxy = true)
+    {
+        $ip = null;
+        if($checkProxy && $this->server('HTTP_CLIENT_IP') != null){
+            $ip = $this->server('HTTP_CLIENT_IP');
+        } else if($checkProxy && $this->server('HTTP_X_FORWARDED_FOR') != null){
+            $ip = $this->server('HTTP_X_FORWARDED_FOR');
+        } else {
+            $ip = $this->server('REMOTE_ADDR');
+        }
+        return $ip;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isFlash()
+    {
+        $header = '';
+        if($this->server('HTTP_USER_AGENT')){
+            $header = strtolower($this->server('HTTP_USER_AGENT'));
+        } else if(function_exists('apache_request_headers')){
+            $headers = apache_request_headers();
+            if(isset($headers['HTTP_USER_AGENT'])){
+                $header = strtolower($headers['HTTP_USER_AGENT']);
+            }
+        }
+        return (strstr($header, ' flash')) ? true : false;
+    }
 }
