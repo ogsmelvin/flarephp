@@ -135,7 +135,8 @@ class Image
      */
     public function resizeHeight($height)
     {
-        return $this->_resize(null, $height);
+        $width = $this->getWidth() * ($height / $this->getHeight());
+        return $this->_resize($width, $height);
     }
 
     /**
@@ -145,7 +146,8 @@ class Image
      */
     public function resizeWidth($width)
     {
-        return $this->_resize($width);
+        $height = $this->getHeight() * ($width / $this->getWidth());
+        return $this->_resize($width, $height);
     }
 
     /**
@@ -156,6 +158,9 @@ class Image
      */
     private function _resize($width = null, $height = null)
     {
+        $new_image = imagecreatetruecolor($width, $height);
+        imagecopyresampled($new_image, $this->_image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
+        $this->_image = $new_image;
         return $this;
     }
 
@@ -184,8 +189,21 @@ class Image
      * 
      * @return boolean
      */
-    public function save()
+    public function save($filename, $image_type = IMAGETYPE_JPEG, $compression = 75, $permissions = null)
     {
+        if($image_type){
+            $image_type = $this->_imageType;
+        }
+        if($image_type == IMAGETYPE_JPEG){
+            imagejpeg($this->image, $filename, $compression);
+        } else if($image_type == IMAGETYPE_GIF){
+            imagegif($this->image, $filename);         
+        } else if($image_type == IMAGETYPE_PNG){
+            imagepng($this->image, $filename);
+        }
 
-    }
+        if($permissions != null){
+            chmod($filename,$permissions);
+        }
+   }
 }
