@@ -2,15 +2,8 @@
 
 /**
  * constants
- * @var string
  */
-// define('APP_DIR', dirname(__FILE__).'/');
-// define('APP_ROOT_DIR', APP_DIR.'web/');
-// define('APP_MODULES_DIR', APP_DIR.'modules/');
-// define('APP_MODELS_DIR', APP_DIR.'models/');
-// define('APP_HELPERS_DIR', APP_DIR.'helpers/');
-// define('APP_CORE_DIR', APP_DIR.'core/');
-define('APP_TITLE', 'ADK Demo');
+require 'constants.php';
 
 /**
  *
@@ -49,7 +42,13 @@ $config['auto_xss_filtering'] = false;
  * 
  * @var boolean
  */
-$config['auto_gzip'] = false;
+$config['auto_compress'] = true;
+
+/**
+ * 
+ * @var boolean
+ */
+$config['require_https'] = true;
 
 /**
  *
@@ -61,7 +60,7 @@ $config['layout'] = array(
      * View Layout settings for main module
      */
     'main' => array(
-        'auto'      => true,
+        'auto'      => false,
         'layout'    => 'main'
     )
 );
@@ -72,58 +71,20 @@ $config['layout'] = array(
  */
 $config['session'] = array(
     'auto_start'        => true,
-    'namespace'         => 'adk_demo'
+    'namespace'         => 'demo.dev'
 );
 
 /**
  *
  * @var boolean
  */
-$config['allow_override'] = false;
+$config['allow_override'] = true;
 
 /**
  *
  * @var array
  */
-$config['router'] = array(
-
-    /**
-     * Custom url using the following format
-     * :url => :module/:controller/:action
-     *
-     * ex.
-     * 'routes' => array(
-     *   '/welcome/home' => 'default/index/home'
-     *  )
-     *
-     */
-    'routes' => array(
-        '/welcome/home' => 'default/index/home'
-    ),
-
-    /**
-     * If you want to set your own error controllers
-     * :module => :controller
-     * this will automatically use 'errorAction' method
-     * Just extend 'ErrorController'
-     * and override 'errorAction' method.
-     *
-     * ex.
-     * 'error_controllers' => array(
-     *   'default' => 'myerror'
-     *  )
-     *
-     */
-    'error_controllers' => array(),
-
-    /**
-     * Default module, controller and action
-     * to be loaded
-     */
-    'default_module'        => 'main',
-    'default_controller'    => 'index',
-    'default_action'        => 'index'
-);
+$config['router'] = require 'routes.php';
 
 /**
  *
@@ -160,9 +121,9 @@ $config['database'] = array(
      */
     'default' => array(
         'host'      => 'localhost',
-        'username'  => 'root',
-        'password'  => 'tontonskie',
-        'dbname'    => 'adk_demo',
+        'username'  => 'technoc9_dev',
+        'password'  => 't3chn0c9_d3v',
+        'dbname'    => 'technoc9_jarvis',
         'driver'    => 'mysql',
         'options'   => array(
             PDO::ATTR_PERSISTENT => true
