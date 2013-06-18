@@ -39,7 +39,7 @@ class OneWaySMS
      * 
      * @var string
      */
-    const API_HOST = "http://gateway.onewaysms.ph:10001/";
+    private $_host = 'http://gateway.onewaysms.ph:10001/';
 
     /**
      * 
@@ -69,11 +69,15 @@ class OneWaySMS
      * 
      * @param string $username
      * @param string $password
+     * @param string $host
      */
-    public function __construct($username, $password)
+    public function __construct($username, $password, $host = null)
     {
         $this->_username = $username;
         $this->_password = $password;
+        if($host){
+            $this->_host = rtrim($host, '/').'/';
+        }
         $this->_curl = new Curl();
     }
 
@@ -95,7 +99,7 @@ class OneWaySMS
             ->setParam('languagetype', $languagetype)
             ->setParam('apiusername', $this->_username)
             ->setParam('apipassword', $this->_password)
-            ->setUrl(self::API_HOST.'api.aspx')
+            ->setUrl($this->_host.'api.aspx')
             ->getContent();
 
         if($this->_curl->hasError()){
@@ -121,7 +125,7 @@ class OneWaySMS
         $this->_error = array();
         $result = $this->_curl
             ->setParam('mtid', $mtid)
-            ->setUrl(self::API_HOST.'bulktrx.aspx')
+            ->setUrl($this->_host.'bulktrx.aspx')
             ->getContent();
 
         if($this->_curl->hasError()){
@@ -147,7 +151,7 @@ class OneWaySMS
         $result = $this->_curl
             ->setParam('apiusername', $this->_username)
             ->setParam('apipassword', $this->_password)
-            ->setUrl(self::API_HOST.'bulkcredit.aspx')
+            ->setUrl($this->_host.'bulkcredit.aspx')
             ->getContent();
 
         if($this->_curl->hasError()){
@@ -202,5 +206,14 @@ class OneWaySMS
     public function getUsername()
     {
         return $this->_username;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->_host;
     }
 }
