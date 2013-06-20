@@ -3,6 +3,7 @@
 namespace FPHP;
 
 use FPHP\Application\Config;
+use FPHP\Application\Router;
 use FPHP\Application\Mvc;
 use FPHP\Http\Request;
 use FPHP\Http\Response;
@@ -47,6 +48,12 @@ class Fphp
      * @var \FPHP\Application\Config
      */
     public static $config = null;
+
+    /**
+     * 
+     * @var \FPHP\Application\Router
+     */
+    public static $router = null;
 
     /**
      *
@@ -101,6 +108,7 @@ class Fphp
         self::$request = new Request();
         self::$response = new Response();
         self::$uri = new Uri();
+        self::$router = new Router(self::$uri);
         if(self::$config->session['namespace']){
             self::$session = Session::getInstance(
                 self::$config->session['namespace'],

@@ -3,6 +3,7 @@
 namespace FPHP\Http;
 
 use FPHP\Fphp as A;
+use FPHP\Security;
 
 /**
  *
@@ -77,6 +78,12 @@ class Uri
      */
     private $_suffix;
 
+    /**
+     * 
+     * @var string
+     */
+    const DEFAULT_PORT = '80';
+
     public function __construct()
     {
         $this->_setSegments();
@@ -94,7 +101,7 @@ class Uri
         }
         $this->_indexPage = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_BASENAME);
         $this->_baseUrl = str_replace($this->_indexPage, '', $_SERVER['SCRIPT_NAME']);
-        $this->_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : '80';
+        $this->_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : self::DEFAULT_PORT;
         if(strpos($_SERVER['REQUEST_URI'], $this->_baseUrl) !== 0){
             $this->_baseUrl = '/';
         }
@@ -106,24 +113,31 @@ class Uri
             $search[] = $this->_indexPage;
         }
         $uri = str_replace($search, '', $_SERVER['REQUEST_URI']);
-        $uri = '/'.ltrim($uri, '/');
-        $this->_uri = $uri;
-        $this->_suffix = pathinfo($uri, PATHINFO_EXTENSION);
-        $this->_segments = explode('/', $uri);
-
+        $this->_uri = '/'.ltrim($uri, '/');
+        $this->_suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
+        $this->_segments = explode('/', $this->_uri);
+        
+        foreach($this->_segments as &$segment){
+            if(!Security::validUriSegment($segment)){
+                display_error("Invalid URI Format", 400);
+            } else {
+                $segment = Security::filterUriSegment($segment);
+            }
+        }
+        
         $this->_protocol = 'http://';
         if(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'){
             $this->_protocol = 'https://';
         }
 
         $this->_host = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
-        if($this->_port == '80' || $this->_protocol == 'https://'){
+        if($this->_port == self::DEFAULT_PORT || $this->_protocol == 'https://'){
             $this->_baseUrl = $this->_protocol.$this->_host.$this->_baseUrl;
         } else {
             $this->_baseUrl = $this->_protocol.$this->_host.':'.$this->_port.$this->_baseUrl;
         }
 
-        $this->_currentUrl = $this->_baseUrl.ltrim($uri, '/');
+        $this->_currentUrl = $this->_baseUrl.ltrim($this->_uri, '/');
         if(!empty($_SERVER['QUERY_STRING'])){
             $this->_fullUrl = $this->_currentUrl.'?'.$_SERVER['QUERY_STRING'];
         } else {
@@ -277,7 +291,7 @@ class Uri
         if(!$this->isHttps()){
             $url = 'https://'.$this->_host;
             //TODO: what if not port 80
-            // if($this->_port != '80' ){
+            // if($this->_port != self::DEFAULT_PORT ){
             //     $url .= ':'.$this->_port;
             // }
             $url .= $this->_uri;

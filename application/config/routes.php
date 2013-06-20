@@ -8,16 +8,16 @@ $routes = array(
 
     /**
      * Custom url using the following format
-     * :url => :module/:controller/:action
+     * :url => module.controller.action
      *
      * ex.
      * 'routes' => array(
-     *   '/welcome/home' => 'default/index/home'
+     *   '/welcome/home' => 'module.controller.action'
      *  )
      *
      */
     'routes' => array(
-        '/welcome/home' => 'default/index/home'
+        '/welcome/home' => 'module.controller.action'
     ),
 
     /**

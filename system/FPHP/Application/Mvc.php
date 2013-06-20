@@ -215,19 +215,6 @@ class Mvc
 
     /**
      * 
-     * @param array $routes
-     * @return \FPHP\Application\Mvc
-     */
-    public function setRoutes(array $routes)
-    {
-        if($routes){
-            $this->_routes = $routes;
-        }
-        return $this;
-    }
-
-    /**
-     * 
      * @return \FPHP\Application\Http\Request
      */
     public function getAcceptedRequest()
@@ -253,10 +240,13 @@ class Mvc
      */
     public function preDispatch()
     {
+        $route = A::$router->getRoute();
         $module = A::$uri->getSegment(1);
         $controller = A::$uri->getSegment(2);
         $action = A::$uri->getSegment(3);
-        if($module === null){
+        if($route){
+            list($module, $controller, $action) = explode('.', $route);
+        } else if($module === null){
             $module = A::$config->router['default_module'];
             $action = A::$config->router['default_action'];
             $controller = A::$config->router['default_controller'];
@@ -265,7 +255,7 @@ class Mvc
             $controller = $module;
             $module = A::$config->router['default_module'];
         }
-        
+
         // if(A::$config->router['url_suffix']){
         //     if($action && A::$uri->getSuffix() !== A::$config->router['url_suffix']){
         //         A::$response->setBody("404 page")

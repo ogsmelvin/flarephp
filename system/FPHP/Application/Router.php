@@ -33,7 +33,7 @@ class Router
      * 
      * @param array $routes
      */
-    public function __construct(Uri $uri, array $routes = array())
+    public function __construct(Uri &$uri, array $routes = array())
     {
         if($routes){
             $this->addRoutes($routes);
@@ -44,11 +44,12 @@ class Router
     /**
      * 
      * @param string $url
-     * @param string $controller
+     * @param string $method
      * @return \FPHP\Application\Router
      */
-    public function addRoute($url, $controller)
+    public function addRoute($url, $method)
     {
+        $this->_routes[$url] = $method;
         return $this;
     }
 
@@ -57,8 +58,11 @@ class Router
      * @param array $routes
      * @return \FPHP\Application\Router
      */
-    public function addRoutes($routes)
+    public function addRoutes(array $routes)
     {
+        foreach($routes as $key => $route){
+            $this->addRoute($key, $route);
+        }
         return $this;
     }
 
@@ -68,7 +72,13 @@ class Router
      */
     public function getRoute()
     {
-        return $this->_current;
+        $uri = (string) $this->_uri;
+        if(!isset($this->_routes[$uri])){
+            return null;
+        } else {
+
+        }
+        return $this->_routes[$uri];
     }
 
     /**

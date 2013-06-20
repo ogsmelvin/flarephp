@@ -193,12 +193,13 @@ if(!function_exists('display_error')){
     /**
      * 
      * @param string $message
+     * @param int $code
      * @return void
      */
-    function display_error($message)
+    function display_error($message, $code = 500)
     {
         $disp = print_r($message, true);
-        FPHP\Fphp::$response->setCode(500)
+        FPHP\Fphp::$response->setCode($code)
             ->setBody("<pre>{$disp}</pre>")
             ->send();
         exit;

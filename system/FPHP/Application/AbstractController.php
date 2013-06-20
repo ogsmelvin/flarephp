@@ -40,6 +40,12 @@ abstract class AbstractController
 
     /**
      * 
+     * @var \FPHP\Application\Router
+     */
+    protected $router;
+
+    /**
+     * 
      * @var \FPHP\Http\Uri
      */
     protected $uri;
@@ -60,6 +66,7 @@ abstract class AbstractController
         $this->session = & A::$session;
         $this->config = & A::$config;
         $this->uri = & A::$uri;
+        $this->router = & A::$router;
         $this->request = & $request;
         $this->response = & $response;
 
