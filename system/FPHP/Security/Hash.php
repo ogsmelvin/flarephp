@@ -31,12 +31,6 @@ class Hash extends Security;
 
     /**
      * 
-     * @var string $_type
-     */
-    private static $_type = null;
-
-    /**
-     * 
      * @var array
      */
     private static $_supportedAlgosOpenssl = array(
@@ -91,7 +85,7 @@ class Hash extends Security;
         }
         $type = self::getHashSupport($algo);
         if($type){
-            $supportedMethod = '_digest' . ucfirst($type);
+            $supportedMethod = '_digest'.ucfirst($type);
             $result = self::$supportedMethod($algo, $str, $binaryOutput);
         } else {
             dislay_error("{$algo} is not supported by your server");
