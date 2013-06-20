@@ -3,7 +3,7 @@
 namespace FPHP\Db\Sql\Results;
 
 use FPHP\Db\Sql\Query\ARQuery;
-use FPHP\Security;
+use FPHP\Security\Xss;
 use \Exception;
 
 /**
@@ -174,7 +174,7 @@ class Row
     public function getXssClean($field)
     {
         if(isset($this->_data[$field])){
-            return Security::xssClean($this->_data[$field]);
+            return Xss::filter($this->_data[$field]);
         }
         display_error("'{$key}' doesn't exist in the row object");
     }

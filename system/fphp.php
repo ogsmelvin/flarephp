@@ -74,12 +74,11 @@ if(!function_exists('html')){
      * 
      * @author anthony
      * @param string $string
-     * @param int $flag
      * @return string
      */
-    function html($string)
+    function escape($string)
     {
-        return \FPHP\Security::xssClean($string);
+        return \FPHP\Security\Xss::filter($string);
     }
 }
 

@@ -2,8 +2,8 @@
 
 namespace FPHP\Http;
 
+use FPHP\Security\Xss;
 use FPHP\Fphp as A;
-use FPHP\Security;
 
 /**
  *
@@ -43,7 +43,7 @@ class Request
     protected function _filter($var)
     {
         if(is_string($var)){
-            return Security::xssClean($var);
+            return Xss::filter($var);
         }
 
         foreach($var as &$val){

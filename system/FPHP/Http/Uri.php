@@ -2,8 +2,8 @@
 
 namespace FPHP\Http;
 
+use FPHP\Security\Uri as UriSec;
 use FPHP\Fphp as A;
-use FPHP\Security;
 
 /**
  *
@@ -112,18 +112,12 @@ class Uri
         if($this->_indexPage){
             $search[] = $this->_indexPage;
         }
-        $uri = str_replace($search, '', $_SERVER['REQUEST_URI']);
-        $this->_uri = '/'.ltrim($uri, '/');
-        $this->_suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
-        $this->_segments = explode('/', $this->_uri);
-        
-        foreach($this->_segments as &$segment){
-            if(!Security::validUriSegment($segment)){
-                display_error("Invalid URI Format", 400);
-            } else {
-                $segment = Security::filterUriSegment($segment);
-            }
+        $this->_uri = '/'.ltrim(str_replace($search, '', $_SERVER['REQUEST_URI']), '/');
+        $valid = UriSec::validate($this->_uri, $this->_segments);
+        if(!$valid){
+            display_error("Invalid URI Format", 400);
         }
+        $this->_suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
         
         $this->_protocol = 'http://';
         if(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'){
