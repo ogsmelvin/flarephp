@@ -2,7 +2,7 @@
 
 namespace FPHP\Http;
 
-use FPHP\Security;
+use FPHP\Security\Hash;
 use \Exception;
 
 /**
@@ -245,7 +245,7 @@ class File
      * @param string $path
      * @return boolean
      */
-    public static function createFromBase64($base64String, $path)
+    public static function fromString($base64String, $path)
     {
         $result = false;
         $source = explode(',', $base64String, 2);
@@ -259,7 +259,7 @@ class File
         $createpath = $createpath !== false ? rtrim(str_replace("\\", "/", $createpath), "/") : rtrim($path, "/");
         
         if(@is_dir($createpath) === true){
-            $filename = Security::hash($source[1]).'.'.end($ext);
+            $filename = Hash::create($source[1]).'.'.end($ext);
             $createpath .= '/'.$filename;
         } else {
             $filename = pathinfo($createpath, PATHINFO_FILENAME);

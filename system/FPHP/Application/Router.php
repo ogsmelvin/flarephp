@@ -76,7 +76,7 @@ class Router
         if(!isset($this->_routes[$uri])){
             return null;
         } else {
-
+            
         }
         return $this->_routes[$uri];
     }
