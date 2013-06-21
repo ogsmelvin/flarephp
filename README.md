@@ -1,4 +1,4 @@
-Fried PHP
+Flare PHP
 ===
 
-Fried PHP is a framework that supports mash ups.
+Flare PHP is a framework that supports mash ups.
