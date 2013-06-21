@@ -2,6 +2,10 @@
 
 namespace FPHP\Security;
 
+if(!function_exists('mcrypt_encrypt')){
+    display_error('FPHP\Security\Crypt requires mcrypt library');
+}
+
 use FPHP\Security;
 
 /**
@@ -13,26 +17,15 @@ class Crypt extends Security
 {
     /**
      * 
-     * @param string $key
+     * @param string $str
      * @param string $key
      * @param string $cipher
      * @param string $mode
      * @return string
      */
-    public static function encode($str, $key, $cipher = null, $mode = null)
+    public static function encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
     {
-        if(!function_exists('mcrypt_encrypt')){
-            display_error("Security::encrypt requires mcrypt library");
-        }
-
         $result = null;
-        if(empty($cipher)){
-            $cipher = MCRYPT_RIJNDAEL_256;
-        }
-        if(empty($mode)){
-            $mode = MCRYPT_MODE_CBC;
-        }
-
         $key = pack('H*', $key);
         $iv_size = mcrypt_get_iv_size($cipher, $mode);
         if($iv_size){
@@ -52,20 +45,9 @@ class Crypt extends Security
      * @param string $mode
      * @return string
      */
-    public static function decode($str, $key, $cipher = null, $mode = null)
+    public static function decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
     {
-        if(!function_exists('mcrypt_decrypt')){
-            display_error("Security::decrypt requires mcrypt library");
-        }
-
         $result = null;
-        if(empty($cipher)){
-            $cipher = MCRYPT_RIJNDAEL_256;
-        }
-        if(empty($mode)){
-            $mode = MCRYPT_MODE_CBC;
-        }
-
         $key = pack('H*', $key);
         $iv_size = mcrypt_get_iv_size($cipher, $mode);
         if($iv_size){

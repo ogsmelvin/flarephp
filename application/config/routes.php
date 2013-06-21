@@ -21,19 +21,14 @@ $routes = array(
     ),
 
     /**
-     * If you want to set your own error controllers
-     * :module => :controller
-     * this will automatically use 'errorAction' method
-     * Just extend 'ErrorController'
-     * and override 'errorAction' method.
-     *
-     * ex.
-     * 'error_controllers' => array(
-     *   'default' => 'myerror'
-     *  )
-     *
+     * 
+     * to use the built in just leave the value blank
+     * statusCode => 'module.controller.action'
      */
-    'error_controllers' => array(),
+    'error_controllers' => array(
+        404 => 'module.controller.action',
+        500 => 'module.controller.action'
+    ),
 
     /**
      * Default module, controller and action

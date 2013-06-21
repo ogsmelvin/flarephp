@@ -185,10 +185,29 @@ class Response
      */
     public function redirect($url, $code = 302)
     {
-        if(parse_url($url, PHP_URL_HOST) === null){
+        if(parse_url($url, PHP_URL_SCHEME) === null){
             $url = A::$uri->getBaseUrl().ltrim($url, '/');
         }
         $this->setRedirect($url, $code)->send(false);
+    }
+
+    /**
+     * 
+     * @param int $seconds
+     * @param string $url
+     * @return void
+     */
+    public function setRefresh($seconds = 0, $url = null)
+    {
+        if(is_string($seconds)){
+            $seconds = (int) $seconds;
+        }
+        if(!$url){
+            $url = A::$uri->getCurrentUrl();
+        } else if(parse_url($url, PHP_URL_SCHEME) === null){
+            $url = A::$uri->getBaseUrl().ltrim($url, '/');
+        }
+        $this->setHeader('Refresh', '{$seconds};url="{$url}"');
     }
 
     /**

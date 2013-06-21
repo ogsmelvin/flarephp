@@ -15,7 +15,7 @@ class Uri extends Security
      * 
      * @var string
      */
-    const INVALID_URI_CHARS = "a-z 0-9~%.:_\-";
+    const INVALID_URI_CHARS = 'a-z 0-9~%.:_\-';
 
     /**
      * 
