@@ -2,6 +2,7 @@
 
 namespace FPHP\Http;
 
+use FPHP\Security\File as FileSec;
 use FPHP\Security\Hash;
 use \Exception;
 
@@ -86,7 +87,7 @@ class File
         $this->_type = $type;
         $this->_error = $error;
         $this->_size = $size;
-        $this->_filename = self::cleanFilename($filename);
+        $this->_filename = FileSec::sanitizeFilename($filename, false);
         $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
     }
 
@@ -240,7 +241,6 @@ class File
 
     /**
      * 
-     * @param string $objID
      * @param string $base64String
      * @param string $path
      * @return boolean
@@ -333,32 +333,5 @@ class File
     public static function getUploadConfig()
     {
         return self::$_config;
-    }
-
-    /**
-     * Clean the file name for security
-     *
-     * @param   string
-     * @return  string
-     */
-    public static function cleanFilename($filename)
-    {
-        $bad = array("<!--", "-->", "'", "<", ">", '"', '&', '$', '=', ';', '?',
-                    '/', "%20", "%22",
-                    "%3c",      // <
-                    "%253c",    // <
-                    "%3e",      // >
-                    "%0e",      // >
-                    "%28",      // (
-                    "%29",      // )
-                    "%2528",    // (
-                    "%26",      // &
-                    "%24",      // $
-                    "%3f",      // ?
-                    "%3b",      // ;
-                    "%3d"       // =
-                );
-        $filename = str_replace($bad, '', $filename);
-        return stripslashes($filename);
     }
 }

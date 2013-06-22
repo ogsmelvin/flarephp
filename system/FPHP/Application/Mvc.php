@@ -5,6 +5,7 @@ namespace FPHP\Application;
 use FPHP\Application\Http\Request;
 use FPHP\Application\Data;
 use FPHP\UI\Javascript;
+use \ReflectionMethod;
 use FPHP\UI\Html;
 use FPHP\Fphp as A;
 use \Exception;
@@ -93,6 +94,12 @@ class Mvc
      * @var boolean
      */
     private $_dispatched = false;
+
+    /**
+     * 
+     * @var array
+     */
+    private $_actionParams = array();
 
     /**
      * 
@@ -285,10 +292,7 @@ class Mvc
             .strtolower(urldecode($controller))
             .'.php';
         if(!file_exists($path)){
-            A::$response->setBody("404 page")
-                ->setCode(404)
-                ->send();
-            exit;
+            display_error('404 Page', 404);
         }
 
         require $this->_modulesDirectory.$this->_request->getModule().'/bootstrap.php';
@@ -296,10 +300,22 @@ class Mvc
         $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getControllerClassName();
         $this->_controller = new $controller($this->_request, A::$response);
         if(!method_exists($this->_controller, $this->_request->getAction())){
-            A::$response->setBody("404 page")
-                ->setCode(404)
-                ->send();
-            exit;
+            display_error('404 Page', 404);
+        } else {
+            $method = new ReflectionMethod($this->_controller, $this->_request->getAction());
+            if($method->getNumberOfParameters()){
+                $segmentCount = A::$uri->getSegmentCount();
+                $indexStart = 3;
+                if($segmentCount > 3){
+                    $indexStart = 4;
+                }
+                foreach(range($indexStart, $segmentCount) as $index){
+                    $this->_actionParams[] = A::$uri->getSegment($index);
+                }
+                if(count($this->_actionParams) !== $method->getNumberOfParameters()){
+                    display_error('404 Page', 404);
+                }
+            }
         }
         return $this;
     }

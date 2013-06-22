@@ -237,7 +237,11 @@ class Uri
      */
     public function getSegmentCount()
     {
-        return count($this->_segments);
+        $length = count($this->_segments);
+        if(empty($this->_segments[$length - 1])){
+            $length--;
+        }
+        return --$length;
     }
 
     /**

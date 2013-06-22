@@ -72,13 +72,12 @@ class Router
      */
     public function getRoute()
     {
+        $route = null;
         $uri = (string) $this->_uri;
-        if(!isset($this->_routes[$uri])){
-            return null;
-        } else {
-            
+        if(isset($this->_routes[$uri])){
+            $route = $this->_routes[$uri];
         }
-        return $this->_routes[$uri];
+        return $route;
     }
 
     /**

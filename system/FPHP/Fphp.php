@@ -108,7 +108,13 @@ class Fphp
         self::$request = new Request();
         self::$response = new Response();
         self::$uri = new Uri();
-        self::$router = new Router(self::$uri);
+        
+        $routes = array();
+        if(self::$config->router['routes']){
+            $routes = self::$config->router['routes'];
+        }
+        self::$router = new Router(self::$uri, $routes);
+
         if(self::$config->session['namespace']){
             self::$session = Session::getInstance(
                 self::$config->session['namespace'],

@@ -11,7 +11,13 @@ use FPHP\Security;
  */
 class File extends Security
 {
-    public static function sanitizeFilename($filename)
+    /**
+     * 
+     * @param string $filename
+     * @param boolean $relativepath
+     * @return string
+     */
+    public static function sanitizeFilename($filename, $relativepath = false)
     {
         $bad = array("<!--", "-->", "'", "<", ">", '"', '&', '$', '=', ';', '?',
                     '/', "%20", "%22",
@@ -28,9 +34,11 @@ class File extends Security
                     "%3b",      // ;
                     "%3d"       // =
                 );
-
-        
-        $filename = str_replace($bad, '', $filename);
-        return stripslashes($filename);
+        if(!$relativepath){
+            $bad[] = './';
+            $bad[] = '/';
+        }
+        $filename = self::removeInvisibleChars($filename, false);
+        return stripslashes(str_replace($bad, '', $filename));
     }
 }
