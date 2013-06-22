@@ -36,7 +36,7 @@ $config['memory_limit'] = null;
  * 
  * @var boolean
  */
-$config['auto_xss_filtering'] = false;
+$config['auto_xss_filter'] = false;
 
 /**
  * 

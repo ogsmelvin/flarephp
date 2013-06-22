@@ -3,7 +3,7 @@
 namespace FPHP\Application\Db\Sql;
 
 use FPHP\Application\Model as ParentModel;
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 use \Exception;
 
 /**

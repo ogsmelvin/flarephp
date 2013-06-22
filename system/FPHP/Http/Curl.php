@@ -4,7 +4,7 @@ namespace FPHP\Http;
 
 use FPHP\Objects\Json;
 use FPHP\Objects\Xml;
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 use \Exception;
 
 if(!function_exists('curl_init')){

@@ -4,7 +4,8 @@ namespace FPHP\Application;
 
 use FPHP\Application\Http\Request;
 use FPHP\Http\Response;
-use FPHP\Fphp as A;
+use FPHP\Security\Xss;
+use FPHP\Fphp as F;
 use \Exception;
 
 /**
@@ -63,10 +64,10 @@ abstract class AbstractController
      */
     public function __construct(Request &$request, Response &$response)
     {
-        $this->session = & A::$session;
-        $this->config = & A::$config;
-        $this->uri = & A::$uri;
-        $this->router = & A::$router;
+        $this->session = & F::$session;
+        $this->config = & F::$config;
+        $this->uri = & F::$uri;
+        $this->router = & F::$router;
         $this->request = & $request;
         $this->response = & $response;
 
@@ -103,7 +104,7 @@ abstract class AbstractController
             $shortKey = $service;
         }
         if(!isset($this->_services[$shortKey])){
-            if(A::service($service)){
+            if(F::service($service)){
                 $this->_services[$shortKey] = $service;
             } else {
                 display_error("Error initializing service '{$service}'");
@@ -121,47 +122,83 @@ abstract class AbstractController
         if(!isset($this->_services[$service])){
             display_error("'{$service}' was not set");
         }
-        return A::service($this->_services[$service]);
+        return F::service($this->_services[$service]);
     }
 
     /**
      * 
      * @param string $key
+     * @param boolean $xss
      * @return mixed
      */
-    public function getPost($key = null)
+    public function getPost($key = null, $xss = null)
     {
-        return $this->request->post($key);
+        $value = $this->request->post($key);
+        if($xss === null){
+            if($this->config->get('auto_xss_filter') && $value){
+                return Xss::filter($value);
+            }
+        } else if($value){
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
     }
 
     /**
      * 
      * @param string $key
+     * @param boolean $xss
      * @return mixed
      */
-    public function getRequest($key = null)
+    public function getRequest($key = null, $xss = null)
     {
-        return $this->request->request($key);
+        $value = $this->request->request($key);
+        if($xss === null){
+            if($this->config->get('auto_xss_filter') && $value){
+                return Xss::filter($value);
+            }
+        } else if($value){
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
     }
 
     /**
      * 
      * @param string $key
+     * @param boolean $xss
      * @return mixed
      */
-    public function getQuery($key = null)
+    public function getQuery($key = null, $xss = null)
     {
-        return $this->request->get($key);
+        $value = $this->request->get($key);
+        if($xss === null){
+            if($this->config->get('auto_xss_filter') && $value){
+                return Xss::filter($value);
+            }
+        } else if($value){
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
     }
 
     /**
      * 
      * @param string $key
+     * @param boolean $xss
      * @return mixed
      */
-    public function getServer($key = null)
+    public function getServer($key = null, $xss = null)
     {
-        return $this->request->server($key);
+        $value = $this->request->server($key);
+        if($xss === null){
+            if($this->config->get('auto_xss_filter') && $value){
+                return Xss::filter($value);
+            }
+        } else if($value){
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
     }
 
     /**
@@ -171,7 +208,7 @@ abstract class AbstractController
      */
     public function setDb($key = 'default')
     {
-        $this->db = & A::db($key);
+        $this->db = & F::db($key);
     }
 
     /**
@@ -181,7 +218,7 @@ abstract class AbstractController
      */
     public function setHelper($helper)
     {
-        A::mvc()->helper($helper);
+        F::mvc()->helper($helper);
     }
 
     /**
@@ -193,7 +230,7 @@ abstract class AbstractController
     {
         $tmpKey = strtolower($key);
         if(!isset($this->{$tmpKey})){
-            $ns = & A::ns($key);
+            $ns = & F::ns($key);
             if(!$ns){
                 display_error("Initialize nosql '{$key}' failed");
             }
@@ -204,11 +241,23 @@ abstract class AbstractController
     /**
      * 
      * @param boolean $switch
-     * @return void
+     * @return \FPHP\Application\AbstractController
      */
     public function setAutoLayout($switch)
     {
         $this->config->set('layout.'.$this->request->getModule().'.auto', $switch);
+        return $this;
+    }
+
+    /**
+     * 
+     * @param boolean $switch
+     * @return \FPHP\Application\AbstractController
+     */
+    public function setAutoXssFilter($switch)
+    {
+        $this->config->set('auto_xss_filter', $switch);
+        return $this;
     }
 
     /**
@@ -220,7 +269,7 @@ abstract class AbstractController
      */
     public function view($path, $data = null, $layout = null)
     {
-        return A::mvc()->view($path, $data, $layout);
+        return F::mvc()->view($path, $data, $layout);
     }
 
     /**
@@ -229,7 +278,7 @@ abstract class AbstractController
      */
     public function getAppDirectory()
     {
-        return A::mvc()->getAppDirectory();
+        return F::mvc()->getAppDirectory();
     }
 
     /**

@@ -2,11 +2,11 @@
 
 namespace FPHP\UI\Html;
 
-use FPHP\FPHP as A;
+use FPHP\FPHP as F;
 use \Exception;
 
 if(!function_exists('fphp_encrypt')){
-    A::mvc()->helper('encrypt');
+    F::mvc()->helper('encrypt');
 }
 
 /**
@@ -121,7 +121,7 @@ class Form
         }
         $this->_name = $name;
         $this->_method = $method;
-        $this->_data = A::$request->{$method}($name, array());
+        $this->_data = F::$request->{$method}($name, array());
         $this->_createToken();
     }
 
@@ -133,11 +133,11 @@ class Form
     private function _createToken($change = false)
     {
         $this->_tokenKey = '_FPHP_form_token_'.$this->_name;
-        if(!isset(A::$session->{$this->_tokenKey}) || $change === true){
+        if(!isset(F::$session->{$this->_tokenKey}) || $change === true){
             $this->_token = md5(uniqid());
-            A::$session->{$this->_tokenKey} = $this->_token;
+            F::$session->{$this->_tokenKey} = $this->_token;
         } else {
-            $this->_token = A::$session->{$this->_tokenKey};
+            $this->_token = F::$session->{$this->_tokenKey};
         }
         return;
     }
@@ -179,7 +179,7 @@ class Form
      */
     public function clearToken()
     {
-        unset(A::$session->{$this->_tokenKey}, $this->_token);
+        unset(F::$session->{$this->_tokenKey}, $this->_token);
         return $this;
     }
 
@@ -286,7 +286,7 @@ class Form
      */
     public function isAjax()
     {
-        return A::$request->isAjax();
+        return F::$request->isAjax();
     }
 
     /**
@@ -452,7 +452,7 @@ class Form
             $this->_errorInfo['__token'] = 'Invalid token';
             return false;
         }
-        if(strpos(A::$request->server('HTTP_REFERER'), A::$uri->getBaseUrl()) !== 0){
+        if(strpos(F::$request->server('HTTP_REFERER'), F::$uri->getBaseUrl()) !== 0){
             $this->_errorInfo['__token'] = 'Invalid referer';
             return false;
         }

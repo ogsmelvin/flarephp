@@ -7,7 +7,7 @@ use FPHP\Application\Data;
 use FPHP\UI\Javascript;
 use \ReflectionMethod;
 use FPHP\UI\Html;
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 use \Exception;
 
 /**
@@ -186,8 +186,8 @@ class Mvc
     public function setModules($modules)
     {
         $this->_modulesList = $modules;
-        if(!in_array(A::$config->router['default_module'], $this->_modulesList)){
-            $this->_modulesList[] = A::$config->router['default_module'];
+        if(!in_array(F::$config->router['default_module'], $this->_modulesList)){
+            $this->_modulesList[] = F::$config->router['default_module'];
         }
         return $this;
     }
@@ -247,39 +247,39 @@ class Mvc
      */
     public function preDispatch()
     {
-        $route = A::$router->getRoute();
-        $module = A::$uri->getSegment(1);
-        $controller = A::$uri->getSegment(2);
-        $action = A::$uri->getSegment(3);
+        $route = F::$router->getRoute();
+        $module = F::$uri->getSegment(1);
+        $controller = F::$uri->getSegment(2);
+        $action = F::$uri->getSegment(3);
         if($route){
             list($module, $controller, $action) = explode('.', $route);
         } else if($module === null){
-            $module = A::$config->router['default_module'];
-            $action = A::$config->router['default_action'];
-            $controller = A::$config->router['default_controller'];
+            $module = F::$config->router['default_module'];
+            $action = F::$config->router['default_action'];
+            $controller = F::$config->router['default_controller'];
         } else if(!in_array($module, $this->_modulesList)){
             $action = $controller;
             $controller = $module;
-            $module = A::$config->router['default_module'];
+            $module = F::$config->router['default_module'];
         }
 
-        // if(A::$config->router['url_suffix']){
-        //     if($action && A::$uri->getSuffix() !== A::$config->router['url_suffix']){
-        //         A::$response->setBody("404 page")
+        // if(F::$config->router['url_suffix']){
+        //     if($action && F::$uri->getSuffix() !== F::$config->router['url_suffix']){
+        //         F::$response->setBody("404 page")
         //             ->setCode(404)
         //             ->send();
         //         exit;
         //     }
 
-        //     $action = rtrim($action, '.'.A::$config->router['url_suffix']);
+        //     $action = rtrim($action, '.'.F::$config->router['url_suffix']);
         // }
 
-        $controller = $controller === null ? A::$config->router['default_controller'] : $controller;
-        $action = $action === null ? A::$config->router['default_action'] : $action;
+        $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
+        $action = $action === null ? F::$config->router['default_action'] : $action;
 
         $this->_request = new Request();
-        if(A::$config->auto_xss_filtering){
-            $this->_request->setAutoFilter(true);
+        if(F::$config->auto_xss_filtering){
+            $this->_request->setAutoXssFilter(true);
         }
         $this->_request->setModule($module)
             ->setController($controller)
@@ -298,19 +298,19 @@ class Mvc
         require $this->_modulesDirectory.$this->_request->getModule().'/bootstrap.php';
         require $path;
         $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getControllerClassName();
-        $this->_controller = new $controller($this->_request, A::$response);
+        $this->_controller = new $controller($this->_request, F::$response);
         if(!method_exists($this->_controller, $this->_request->getAction())){
             display_error('404 Page', 404);
         } else {
             $method = new ReflectionMethod($this->_controller, $this->_request->getAction());
             if($method->getNumberOfParameters()){
-                $segmentCount = A::$uri->getSegmentCount();
+                $segmentCount = F::$uri->getSegmentCount();
                 $indexStart = 3;
                 if($segmentCount > 3){
                     $indexStart = 4;
                 }
                 foreach(range($indexStart, $segmentCount) as $index){
-                    $this->_actionParams[] = A::$uri->getSegment($index);
+                    $this->_actionParams[] = F::$uri->getSegment($index);
                 }
                 if(count($this->_actionParams) !== $method->getNumberOfParameters()){
                     display_error('404 Page', 404);
@@ -338,21 +338,21 @@ class Mvc
         $this->_controller->preDispatch();
         $view = $this->_controller->{$this->_request->getAction()}();
 
-        if(!A::$response->hasContentType()){
+        if(!F::$response->hasContentType()){
             if($view instanceof Html){
-                A::$response->setContentType('text/html');
+                F::$response->setContentType('text/html');
             } else if($view instanceof \FPHP\Objects\Xml){
                 $view = $view->asXml();
-                A::$response->setContentType('text/xml');
+                F::$response->setContentType('text/xml');
             } else if($view instanceof \FPHP\Objects\Json){
-                A::$response->setContentType('application/json');
+                F::$response->setContentType('application/json');
             } else if($view instanceof \FPHP\Objects\Image){
                 //TODO
             }
         }
         
         $this->_controller->postDispatch();
-        A::$response->setBody($view)->send();
+        F::$response->setBody($view)->send();
         $this->_controller->complete();
         $this->_dispatched = true;
     }
@@ -368,11 +368,11 @@ class Mvc
     {
         $module = $this->_request->getModule();
         if($layout === null 
-            && isset(A::$config->layout[$module]) 
-            && A::$config->layout[$module]['auto'])
+            && isset(F::$config->layout[$module]) 
+            && F::$config->layout[$module]['auto'])
         {
             $layout = $this->_layoutsDirectory
-                .A::$config->layout[$module]['layout'].'_layout.php';
+                .F::$config->layout[$module]['layout'].'_layout.php';
         } else if($layout !== false && $layout !== null){
             $layout = $this->_layoutsDirectory.$layout.'_layout.php';
         }
@@ -387,11 +387,11 @@ class Mvc
             throw new Exception("{$path} not found");
         }
         $html = new Html($path);
-        $html->set('uri', A::$uri)
+        $html->set('uri', F::$uri)
             ->set('request', $this->_request)
-            ->set('session', A::$session)
+            ->set('session', F::$session)
             ->set('js', new Javascript())
-            ->set('config', A::$config);
+            ->set('config', F::$config);
         if($data === null){
             $data = new Data();
         } else if(!($data instanceof Data) && is_array($data)){
@@ -439,8 +439,8 @@ class Mvc
         } else if(!$this->_appDirectory){
             throw new Exception("App Directory and System Directory must be set");
         }
-        A::init(require $this->_appDirectory.'config/config.php');
-        $this->setModules(A::$config->modules)
+        F::init(require $this->_appDirectory.'config/config.php');
+        $this->setModules(F::$config->modules)
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setModelsDirectory('models')
             ->setHelpersDirectory($this->_appDirectory.'helpers')

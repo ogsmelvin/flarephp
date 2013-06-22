@@ -3,6 +3,7 @@
 namespace FPHP\Application\Http;
 
 use FPHP\Http\Request as ParentRequest;
+use FPHP\Security\Xss;
 
 /**
  * 

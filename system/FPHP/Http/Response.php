@@ -2,7 +2,7 @@
 
 namespace FPHP\Http;
 
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 
 /**
  *
@@ -186,7 +186,7 @@ class Response
     public function redirect($url, $code = 302)
     {
         if(parse_url($url, PHP_URL_SCHEME) === null){
-            $url = A::$uri->getBaseUrl().ltrim($url, '/');
+            $url = F::$uri->getBaseUrl().ltrim($url, '/');
         }
         $this->setRedirect($url, $code)->send(false);
     }
@@ -203,9 +203,9 @@ class Response
             $seconds = (int) $seconds;
         }
         if(!$url){
-            $url = A::$uri->getCurrentUrl();
+            $url = F::$uri->getCurrentUrl();
         } else if(parse_url($url, PHP_URL_SCHEME) === null){
-            $url = A::$uri->getBaseUrl().ltrim($url, '/');
+            $url = F::$uri->getBaseUrl().ltrim($url, '/');
         }
         $this->setHeader('Refresh', '{$seconds};url="{$url}"');
     }

@@ -3,7 +3,7 @@
 namespace FPHP\Http;
 
 use FPHP\Security\Uri as UriSec;
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 
 /**
  *
@@ -296,7 +296,7 @@ class Uri
             if(!empty($_SERVER['QUERY_STRING'])){
                 $url .= '?'.$_SERVER['QUERY_STRING'];
             }
-            A::$response->redirect($url, $code);
+            F::$response->redirect($url, $code);
         }
         return;
     }
@@ -308,8 +308,8 @@ class Uri
     public function getModuleUrl()
     {
         if(!$this->_moduleUrl){
-            $this->_moduleUrl = A::mvc()->getAcceptedRequest()->getModule();
-            if($this->_moduleUrl !== A::$config->router['default_module']){
+            $this->_moduleUrl = F::mvc()->getAcceptedRequest()->getModule();
+            if($this->_moduleUrl !== F::$config->router['default_module']){
                 $this->_moduleUrl .= '/';
             }
             $this->_moduleUrl = $this->_baseUrl.$this->_moduleUrl;

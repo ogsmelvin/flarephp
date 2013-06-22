@@ -3,6 +3,6 @@
 $appDirectory = dirname(dirname(__FILE__));
 
 require $appDirectory.'/system/fphp.php';
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 
-A::mvc()->setAppDirectory($appDirectory.'/application')->start();
+F::mvc()->setAppDirectory($appDirectory.'/application')->start();

@@ -2,10 +2,10 @@
 
 namespace FPHP\UI;
 
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 
 if(!function_exists('http_build_url')){
-    A::mvc()->helper('url');
+    F::mvc()->helper('url');
 }
 
 /**
