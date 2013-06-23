@@ -96,7 +96,7 @@ abstract class AbstractController
      * 
      * @param string $service
      * @param string $shortKey
-     * @return void
+     * @return \FPHP\Application\AbstractController
      */
     public function setService($service, $shortKey = null)
     {
@@ -110,6 +110,7 @@ abstract class AbstractController
                 display_error("Error initializing service '{$service}'");
             }
         }
+        return $this;
     }
 
     /**
@@ -128,7 +129,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @param boolean $xss
+     * @param boolean|null $xss
      * @return mixed
      */
     public function getPost($key = null, $xss = null)
@@ -147,7 +148,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @param boolean $xss
+     * @param boolean|null $xss
      * @return mixed
      */
     public function getRequest($key = null, $xss = null)
@@ -166,7 +167,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @param boolean $xss
+     * @param boolean|null $xss
      * @return mixed
      */
     public function getQuery($key = null, $xss = null)
@@ -185,7 +186,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @param boolean $xss
+     * @param boolean|null $xss
      * @return mixed
      */
     public function getServer($key = null, $xss = null)
@@ -204,27 +205,29 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @return void
+     * @return \FPHP\Application\AbstractController
      */
     public function setDb($key = 'default')
     {
         $this->db = & F::db($key);
+        return $this;
     }
 
     /**
      * 
      * @param string $helper
-     * @return void
+     * @return \FPHP\Application\AbstractController
      */
     public function setHelper($helper)
     {
         F::mvc()->helper($helper);
+        return $this;
     }
 
     /**
      * 
      * @param string $key
-     * @return void
+     * @return \FPHP\Application\AbstractController
      */
     public function setNosql($key)
     {
@@ -236,6 +239,7 @@ abstract class AbstractController
             }
             $this->{$tmpKey} = & $ns;
         }
+        return $this;
     }
 
     /**
