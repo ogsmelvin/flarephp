@@ -656,7 +656,7 @@ class ARQuery
             unset($newRow);
             $stmt = null;
         } catch(PDOException $ex) {
-            display_error($ex->getMessage());
+            display_error(500, $ex->getMessage());
         }
         return $result;
     }
@@ -712,7 +712,7 @@ class ARQuery
             $stmt = null;
             unset($row);
         } catch(PDOException $ex) {
-            display_error($ex->getMessage());
+            display_error(500, $ex->getMessage());
         }
         return $result;
     }
@@ -757,7 +757,7 @@ class ARQuery
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt = null;
         } catch(PDOException $ex) {
-            display_error($ex->getMessage());
+            display_error(500, $ex->getMessage());
         }
         return $result;
     }
@@ -776,7 +776,7 @@ class ARQuery
             $result = $stmt->fetchAll(PDO::FETCH_OBJ);
             $stmt = null;
         } catch(PDOException $ex) {
-            display_error($ex->getMessage());
+            display_error(500, $ex->getMessage());
         }
         return $result;
     }
@@ -799,7 +799,7 @@ class ARQuery
             $stmt = null;
             unset($row);
         } catch(PDOException $ex) {
-            display_error($ex->getMessage());
+            display_error(500, $ex->getMessage());
         }
         return $result;
     }
@@ -937,7 +937,7 @@ class ARQuery
             }
             $stmt = null;
         } catch(PDOException $ex) {
-            display_error($ex->getMessage());
+            display_error(500, $ex->getMessage());
         }
         return $return;
     }

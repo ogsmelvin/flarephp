@@ -57,7 +57,7 @@ class Model extends ParentModel
         if(isset(self::appInstance()->db)){
             $this->_adapter = & self::appInstance()->db;
         } else {
-            display_error("No database connection");
+            display_error(500, "No database connection");
         }
         if(empty(static::$primaryKey)){
             static::$primaryKey = $this->_adapter->getPrimaryKey(static::$table);

@@ -3,7 +3,7 @@
 namespace FPHP\Objects;
 
 if(!extension_loaded('gd') || !function_exists('gd_info')){
-    display_error("GD Library is not supported");
+    display_error(500, "GD Library is not supported");
 }
 
 use \Exception;
@@ -76,10 +76,10 @@ class Image
             } else if($this->_imageType == IMAGETYPE_PNG){
                 $this->_image = imagecreatefrompng($filename);
             } else {
-                display_error("Can't load image, not supported image type");
+                display_error(500, "Can't load image, not supported image type");
             }
         } else {
-            display_error("Not a valid image type");
+            display_error(500, "Not a valid image type");
         }
     }
 

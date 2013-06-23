@@ -191,16 +191,26 @@ if(!function_exists('display_error')){
 
     /**
      * 
-     * @param string $message
      * @param int $code
+     * @param string $message
      * @return void
      */
-    function display_error($message, $code = 500)
+    function display_error($code, $message = '')
     {
-        $disp = print_r($message, true);
-        FPHP\Fphp::$response->setCode($code)
-            ->setBody("<pre>{$disp}</pre>")
-            ->send();
+        if($message){
+            FPHP\Fphp::$response->setCode($code)
+                ->setBody("<pre>{$message}</pre>")
+                ->send();
+        } else if(isset(FPHP\Http\Response::$messages[$code])){
+            $disp = print_r(FPHP\Http\Response::$messages[$code], true);
+            FPHP\Fphp::$response->setCode($code)
+                ->setBody("<pre>{$disp}</pre>")
+                ->send();
+        } else {
+            FPHP\Fphp::$response->setCode(500)
+                ->setBody("<pre>Unrecognized Error Code</pre>")
+                ->send();
+        }
         exit;
     }
 }
@@ -218,7 +228,7 @@ if(!function_exists('_fphp_show_error')){
      */
     function _fphp_show_error($errno, $errstr, $errfile, $errline, $errcontext)
     {
-        display_error('Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
+        display_error(500, 'Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
     }
 }
 

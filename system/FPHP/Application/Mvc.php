@@ -265,7 +265,7 @@ class Mvc
 
         // if(F::$config->router['url_suffix']){
         //     if($action && F::$uri->getSuffix() !== F::$config->router['url_suffix']){
-        //         display_error('404 Page', 404);
+        //         display_error(404);
         //     }
 
         //     $action = rtrim($action, '.'.F::$config->router['url_suffix']);
@@ -286,7 +286,7 @@ class Mvc
             .strtolower(urldecode($controller))
             .'.php';
         if(!file_exists($path)){
-            display_error('404 Page', 404);
+            display_error(404);
         }
 
         require $this->_modulesDirectory.$this->_request->getModule().'/bootstrap.php';
@@ -294,7 +294,7 @@ class Mvc
         $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getControllerClassName();
         $this->_controller = new $controller($this->_request, F::$response);
         if(!method_exists($this->_controller, $this->_request->getActionMethodName())){
-            display_error('404 Page', 404);
+            display_error(404);
         } else {
             $method = new ReflectionMethod($this->_controller, $this->_request->getActionMethodName());
             $segmentCount = F::$uri->getSegmentCount();
@@ -306,23 +306,23 @@ class Mvc
                         $indexStart = 4;
                     }
                 } else {
-                    display_error('404 Page', 404);
+                    display_error(404);
                 }
                 if($segmentCount < $indexStart){
-                    display_error('404 Page', 404);
+                    display_error(404);
                 }
                 foreach(range($indexStart, $segmentCount) as $index){
                     $this->_actionParams[] = F::$uri->getSegment($index);
                 }
                 if(count($this->_actionParams) !== $method->getNumberOfRequiredParameters()){
-                    display_error('404 Page', 404);
+                    display_error(404);
                 }
             } else {
                 if($firstSegment && in_array($firstSegment, $this->_modulesList)){
                     $indexStart = 4;
                 }
                 if($segmentCount >= $indexStart){
-                    display_error('404 Page', 404);
+                    display_error(404);
                 }
             }
         }

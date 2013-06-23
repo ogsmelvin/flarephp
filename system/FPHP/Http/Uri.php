@@ -115,7 +115,7 @@ class Uri
         $this->_uri = '/'.ltrim(str_replace($search, '', $_SERVER['REQUEST_URI']), '/');
         $valid = UriSec::validate($this->_uri, $this->_segments);
         if(!$valid){
-            display_error("Invalid URI Format", 400);
+            display_error(400);
         }
         $this->_suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
         

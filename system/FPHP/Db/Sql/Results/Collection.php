@@ -175,7 +175,7 @@ class Collection extends ArrayObject
                 $callback($key, $row);
             }
         } else {
-            display_error("param must be callable");
+            display_error(500, "param must be callable");
         }
     }
 

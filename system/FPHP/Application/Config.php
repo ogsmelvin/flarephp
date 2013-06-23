@@ -104,7 +104,7 @@ class Config
         $conf = & $tmpConf;
         foreach($key as $k){
             if(isset($conf[$k])) $conf = & $conf[$k];
-            else display_error("'{$key}' doesn't exists in config");
+            else display_error(500, "'{$key}' doesn't exists in config");
         }
         $conf = $value;
         $this->_config = $tmpConf;
@@ -123,7 +123,7 @@ class Config
         $conf = $this->_config;
         foreach($key as $k){
             if(isset($conf[$k])) $conf = $conf[$k];
-            else display_error("'{$key}' doesn't exists in config");
+            else display_error(500, "'{$key}' doesn't exists in config");
         }
         return $conf;
     }

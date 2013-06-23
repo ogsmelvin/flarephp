@@ -22,7 +22,7 @@ class Log
     public function __construct($path)
     {
         // if(!is_file($path)){
-        //     display_error("{$path} is not a file");
+        //     display_error(500, "{$path} is not a file");
         // }
         $this->_path = $path;
     }
