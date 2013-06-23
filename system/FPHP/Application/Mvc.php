@@ -265,10 +265,7 @@ class Mvc
 
         // if(F::$config->router['url_suffix']){
         //     if($action && F::$uri->getSuffix() !== F::$config->router['url_suffix']){
-        //         F::$response->setBody("404 page")
-        //             ->setCode(404)
-        //             ->send();
-        //         exit;
+        //         display_error('404 Page', 404);
         //     }
 
         //     $action = rtrim($action, '.'.F::$config->router['url_suffix']);
@@ -278,9 +275,6 @@ class Mvc
         $action = $action === null ? F::$config->router['default_action'] : $action;
 
         $this->_request = new Request();
-        if(F::$config->auto_xss_filtering){
-            $this->_request->setAutoXssFilter(true);
-        }
         $this->_request->setModule($module)
             ->setController($controller)
             ->setAction($action);
@@ -299,20 +293,35 @@ class Mvc
         require $path;
         $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getControllerClassName();
         $this->_controller = new $controller($this->_request, F::$response);
-        if(!method_exists($this->_controller, $this->_request->getAction())){
+        if(!method_exists($this->_controller, $this->_request->getActionMethodName())){
             display_error('404 Page', 404);
         } else {
-            $method = new ReflectionMethod($this->_controller, $this->_request->getAction());
-            if($method->getNumberOfParameters()){
-                $segmentCount = F::$uri->getSegmentCount();
-                $indexStart = 3;
-                if($segmentCount > 3){
-                    $indexStart = 4;
+            $method = new ReflectionMethod($this->_controller, $this->_request->getActionMethodName());
+            $segmentCount = F::$uri->getSegmentCount();
+            $firstSegment = F::$uri->getSegment(1);
+            $indexStart = 3;
+            if($method->getNumberOfRequiredParameters()){
+                if($firstSegment){
+                    if(in_array($firstSegment, $this->_modulesList)){
+                        $indexStart = 4;
+                    }
+                } else {
+                    display_error('404 Page', 404);
+                }
+                if($segmentCount < $indexStart){
+                    display_error('404 Page', 404);
                 }
                 foreach(range($indexStart, $segmentCount) as $index){
                     $this->_actionParams[] = F::$uri->getSegment($index);
                 }
-                if(count($this->_actionParams) !== $method->getNumberOfParameters()){
+                if(count($this->_actionParams) !== $method->getNumberOfRequiredParameters()){
+                    display_error('404 Page', 404);
+                }
+            } else {
+                if($firstSegment && in_array($firstSegment, $this->_modulesList)){
+                    $indexStart = 4;
+                }
+                if($segmentCount >= $indexStart){
                     display_error('404 Page', 404);
                 }
             }
@@ -336,7 +345,12 @@ class Mvc
 
         $this->_controller->init();
         $this->_controller->preDispatch();
-        $view = $this->_controller->{$this->_request->getAction()}();
+        $view = null;
+        if(!$this->_actionParams){
+            $view = $this->_controller->{$this->_request->getActionMethodName()}();
+        } else {
+            $view = call_user_func_array(array($this->_controller, $this->_request->getActionMethodName()), $this->_actionParams);
+        }
 
         if(!F::$response->hasContentType()){
             if($view instanceof Html){

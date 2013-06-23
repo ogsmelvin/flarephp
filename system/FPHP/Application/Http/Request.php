@@ -73,7 +73,7 @@ class Request extends ParentRequest
      */
     public function setAction($action)
     {
-        $this->_action = urldecode($action).'_action';
+        $this->_action = urldecode($action);
         return $this;
     }
 
@@ -102,5 +102,14 @@ class Request extends ParentRequest
     public function getAction()
     {
         return $this->_action;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getActionMethodName()
+    {
+        return $this->_action.'_action';
     }
 }

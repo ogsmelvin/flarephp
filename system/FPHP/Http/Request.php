@@ -144,6 +144,8 @@ class Request
             $ip = $this->server('HTTP_CLIENT_IP');
         } else if($checkProxy && $this->server('HTTP_X_FORWARDED_FOR') != null){
             $ip = $this->server('HTTP_X_FORWARDED_FOR');
+        } else if($checkProxy && $this->server('HTTP_X_CLUSTER_CLIENT_IP')){
+            $ip = $this->server('HTTP_X_CLUSTER_CLIENT_IP');
         } else {
             $ip = $this->server('REMOTE_ADDR');
         }
