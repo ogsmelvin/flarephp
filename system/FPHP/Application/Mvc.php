@@ -2,7 +2,6 @@
 
 namespace FPHP\Application;
 
-use FPHP\Application\Http\Request;
 use FPHP\Application\Data;
 use FPHP\UI\Javascript;
 use \ReflectionMethod;
@@ -248,7 +247,6 @@ class Mvc
     public function preDispatch()
     {
         $this->_request = F::$router->getRouteRequest();
-
         $path = $this->_modulesDirectory
             .$this->_request->getModule()
             .'/'
