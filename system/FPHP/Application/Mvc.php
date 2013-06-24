@@ -185,10 +185,10 @@ class Mvc
      */
     public function setModules($modules)
     {
-        $this->_modulesList = $modules;
-        if(!in_array(F::$config->router['default_module'], $this->_modulesList)){
-            $this->_modulesList[] = F::$config->router['default_module'];
+        if(!in_array(F::$config->router['default_module'], $modules)){
+            $modules[] = F::$config->router['default_module'];
         }
+        F::$router->setRoutingModules($modules);
         return $this;
     }
 
@@ -247,43 +247,13 @@ class Mvc
      */
     public function preDispatch()
     {
-        $route = F::$router->getRoute();
-        $module = F::$uri->getSegment(1);
-        $controller = F::$uri->getSegment(2);
-        $action = F::$uri->getSegment(3);
-        if($route){
-            list($module, $controller, $action) = explode('.', $route);
-        } else if($module === null){
-            $module = F::$config->router['default_module'];
-            $action = F::$config->router['default_action'];
-            $controller = F::$config->router['default_controller'];
-        } else if(!in_array($module, $this->_modulesList)){
-            $action = $controller;
-            $controller = $module;
-            $module = F::$config->router['default_module'];
-        }
-
-        // if(F::$config->router['url_suffix']){
-        //     if($action && F::$uri->getSuffix() !== F::$config->router['url_suffix']){
-        //         display_error(404);
-        //     }
-
-        //     $action = rtrim($action, '.'.F::$config->router['url_suffix']);
-        // }
-
-        $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
-        $action = $action === null ? F::$config->router['default_action'] : $action;
-
-        $this->_request = new Request();
-        $this->_request->setModule($module)
-            ->setController($controller)
-            ->setAction($action);
+        $this->_request = F::$router->getRouteRequest();
 
         $path = $this->_modulesDirectory
             .$this->_request->getModule()
             .'/'
             .$this->_controllersDirectory
-            .strtolower(urldecode($controller))
+            .strtolower(urldecode($this->_request->getController()))
             .'.php';
         if(!file_exists($path)){
             display_error(404);
@@ -303,7 +273,7 @@ class Mvc
             $indexStart = 3;
             if($params){
                 if($firstSegment){
-                    if(in_array($firstSegment, $this->_modulesList)){
+                    if(in_array($firstSegment, F::$router->getRoutingModules())){
                         $indexStart = 4;
                     }
                 } else {
@@ -329,7 +299,7 @@ class Mvc
                     display_error(404);
                 }
             } else {
-                if($firstSegment && in_array($firstSegment, $this->_modulesList)){
+                if($firstSegment && in_array($firstSegment, F::$router->getRoutingModules())){
                     $indexStart = 4;
                 }
                 if($segmentCount >= $indexStart){

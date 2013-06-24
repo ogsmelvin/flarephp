@@ -2,7 +2,8 @@
 
 namespace FPHP\Application;
 
-use FPHP\Http\Uri;
+use FPHP\Application\Http\Request;
+use FPHP\Fphp as F;
 
 /**
  * 
@@ -13,32 +14,43 @@ class Router
 {
     /**
      * 
-     * @var string
-     */
-    private $_current;
-
-    /**
-     * 
-     * @var \FPHP\Http\Uri
-     */
-    private $_uri;
-
-    /**
-     * 
      * @var array
      */
     private $_routes = array();
 
     /**
      * 
+     * @var array
+     */
+    private $_routeModules = array();
+
+    /**
+     * 
      * @param array $routes
      */
-    public function __construct(Uri &$uri, array $routes = array())
+    public function __construct(array $routes = array())
     {
-        if($routes){
-            $this->addRoutes($routes);
-        }
-        $this->_uri = & $uri;
+        $this->addRoutes($routes);
+    }
+
+    /**
+     * 
+     * @param array $modules
+     * @return \FPHP\Application\Router
+     */
+    public function setRoutingModules($modules)
+    {
+        $this->_routeModules = $modules;
+        return $this;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getRoutingModules()
+    {
+        return $this->_routeModules;
     }
 
     /**
@@ -73,11 +85,53 @@ class Router
     public function getRoute()
     {
         $route = null;
-        $uri = (string) $this->_uri;
+        $uri = F::$uri->getURIString();
         if(isset($this->_routes[$uri])){
             $route = $this->_routes[$uri];
         }
         return $route;
+    }
+
+    /**
+     * 
+     * @return \FPHP\Application\Http\Request
+     */
+    public function getRouteRequest()
+    {
+        $route = $this->getRoute();
+        $module = F::$uri->getSegment(1);
+        $controller = F::$uri->getSegment(2);
+        $action = F::$uri->getSegment(3);
+        if($route){
+            list($module, $controller, $action) = explode('.', $route);
+        } else if($module === null){
+            $module = F::$config->router['default_module'];
+            $action = F::$config->router['default_action'];
+            $controller = F::$config->router['default_controller'];
+        } else if(!in_array($module, $this->_routeModules)){
+            $action = $controller;
+            $controller = $module;
+            $module = F::$config->router['default_module'];
+        }
+
+        // if(F::$config->router['url_suffix']){
+        //     if($action && F::$uri->getSuffix() !== F::$config->router['url_suffix']){
+        //         display_error(404);
+        //     }
+
+        //     $action = rtrim($action, '.'.F::$config->router['url_suffix']);
+        // }
+
+        $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
+        $action = $action === null ? F::$config->router['default_action'] : $action;
+
+        $request = new Request();
+        $request->setModule($module)
+            ->setController($controller)
+            ->setAction($action);
+        unset($module, $controller, $action);
+
+        return $request;
     }
 
     /**

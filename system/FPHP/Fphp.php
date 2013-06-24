@@ -113,7 +113,7 @@ class Fphp
         if(self::$config->router['routes']){
             $routes = self::$config->router['routes'];
         }
-        self::$router = new Router(self::$uri, $routes);
+        self::$router = new Router($routes);
 
         if(self::$config->session['namespace']){
             self::$session = Session::getInstance(
