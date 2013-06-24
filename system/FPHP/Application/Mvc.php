@@ -299,8 +299,9 @@ class Mvc
             $method = new ReflectionMethod($this->_controller, $this->_request->getActionMethodName());
             $segmentCount = F::$uri->getSegmentCount();
             $firstSegment = F::$uri->getSegment(1);
+            $params = $method->getParameters();
             $indexStart = 3;
-            if($method->getNumberOfRequiredParameters()){
+            if($params){
                 if($firstSegment){
                     if(in_array($firstSegment, $this->_modulesList)){
                         $indexStart = 4;
@@ -308,13 +309,23 @@ class Mvc
                 } else {
                     display_error(404);
                 }
-                if($segmentCount < $indexStart){
+                if(!$params[0]->isOptional() && $segmentCount < $indexStart){
                     display_error(404);
                 }
-                foreach(range($indexStart, $segmentCount) as $index){
-                    $this->_actionParams[] = F::$uri->getSegment($index);
+
+                $i = $indexStart;
+                foreach($params as $param){
+                    if($i <= $segmentCount){
+                        if($segmentValue = F::$uri->getSegment($i++)){
+                            $this->_actionParams[] = $segmentValue;
+                        }
+                    }
                 }
-                if(count($this->_actionParams) !== $method->getNumberOfRequiredParameters()){
+                
+                $segmentParamsCount = ($segmentCount - $indexStart) + 1;
+                $segmentParamsCount = $segmentParamsCount < 0 ? 1 : $segmentParamsCount;
+                if($segmentParamsCount > $method->getNumberOfParameters()
+                    || $segmentParamsCount < $method->getNumberOfRequiredParameters()){
                     display_error(404);
                 }
             } else {
@@ -325,6 +336,7 @@ class Mvc
                     display_error(404);
                 }
             }
+            unset($params, $indexStart, $method, $segmentCount, $firstSegment);
         }
         return $this;
     }
