@@ -12,18 +12,6 @@ define('FPHP_DIR', dirname(__FILE__).'/');
  */
 define('FPHP_VERSION', '1.0');
 
-/**
- * 
- * @var string
- */
-define('FPHP_AUTH_VALID', 'valid');
-
-/**
- * 
- * @var string
- */
-define('FPHP_AUTH_INVALID', 'invalid');
-
 if(!function_exists('fphp_load_class')){
 
     /**
