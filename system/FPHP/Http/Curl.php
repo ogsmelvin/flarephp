@@ -8,7 +8,7 @@ use FPHP\Fphp as F;
 use \Exception;
 
 if(!function_exists('curl_init')){
-    display_error(500, 'CURL is not supported by your server');
+    show_response(500, 'CURL is not supported by your server');
 }
 
 /**

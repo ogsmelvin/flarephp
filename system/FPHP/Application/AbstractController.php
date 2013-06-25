@@ -107,7 +107,7 @@ abstract class AbstractController
             if(F::service($service)){
                 $this->_services[$shortKey] = $service;
             } else {
-                display_error(500, "Error initializing service '{$service}'");
+                show_response(500, "Error initializing service '{$service}'");
             }
         }
         return $this;
@@ -121,7 +121,7 @@ abstract class AbstractController
     public function getService($service)
     {
         if(!isset($this->_services[$service])){
-            display_error(500, "'{$service}' was not set");
+            show_response(500, "'{$service}' was not set");
         }
         return F::service($this->_services[$service]);
     }
@@ -235,7 +235,7 @@ abstract class AbstractController
         if(!isset($this->{$tmpKey})){
             $ns = & F::ns($key);
             if(!$ns){
-                display_error(500, "Initialize nosql '{$key}' failed");
+                show_response(500, "Initialize nosql '{$key}' failed");
             }
             $this->{$tmpKey} = & $ns;
         }

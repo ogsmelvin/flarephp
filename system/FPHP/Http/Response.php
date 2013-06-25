@@ -259,7 +259,7 @@ class Response
     public function send($output_body = true)
     {
         if($this->_sent){
-            display_error(500, "Response::send already executed");
+            show_response(500, "Response::send already executed");
         }
         if($this->_code !== 200 && isset(self::$messages[$this->_code])){
             if(!empty($_SERVER['SERVER_PROTOCOL'])){

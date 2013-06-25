@@ -130,7 +130,7 @@ class Fphp
             && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
             && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE){
             if(!ob_start('ob_gzhandler')){
-                display_error(500, 'output compression failed');
+                show_response(500, 'output compression failed');
             }
         }
         self::$_init = true;

@@ -284,7 +284,7 @@ class Mvc
     {
         $route = F::$router->getRoute();
         if(!$route){
-            display_error(404);
+            show_response(404);
         }
         $this->_controller = $route->getController();
         return $this;

@@ -250,7 +250,7 @@ class File
         $result = false;
         $source = explode(',', $base64String, 2);
         if(count($source) !== 2){
-            display_error(500, "Invalid base64 string");
+            show_response(500, "Invalid base64 string");
         }
 
         $type = substr(substr($source[0], 0, -7), 5);

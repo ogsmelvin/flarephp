@@ -118,7 +118,7 @@ class Row
     public function __get($key)
     {
         if(!isset($this->_data[$key])){
-            display_error(500, "'{$key}' doesn't exist in the row object");
+            show_response(500, "'{$key}' doesn't exist in the row object");
         }
         return $this->_data[$key];
     }
@@ -176,7 +176,7 @@ class Row
         if(isset($this->_data[$field])){
             return Xss::filter($this->_data[$field]);
         }
-        display_error(500, "'{$key}' doesn't exist in the row object");
+        show_response(500, "'{$key}' doesn't exist in the row object");
     }
 
     /**

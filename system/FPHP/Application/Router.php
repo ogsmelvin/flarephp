@@ -271,11 +271,12 @@ class Router
 
     /**
      * 
-     * @return void
+     * @return \FPHP\Application\Router
      */
     public function clearRoutesList()
     {
         $this->_routes = array();
+        return $this;
     }
 
     /**

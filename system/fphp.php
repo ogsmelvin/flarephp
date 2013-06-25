@@ -28,6 +28,7 @@ if(!function_exists('fphp_load_class')){
 
     /**
      * 
+     * @author anthony
      * @param string $class
      * @return void
      */
@@ -43,6 +44,7 @@ if(!function_exists('debug')){
 
     /**
      * 
+     * @author anthony
      * @param mixed $var
      * @param boolean $vardump
      * @return void
@@ -86,6 +88,7 @@ if(!function_exists('render')){
 
     /**
      * 
+     * @author anthony
      * @param string $path
      * @param array $data
      * @return string
@@ -168,6 +171,7 @@ if(!function_exists('http_build_url')){
 
     /**
      * 
+     * @author anthony
      * @param array $parsed_url
      * @return string
      */
@@ -187,15 +191,16 @@ if(!function_exists('http_build_url')){
 }
 
 
-if(!function_exists('display_error')){
+if(!function_exists('show_response')){
 
     /**
      * 
+     * @author anthony
      * @param int $code
      * @param string $message
      * @return void
      */
-    function display_error($code, $message = '')
+    function show_response($code, $message = '')
     {
         if($message){
             FPHP\Fphp::$response->setCode($code)
@@ -215,10 +220,25 @@ if(!function_exists('display_error')){
     }
 }
 
+if(!function_exists('show_error')){
+
+    /**
+     * 
+     * @author anthony
+     * @param string $message
+     * @return void
+     */
+    function show_error($message)
+    {
+        show_response(500, $message);
+    }
+}
+
 if(!function_exists('_fphp_show_error')){
 
     /**
      * 
+     * @author anthony
      * @param int $errno
      * @param string $errstr
      * @param string $errfile
@@ -228,7 +248,7 @@ if(!function_exists('_fphp_show_error')){
      */
     function _fphp_show_error($errno, $errstr, $errfile, $errline, $errcontext)
     {
-        display_error(500, 'Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
+        show_response(500, 'Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
     }
 }
 

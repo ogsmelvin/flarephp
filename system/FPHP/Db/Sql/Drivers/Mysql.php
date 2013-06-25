@@ -211,7 +211,7 @@ class Mysql extends PDO implements Sql
     {
         $error = $stmt->errorInfo();
         if(!empty($error[1]) || !empty($error[2])){
-            display_error(500, $error[2]);
+            show_response(500, $error[2]);
         }
         return;
     }
