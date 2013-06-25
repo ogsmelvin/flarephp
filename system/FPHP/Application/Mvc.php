@@ -54,18 +54,6 @@ class Mvc
 
     /**
      * 
-     * @var array
-     */
-    private $_modulesList = array();
-
-    /**
-     * 
-     * @var boolean
-     */
-    private $_routes = false;
-
-    /**
-     * 
      * @var string
      */
     private $_appDirectory = null;
@@ -84,21 +72,9 @@ class Mvc
 
     /**
      * 
-     * @var \FPHP\Application\Http\Request
-     */
-    private $_request = null;
-
-    /**
-     * 
      * @var boolean
      */
     private $_dispatched = false;
-
-    /**
-     * 
-     * @var array
-     */
-    private $_actionParams = array();
 
     /**
      * 
@@ -109,6 +85,15 @@ class Mvc
     {
         $this->_controllersDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getControllersDirectory()
+    {
+        return $this->_controllersDirectory;
     }
 
     /**
@@ -124,6 +109,15 @@ class Mvc
 
     /**
      * 
+     * @return string
+     */
+    public function getViewsDirectory()
+    {
+        return $this->_viewsDirectory;
+    }
+
+    /**
+     * 
      * @param string $directory
      * @return \FPHP\Application\Mvc
      */
@@ -131,6 +125,15 @@ class Mvc
     {
         $this->_modulesDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModulesDirectory()
+    {
+        return $this->_modulesDirectory;
     }
 
     /**
@@ -146,6 +149,15 @@ class Mvc
 
     /**
      * 
+     * @return string
+     */
+    public function getLayoutsDirectory()
+    {
+        return $this->_layoutsDirectory;
+    }
+
+    /**
+     * 
      * @param string $directory
      * @return \FPHP\Application\Mvc
      */
@@ -153,6 +165,15 @@ class Mvc
     {
         $this->_helpersDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getHelpersDirectory()
+    {
+        return $this->_helpersDirectory;
     }
 
     /**
@@ -168,6 +189,15 @@ class Mvc
 
     /**
      * 
+     * @return string
+     */
+    public function getAppDirectory()
+    {
+        return $this->_appDirectory;
+    }
+
+    /**
+     * 
      * @param string $directory
      * @return \FPHP\Application\Mvc
      */
@@ -175,6 +205,15 @@ class Mvc
     {
         $this->_sysDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getSystemDirectory()
+    {
+        return $this->_sysDirectory;
     }
 
     /**
@@ -193,6 +232,15 @@ class Mvc
 
     /**
      * 
+     * @return array
+     */
+    public function getModules()
+    {
+        return F::$router->getRoutingModules();
+    }
+
+    /**
+     * 
      * @param string $directory
      * @return \FPHP\Application\Mvc
      */
@@ -203,6 +251,15 @@ class Mvc
         }
         $this->_modelsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelsDirectory()
+    {
+        return $this->_modelsDirectory;
     }
 
     /**
@@ -221,91 +278,15 @@ class Mvc
 
     /**
      * 
-     * @return \FPHP\Application\Http\Request
-     */
-    public function getAcceptedRequest()
-    {
-        return $this->_request;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getAppDirectory()
-    {
-        if(!isset($this->_appDirectory)){
-            return null;
-        }
-        return $this->_appDirectory;
-    }
-
-    /**
-     * 
      * @return \FPHP\Application\Mvc
      */
     public function preDispatch()
     {
-        $this->_request = F::$router->getRouteRequest();
-        $path = $this->_modulesDirectory
-            .$this->_request->getModule()
-            .'/'
-            .$this->_controllersDirectory
-            .strtolower(urldecode($this->_request->getController()))
-            .'.php';
-        if(!file_exists($path)){
+        $route = F::$router->getRoute();
+        if(!$route){
             display_error(404);
         }
-
-        require $this->_modulesDirectory.$this->_request->getModule().'/bootstrap.php';
-        require $path;
-        $controller = ucwords($this->_request->getModule())."\\Controllers\\".$this->_request->getControllerClassName();
-        $this->_controller = new $controller($this->_request, F::$response);
-        if(!method_exists($this->_controller, $this->_request->getActionMethodName())){
-            display_error(404);
-        } else {
-            $method = new ReflectionMethod($this->_controller, $this->_request->getActionMethodName());
-            $segmentCount = F::$uri->getSegmentCount();
-            $firstSegment = F::$uri->getSegment(1);
-            $params = $method->getParameters();
-            $indexStart = 3;
-            if($params){
-                if($firstSegment){
-                    if(in_array($firstSegment, F::$router->getRoutingModules())){
-                        $indexStart = 4;
-                    }
-                } else {
-                    display_error(404);
-                }
-                if(!$params[0]->isOptional() && $segmentCount < $indexStart){
-                    display_error(404);
-                }
-
-                $i = $indexStart;
-                foreach($params as $param){
-                    if($i <= $segmentCount){
-                        if($segmentValue = F::$uri->getSegment($i++)){
-                            $this->_actionParams[] = $segmentValue;
-                        }
-                    }
-                }
-                
-                $segmentParamsCount = ($segmentCount - $indexStart) + 1;
-                $segmentParamsCount = $segmentParamsCount < 0 ? 1 : $segmentParamsCount;
-                if($segmentParamsCount > $method->getNumberOfParameters()
-                    || $segmentParamsCount < $method->getNumberOfRequiredParameters()){
-                    display_error(404);
-                }
-            } else {
-                if($firstSegment && in_array($firstSegment, F::$router->getRoutingModules())){
-                    $indexStart = 4;
-                }
-                if($segmentCount >= $indexStart){
-                    display_error(404);
-                }
-            }
-            unset($params, $indexStart, $method, $segmentCount, $firstSegment);
-        }
+        $this->_controller = $route->getController();
         return $this;
     }
 
@@ -326,10 +307,13 @@ class Mvc
         $this->_controller->init();
         $this->_controller->preDispatch();
         $view = null;
-        if(!$this->_actionParams){
-            $view = $this->_controller->{$this->_request->getActionMethodName()}();
+        if(!F::$router->getRoute()->getActionParams()){
+            $view = $this->_controller->{$this->_controller->getAppRequest()->getActionMethodName()}();
         } else {
-            $view = call_user_func_array(array($this->_controller, $this->_request->getActionMethodName()), $this->_actionParams);
+            $view = call_user_func_array(
+                array($this->_controller, $this->_controller->getAppRequest()->getActionMethodName()), 
+                F::$router->getRoute()->getActionParams()
+            );
         }
 
         if(!F::$response->hasContentType()){
@@ -360,7 +344,7 @@ class Mvc
      */
     public function view($path, $data = null, $layout = null)
     {
-        $module = $this->_request->getModule();
+        $module = $this->_controller->getAppRequest()->getModule();
         if($layout === null 
             && isset(F::$config->layout[$module]) 
             && F::$config->layout[$module]['auto'])
@@ -382,7 +366,7 @@ class Mvc
         }
         $html = new Html($path);
         $html->set('uri', F::$uri)
-            ->set('request', $this->_request)
+            ->set('request', $this->_controller->getAppRequest())
             ->set('session', F::$session)
             ->set('js', new Javascript())
             ->set('config', F::$config);

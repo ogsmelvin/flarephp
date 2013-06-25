@@ -298,6 +298,15 @@ abstract class AbstractController
 
     /**
      * 
+     * @return \FPHP\Application\Http\Request
+     */
+    public function getAppRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * 
      * @return void
      */
     abstract public function init();

@@ -2,7 +2,9 @@
 
 namespace FPHP\Application;
 
+use FPHP\Application\Router\Route\Action;
 use FPHP\Application\Http\Request;
+use FPHP\Application\Router\Route;
 use FPHP\Fphp as F;
 
 /**
@@ -12,6 +14,12 @@ use FPHP\Fphp as F;
  */
 class Router
 {
+    /**
+     * 
+     * @var \FPHP\Application\Router\Route
+     */
+    private $_currentRoute = null;
+
     /**
      * 
      * @var array
@@ -82,7 +90,7 @@ class Router
      * 
      * @return string
      */
-    public function getRoute()
+    private function _getMatchedCustomRoute()
     {
         $route = null;
         $uri = F::$uri->getURIString();
@@ -94,16 +102,30 @@ class Router
 
     /**
      * 
-     * @return \FPHP\Application\Http\Request
+     * @return \FPHP\Application\Router\Route
      */
-    public function getRouteRequest()
+    public function getMatchedCustomRoute()
     {
-        $route = $this->getRoute();
+
+    }
+
+    /**
+     * 
+     * @return \FPHP\Application\Router\Route
+     */
+    public function getRoute()
+    {
+        if($this->_currentRoute){
+            return $this->_currentRoute;
+        }
+
+        $customRoute = $this->_getMatchedCustomRoute();
         $module = F::$uri->getSegment(1);
         $controller = F::$uri->getSegment(2);
         $action = F::$uri->getSegment(3);
-        if($route){
-            list($module, $controller, $action) = explode('.', $route);
+
+        if($customRoute){
+            list($module, $controller, $action) = explode('.', $customRoute);
         } else if($module === null){
             $module = F::$config->router['default_module'];
             $action = F::$config->router['default_action'];
@@ -114,14 +136,6 @@ class Router
             $module = F::$config->router['default_module'];
         }
 
-        // if(F::$config->router['url_suffix']){
-        //     if($action && F::$uri->getSuffix() !== F::$config->router['url_suffix']){
-        //         display_error(404);
-        //     }
-
-        //     $action = rtrim($action, '.'.F::$config->router['url_suffix']);
-        // }
-
         $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
         $action = $action === null ? F::$config->router['default_action'] : $action;
 
@@ -131,7 +145,95 @@ class Router
             ->setAction($action);
         unset($module, $controller, $action);
 
-        return $request;
+        $path = F::mvc()->getModulesDirectory()
+            .$request->getModule()
+            .'/'
+            .F::mvc()->getControllersDirectory()
+            .strtolower(urldecode($request->getController()))
+            .'.php';
+        if(!file_exists($path)){
+            return null;
+        }
+
+        require F::mvc()->getModulesDirectory().$request->getModule().'/bootstrap.php';
+        require $path;
+        
+        $controller = ucwords($request->getModule())."\\Controllers\\".$request->getControllerClassName();
+        $route = new Route();
+        $route->setModule($request->getModule());
+        $route->setController(new $controller($request, F::$response));
+        $route->setAction(new Action($route->getController(), $request->getActionMethodName()));
+        
+        $this->_setActionParams($route, $validUriForParams);
+        if(!$validUriForParams){
+            return null;
+        }
+
+        $this->_currentRoute = $route;
+        return $this->_currentRoute;
+    }
+
+    /**
+     * 
+     * @param \FPHP\Application\Router\Route
+     * @return array|boolean
+     */
+    private function _setActionParams(Route &$route, &$validUriForParams = null)
+    {
+        $actionParams = array();
+        if(!$route->getAction()->exists()){
+            $validUriForParams = false;
+            return;
+        } else {
+
+            $segmentCount = F::$uri->getSegmentCount();
+            $firstSegment = F::$uri->getSegment(1);
+            $params = $route->getAction()->getParameters();
+            $indexStart = 3;
+            if($params){
+                if($firstSegment){
+                    if(in_array($firstSegment, $this->_routeModules)){
+                        $indexStart = 4;
+                    }
+                } else {
+                    $validUriForParams = false;
+                    return;
+                }
+                if(!$params[0]->isOptional() && $segmentCount < $indexStart){
+                    $validUriForParams = false;
+                    return;
+                }
+
+                $i = $indexStart;
+                foreach($params as $param){
+                    if($i <= $segmentCount){
+                        if($segmentValue = F::$uri->getSegment($i++)){
+                            $actionParams[] = $segmentValue;
+                        }
+                    }
+                }
+                
+                $segmentParamsCount = ($segmentCount - $indexStart) + 1;
+                $segmentParamsCount = $segmentParamsCount < 0 ? 1 : $segmentParamsCount;
+                if($segmentParamsCount > $route->getAction()->getNumberOfParameters()
+                    || $segmentParamsCount < $route->getAction()->getNumberOfRequiredParameters()){
+                    $validUriForParams = false;
+                    return;
+                }
+            } else {
+                if($firstSegment && in_array($firstSegment, $this->_routeModules)){
+                    $indexStart = 4;
+                }
+                if($segmentCount >= $indexStart){
+                    $validUriForParams = false;
+                    return;
+                }
+            }
+            unset($params, $indexStart, $segmentCount, $firstSegment);
+        }
+        
+        $validUriForParams = true;
+        $route->setActionParams($actionParams);
     }
 
     /**
