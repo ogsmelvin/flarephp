@@ -282,27 +282,6 @@ class Uri
 
     /**
      * 
-     * @return void
-     */
-    public function requireHttps($code = 301)
-    {
-        if(!$this->isHttps()){
-            $url = 'https://'.$this->_host;
-            //TODO: what if not port 80
-            // if($this->_port != self::DEFAULT_PORT ){
-            //     $url .= ':'.$this->_port;
-            // }
-            $url .= $this->_uri;
-            if(!empty($_SERVER['QUERY_STRING'])){
-                $url .= '?'.$_SERVER['QUERY_STRING'];
-            }
-            F::$response->redirect($url, $code);
-        }
-        return;
-    }
-
-    /**
-     * 
      * @return string
      */
     public function getModuleUrl()

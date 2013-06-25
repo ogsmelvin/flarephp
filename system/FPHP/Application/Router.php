@@ -93,7 +93,7 @@ class Router
     private function _getMatchedCustomRoute()
     {
         $route = null;
-        $uri = (string) F::$uri;
+        $uri = rtrim((string) F::$uri, '/');
         if(isset($this->_routes[$uri])){
             $route = $this->_routes[$uri];
         } else {
@@ -289,5 +289,23 @@ class Router
     public function getRoutesList()
     {
         return $this->_routes;
+    }
+
+    /**
+     * 
+     * @param int $redirectCode
+     * @return void
+     */
+    public function secure($redirectCode = 301)
+    {
+        if(!F::$uri->isHttps()){
+            $url = 'https://'.F::$uri->getHost();
+            $url .= F::$uri;
+            if(!empty($_SERVER['QUERY_STRING'])){
+                $url .= '?'.$_SERVER['QUERY_STRING'];
+            }
+            F::$response->redirect($url, $redirectCode);
+        }
+        return;
     }
 }
