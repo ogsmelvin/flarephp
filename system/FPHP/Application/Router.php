@@ -69,7 +69,7 @@ class Router
      */
     public function addRoute($url, $method)
     {
-        $this->_routes[$url] = $method;
+        $this->_routes['/'.trim($url, '/')] = $method;
         return $this;
     }
 
@@ -97,7 +97,10 @@ class Router
         if(isset($this->_routes[$uri])){
             $route = $this->_routes[$uri];
         } else {
-
+            // /user/register/:param1/:param2/
+            foreach($this->_routes as $uri => $class){
+                
+            }
         }
         return $route;
     }
@@ -114,7 +117,7 @@ class Router
 
         $route = $this->_getMatchedCustomRoute();
         if($route){
-            list($module, $controller, $action) = explode('.', $route);
+            list($module, $controller, $action) = explode('.', $route, 3);
             $route = $this->_route($module, $controller, $action);
             if($route){
                 $this->_currentRoute = $route;
@@ -176,7 +179,7 @@ class Router
         $action = F::$uri->getSegment(3);
 
         if($customRoute){
-            list($module, $controller, $action) = explode('.', $customRoute);
+            list($module, $controller, $action) = explode('.', $customRoute, 3);
         } else if($module === null){
             $module = F::$config->router['default_module'];
             $action = F::$config->router['default_action'];

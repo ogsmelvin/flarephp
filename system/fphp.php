@@ -87,7 +87,7 @@ if(!function_exists('render')){
     }
 }
 
-$adk_sections = array();
+$fphp_sections = array();
 
 if(!function_exists('section_open')){
 
@@ -99,8 +99,8 @@ if(!function_exists('section_open')){
      */
     function section_open($name)
     {
-        global $adk_sections;
-        $adk_sections[$name] = true;
+        global $fphp_sections;
+        $fphp_sections[$name] = true;
         ob_start();
     }
 }
@@ -115,11 +115,11 @@ if(!function_exists('section_close')){
      */
     function section_close($name)
     {
-        global $adk_sections;
-        if(!isset($adk_sections[$name])){
+        global $fphp_sections;
+        if(!isset($fphp_sections[$name])){
             throw new Exception("{$name} is not yet open");
         }
-        $adk_sections[$name] = (string) ob_get_clean();
+        $fphp_sections[$name] = (string) ob_get_clean();
     }
 }
 
@@ -133,11 +133,11 @@ if(!function_exists('get_section')){
      */
     function get_section($name)
     {
-        global $adk_sections;
-        if(!isset($adk_sections[$name])){
+        global $fphp_sections;
+        if(!isset($fphp_sections[$name])){
             return null;
         }
-        return $adk_sections[$name];
+        return $fphp_sections[$name];
     }
 }
 
@@ -150,8 +150,8 @@ if(!function_exists('get_sections')){
      */
     function get_sections()
     {
-        global $adk_sections;
-        return $adk_sections;
+        global $fphp_sections;
+        return $fphp_sections;
     }
 }
 

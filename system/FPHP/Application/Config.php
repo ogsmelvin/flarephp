@@ -45,13 +45,13 @@ class Config
                 $config_file = rtrim($config_file, '.php').'.php';
                 $content = require $config_file;
                 if(!is_array($content)){
-                    throw new Exception("{$config_file} return must be an array");
+                    show_error("{$config_file} return must be an array");
                 }
             } else if(is_array($config_file)){
                 $content = $config_file;
                 unset($config_file);
             } else {
-                throw new Exception("Invalid type");
+                show_error("Invalid Config file type");
             }
             if(!isset($content['allow_override'])){
                 $content['allow_override'] = false;
