@@ -88,30 +88,81 @@ class Router
 
     /**
      * 
-     * @return string
+     * @return string|null
      */
     private function _getMatchedCustomRoute()
     {
         $route = null;
-        $uri = F::$uri->getURIString();
+        $uri = (string) F::$uri;
         if(isset($this->_routes[$uri])){
             $route = $this->_routes[$uri];
+        } else {
+
         }
         return $route;
     }
 
     /**
      * 
-     * @return \FPHP\Application\Router\Route
+     * @return \FPHP\Application\Router\Route|null
      */
     public function getMatchedCustomRoute()
     {
+        if($this->_currentRoute){
+            return $this->_currentRoute;
+        }
 
+        $route = $this->_getMatchedCustomRoute();
+        if($route){
+            list($module, $controller, $action) = explode('.', $route);
+            $route = $this->_route($module, $controller, $action);
+            if($route){
+                $this->_currentRoute = $route;
+            }
+        }
+
+        return $this->_currentRoute;
     }
 
     /**
      * 
+     * @param string $module
+     * @param string $controller
+     * @param string $action
      * @return \FPHP\Application\Router\Route
+     */
+    private function _route($module, $controller, $action)
+    {
+        $request = new Request();
+        $request->setModule($module)
+            ->setController($controller)
+            ->setAction($action);
+
+        $path = F::mvc()->getModulesDirectory()
+            .$request->getModule()
+            .'/'
+            .F::mvc()->getControllersDirectory()
+            .strtolower(urldecode($request->getController()))
+            .'.php';
+        if(!file_exists($path)){
+            return null;
+        }
+
+        require F::mvc()->getModulesDirectory().$request->getModule().'/bootstrap.php';
+        require $path;
+        
+        $controller = ucwords($request->getModule())."\\Controllers\\".$request->getControllerClassName();
+        $route = new Route();
+        $route->setModule($request->getModule());
+        $route->setController(new $controller($request, F::$response));
+        $route->setAction(new Action($route->getController(), $request->getActionMethodName()));
+
+        return $route;
+    }
+
+    /**
+     * 
+     * @return \FPHP\Application\Router\Route|null
      */
     public function getRoute()
     {
@@ -139,37 +190,19 @@ class Router
         $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
         $action = $action === null ? F::$config->router['default_action'] : $action;
 
-        $request = new Request();
-        $request->setModule($module)
-            ->setController($controller)
-            ->setAction($action);
-        unset($module, $controller, $action);
-
-        $path = F::mvc()->getModulesDirectory()
-            .$request->getModule()
-            .'/'
-            .F::mvc()->getControllersDirectory()
-            .strtolower(urldecode($request->getController()))
-            .'.php';
-        if(!file_exists($path)){
-            return null;
+        $route = $this->_route($module, $controller, $action);
+        if($route){
+            if(!$customRoute){
+                $this->_setActionParams($route, $validUriForParams);
+                if(!$validUriForParams){
+                    return null;
+                }
+            } else if(!$route->getAction()->exists()){
+                return null;
+            }
+            $this->_currentRoute = $route;
         }
 
-        require F::mvc()->getModulesDirectory().$request->getModule().'/bootstrap.php';
-        require $path;
-        
-        $controller = ucwords($request->getModule())."\\Controllers\\".$request->getControllerClassName();
-        $route = new Route();
-        $route->setModule($request->getModule());
-        $route->setController(new $controller($request, F::$response));
-        $route->setAction(new Action($route->getController(), $request->getActionMethodName()));
-        
-        $this->_setActionParams($route, $validUriForParams);
-        if(!$validUriForParams){
-            return null;
-        }
-
-        $this->_currentRoute = $route;
         return $this->_currentRoute;
     }
 

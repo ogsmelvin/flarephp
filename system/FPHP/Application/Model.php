@@ -15,7 +15,7 @@ abstract class Model
      * 
      * @return \FPHP\Application\AbstractController
      */
-    public static function appInstance()
+    public static function getController()
     {
         return F::mvc()->getController();
     }

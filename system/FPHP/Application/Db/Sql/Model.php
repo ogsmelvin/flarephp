@@ -54,8 +54,8 @@ class Model extends ParentModel
      */
     protected function _setup()
     {
-        if(isset(self::appInstance()->db)){
-            $this->_adapter = & self::appInstance()->db;
+        if(isset(self::getController()->db)){
+            $this->_adapter = & self::getController()->db;
         } else {
             display_error(500, "No database connection");
         }
