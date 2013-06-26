@@ -418,9 +418,12 @@ class Mvc
     public function error($code, $message = '')
     {
         $html = null;
-        if(isset(F::$config->router['errors'][$code])){
+        if(isset(F::$config->router['errors'][$code]) 
+            && file_exists($this->_errorLayoutsDirectory.$code.'.php')){
+
             $html = new Html($this->_errorLayoutsDirectory.$code.'.php');
             $html->set('message', $message);
+
         } else if($message){
             $html = '<pre>'.$message.'</pre>';
         } else if(isset(Response::$messages[$code])){
