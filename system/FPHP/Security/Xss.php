@@ -13,14 +13,44 @@ class Xss extends Security
 {
     /**
      * 
-     * @param string|array $str
-     * @return string
+     * @var array
      */
-    public static function filter($str)
+    private static $_defaultOptions = array(
+        'strip_tags' => false,
+        'encoding' => 'UTF-8',
+        'flags' => ENT_QUOTES,
+        'double_encode' => true
+    );
+
+    /**
+     * 
+     * @param string|array $value
+     * @param array $options
+     * @return string|array
+     */
+    public static function filter($value, $options = array())
     {
-        if(is_array($str)){
-            return array_map(array(__CLASS__, 'filter'), $str);
+        if($options){
+            $options = array_merge(self::$_defaultOptions, $options);
         }
-        return htmlspecialchars((string) $str, ENT_QUOTES);
+        if(is_array($value)){
+            foreach($value as &$val){
+                $val = self::filter($val, $options);
+            }
+            return $value;
+        }
+        if($options['strip_tags']){
+            $value = strip_tags($value);
+        }
+        return htmlentities((string) $value, $options['flags'], $options['encoding'], $options['double_encode']); 
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function getDefaultOptions()
+    {
+        return self::$_defaultOptions;
     }
 }

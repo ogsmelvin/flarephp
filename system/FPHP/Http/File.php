@@ -29,6 +29,21 @@ class File
 
     /**
      * 
+     * @var array
+     */
+    private static $_errorCodes = array(
+        UPLOAD_ERR_INI_SIZE => 'Upload file exceeds limit', // 1
+        UPLOAD_ERR_FORM_SIZE => 'Upload file exceeds form limit', // 2
+        UPLOAD_ERR_PARTIAL => 'Upload file partial', // 3
+        UPLOAD_ERR_NO_FILE => 'Upload no file selected', // 4
+        UPLOAD_ERR_NO_TMP_DIR => 'Upload no temp directory', // 6
+        UPLOAD_ERR_CANT_WRITE => 'Upload unable to write file', // 7
+        UPLOAD_ERR_EXTENSION => 'Upload stopped by extension' // 8
+        // UPLOAD_ERR_OK => 'No Error'
+    );
+
+    /**
+     * 
      * @var string
      */
     private $_name;
@@ -59,7 +74,7 @@ class File
 
     /**
      * 
-     * @var string
+     * @var int
      */
     private $_error;
 
@@ -78,14 +93,19 @@ class File
     /**
      * 
      * @param string $name
+     * @param string $filename
+     * @param string $tmpname
+     * @param string $type
+     * @param int $error
+     * @param int $size
      */
     private function __construct($name, $filename, $tmpname, $type, $error, $size)
     {
         $this->_name = $name;
         $this->_tmpname = $tmpname;
         $this->_type = $type;
-        $this->_error = $error;
-        $this->_size = $size;
+        $this->_error = (int) $error;
+        $this->_size = (int) $size;
         $this->_filename = FileSec::sanitizeFilename($filename, false);
         $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
     }
@@ -174,11 +194,23 @@ class File
 
     /**
      * 
-     * @return string
+     * @return int
      */
     public function getError()
     {
         return $this->_error;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        if(!isset(self::$_errorCodes[$this->_error])){
+            return self::$_errorCodes[UPLOAD_ERR_NO_FILE];
+        }
+        return self::$_errorCodes[$this->_error];
     }
 
     /**
@@ -202,35 +234,8 @@ class File
         $config = !$config ? self::$_config : array_merge(self::$_config, $config);
         $to = $this->_validateUploadPath($to);
         if($to){
-            if(!is_uploaded_file($this->_tmpname)){
-                $error = ( ! isset($this->_error)) ? 4 : $this->_error;
-                switch($error){
-                    case 1: // UPLOAD_ERR_INI_SIZE
-                        $this->_setMoveError('Upload file exceeds limit');
-                        break;
-                    case 2: // UPLOAD_ERR_FORM_SIZE
-                        $this->_setMoveError('Upload file exceeds form limit');
-                        break;
-                    case 3: // UPLOAD_ERR_PARTIAL
-                        $this->_setMoveError('Upload file partial');
-                        break;
-                    case 4: // UPLOAD_ERR_NO_FILE
-                        $this->_setMoveError('Upload no file selected');
-                        break;
-                    case 6: // UPLOAD_ERR_NO_TMP_DIR
-                        $this->_setMoveError('Upload no temp directory');
-                        break;
-                    case 7: // UPLOAD_ERR_CANT_WRITE
-                        $this->_setMoveError('Upload unable to write file');
-                        break;
-                    case 8: // UPLOAD_ERR_EXTENSION
-                        $this->_setMoveError('Upload stopped by extension');
-                        break;
-                    default : $this->_setMoveError('Upload no file selected');
-                        break;
-                }
-            } else {
-
+            if(is_uploaded_file($this->_tmpname)){
+                
             }
         } else {
             $this->_setMoveError("Upload path doesn't exists or not writable");
@@ -242,14 +247,14 @@ class File
      * 
      * @param string $base64String
      * @param string $path
-     * @return boolean
+     * @return \FPHP\Http\File|boolean
      */
     public static function createFromString($base64String, $path)
     {
         $result = false;
         $source = explode(',', $base64String, 2);
         if(count($source) !== 2){
-            show_response(500, "Invalid base64 string");
+            show_error("Invalid base64 string");
         }
 
         $type = substr(substr($source[0], 0, -7), 5);
@@ -270,7 +275,7 @@ class File
             }
         }
         if(file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))){
-            $result = new self(null, $filename, $filename, $type, 0,  0);
+            $result = new self(null, $filename, $filename, $type, 0, 0);
         }
         return $result;
     }
@@ -332,5 +337,14 @@ class File
     public static function getUploadConfig()
     {
         return self::$_config;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function getErrorCodes()
+    {
+        return self::$_errorCodes;
     }
 }
