@@ -69,7 +69,7 @@ class Router
      */
     public function addRoute($url, $method)
     {
-        $this->_routes['/'.trim($url, '/')] = $method;
+        $this->_routes[trim($url, '/')] = $method;
         return $this;
     }
 
@@ -92,17 +92,17 @@ class Router
      */
     private function _getMatchedCustomRoute()
     {
-        $route = null;
-        $uri = rtrim((string) F::$uri, '/');
+        $uri = trim((string) F::$uri, '/');
         if(isset($this->_routes[$uri])){
-            $route = $this->_routes[$uri];
+            return $this->_routes[$uri];
         } else {
-            // /user/register/:param1/:param2/
-            foreach($this->_routes as $uri => $class){
-                
+            foreach($this->_routes as $key => $class){
+                if(preg_match('#^'.$key.'$#', $uri, $matches)){
+                    return $class;
+                }
             }
         }
-        return $route;
+        return null;
     }
 
     /**
@@ -117,8 +117,12 @@ class Router
 
         $route = $this->_getMatchedCustomRoute();
         if($route){
+            // list($route, $params) = explode(':', $route, 2);
+            // if($params){
+            //     $params = explode(',', ltrim(rtrim($params, ')'), '('));
+            // }
             list($module, $controller, $action) = explode('.', $route, 3);
-            $route = $this->_route($module, $controller, $action);
+            $route = $this->_route($module, $controller, $action, $params);
             if($route){
                 $this->_currentRoute = $route;
             }
@@ -132,9 +136,10 @@ class Router
      * @param string $module
      * @param string $controller
      * @param string $action
+     * @param array $params
      * @return \FPHP\Application\Router\Route
      */
-    private function _route($module, $controller, $action)
+    private function _route($module, $controller, $action, $params = array())
     {
         $request = new Request();
         $request->setModule($module)
@@ -159,6 +164,9 @@ class Router
         $route->setModule($request->getModule());
         $route->setController(new $controller($request, F::$response));
         $route->setAction(new Action($route->getController(), $request->getActionMethodName()));
+        if($params){
+            $route->setActionParams($params);
+        }
 
         return $route;
     }
@@ -212,7 +220,7 @@ class Router
     /**
      * 
      * @param \FPHP\Application\Router\Route
-     * @return array|boolean
+     * @return void
      */
     private function _setActionParams(Route &$route, &$validUriForParams = null)
     {
@@ -306,6 +314,5 @@ class Router
             }
             F::$response->redirect($url, $redirectCode);
         }
-        return;
     }
 }
