@@ -3,6 +3,7 @@
 namespace FPHP\Application;
 
 use FPHP\Application\Data;
+use FPHP\Http\Response;
 use FPHP\UI\Javascript;
 use \ReflectionMethod;
 use FPHP\UI\Html;
@@ -21,6 +22,12 @@ class Mvc
      * @var string
      */
     private $_controllersDirectory = null;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_errorLayoutsDirectory = null;
 
     /**
      * 
@@ -94,6 +101,26 @@ class Mvc
     public function getControllersDirectory()
     {
         return $this->_controllersDirectory;
+    }
+
+    /**
+     * 
+     * @param string $directory
+     * @return \FPHP\Application\Mvc
+     */
+    public function setErrorsDirectory($directory)
+    {
+        $this->_errorLayoutsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+        return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getErrorsDirectory()
+    {
+        return $this->_errorLayoutsDirectory;
     }
 
     /**
@@ -297,7 +324,7 @@ class Mvc
     public function dispatch()
     {
         if($this->_dispatched){
-            throw new Exception("Already dispatched");
+            show_error("Already dispatched");
         }
 
         if(!$this->_controller){
@@ -362,7 +389,7 @@ class Mvc
             .$path
             .'.php';
         if(!file_exists($path)){
-            throw new Exception("{$path} not found");
+            show_error("{$path} not found");
         }
         $html = new Html($path);
         $html->set('uri', F::$uri)
@@ -380,6 +407,29 @@ class Mvc
             $html->setLayout($layout);
         }
         return $html;
+    }
+
+    /**
+     * 
+     * @param int $code
+     * @param string $message
+     * @return void
+     */
+    public function error($code, $message = '')
+    {
+        $html = null;
+        if(isset(F::$config->router['errors'][$code])){
+            $html = new Html($this->_errorLayoutsDirectory.$code.'.php');
+            $html->set('message', $message);
+        } else if($message){
+            $html = '<pre>'.$message.'</pre>';
+        } else if(isset(Response::$messages[$code])){
+            $html = '<pre>'.Response::$messages[$code].'</pre>';
+        }
+        F::$response->setCode($code)
+            ->setBody($html)
+            ->send();
+        exit;
     }
 
     /**
@@ -413,17 +463,18 @@ class Mvc
     public function start()
     {
         if($this->_dispatched){
-            throw new Exception("Application is already started");
+            show_error("Application is already started");
         } else if(!$this->_appDirectory){
-            throw new Exception("App Directory and System Directory must be set");
+            show_error("App Directory and System Directory must be set");
         }
         F::init(require $this->_appDirectory.'config/config.php');
         $this->setModules(F::$config->modules)
             ->setModulesDirectory($this->_appDirectory.'modules')
-            ->setModelsDirectory('models')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
             ->setLayoutsDirectory($this->_appDirectory.'layouts')
+            ->setErrorsDirectory($this->_appDirectory.'errors')
             ->setControllersDirectory('controllers')
+            ->setModelsDirectory('models')
             ->setViewsDirectory('views')
             ->preDispatch()
             ->dispatch();

@@ -190,21 +190,7 @@ if(!function_exists('show_response')){
      */
     function show_response($code, $message = '')
     {
-        if($message){
-            FPHP\Fphp::$response->setCode($code)
-                ->setBody("<pre>{$message}</pre>")
-                ->send();
-        } else if(isset(FPHP\Http\Response::$messages[$code])){
-            $disp = print_r(FPHP\Http\Response::$messages[$code], true);
-            FPHP\Fphp::$response->setCode($code)
-                ->setBody("<pre>{$disp}</pre>")
-                ->send();
-        } else {
-            FPHP\Fphp::$response->setCode(500)
-                ->setBody("<pre>Unrecognized Error Code</pre>")
-                ->send();
-        }
-        exit;
+        FPHP\Fphp::mvc()->error($code, $message);
     }
 }
 
@@ -218,7 +204,7 @@ if(!function_exists('show_error')){
      */
     function show_error($message)
     {
-        show_response(500, $message);
+        FPHP\Fphp::mvc()->error(500, $message);
     }
 }
 

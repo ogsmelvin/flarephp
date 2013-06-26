@@ -122,7 +122,7 @@ class Router
             //     $params = explode(',', ltrim(rtrim($params, ')'), '('));
             // }
             list($module, $controller, $action) = explode('.', $route, 3);
-            $route = $this->_route($module, $controller, $action, $params);
+            $route = $this->_route($module, $controller, $action);
             if($route){
                 $this->_currentRoute = $route;
             }
