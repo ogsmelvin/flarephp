@@ -101,7 +101,7 @@ class Session
     public function __get($key)
     {
         if(!$this->_started){
-            throw new Exception("Session must be started first");
+            show_error("Session must be started first");
         }
         if(!isset($_SESSION[$this->_name][$key]) || $key === self::$_keySettings){
             return null;
@@ -124,9 +124,9 @@ class Session
     public function __set($key, $value)
     {
         if(!$this->_started){
-            throw new Exception("Session must be started first");
+            show_error("Session must be started first");
         } else if(strpos($key, '__') === 0){
-            throw new Exception("Key must not have '__' ( underscore )");
+            show_error("Key must not have '__' ( underscore )");
         }
         $_SESSION[$this->_name][$key] = $value;
     }
@@ -195,7 +195,7 @@ class Session
     public function __isset($key)
     {
         if(!$this->_started){
-            throw new Exception("Session must be started first");
+            show_error("Session must be started first");
         }
         return isset($_SESSION[$this->_name][$key]);
     }
@@ -208,7 +208,7 @@ class Session
     public function __unset($key)
     {
         if(!$this->_started){
-            throw new Exception("Session must be started first");
+            show_error("Session must be started first");
         }
         unset($_SESSION[$this->_name][$key]);
     }
@@ -230,7 +230,7 @@ class Session
     public function destroy()
     {
         if(!$this->_started){
-            throw new Exception("Session must be started first");
+            show_error("Session must be started first");
         }
         session_destroy();
         session_regenerate_id();
@@ -245,7 +245,7 @@ class Session
     public function resetId()
     {
         if(!$this->_started){
-            throw new Exception("Session must be started first");
+            show_error("Session must be started first");
         }
         session_regenerate_id();
         return $this;
@@ -258,7 +258,7 @@ class Session
     public function clear()
     {
         if(!$this->_started){
-            throw new Exception("Session must be started first");
+            show_error("Session must be started first");
         }
         unset($_SESSION[$this->_name]);
         return $this;
