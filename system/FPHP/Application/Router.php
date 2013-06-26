@@ -97,7 +97,7 @@ class Router
             return $this->_routes[$uri];
         } else {
             foreach($this->_routes as $key => $class){
-                if(preg_match('#^'.$key.'$#', $uri, $matches)){
+                if(preg_match('#^'.$key.'$#', $uri)){
                     return $class;
                 }
             }
