@@ -245,7 +245,7 @@ class File
      * @param string $path
      * @return boolean
      */
-    public static function fromString($base64String, $path)
+    public static function createFromString($base64String, $path)
     {
         $result = false;
         $source = explode(',', $base64String, 2);
