@@ -89,7 +89,7 @@ class Curl
     /**
      * 
      * @param boolean $switch
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setAutoReset($switch)
     {
@@ -100,7 +100,7 @@ class Curl
     /**
      * 
      * @param string $url
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function open($url = null)
     {
@@ -114,7 +114,7 @@ class Curl
     /**
      * 
      * @param string $url
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setUrl($url)
     {
@@ -126,7 +126,7 @@ class Curl
     /**
      * 
      * @param string $method
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setRequestMethod($method)
     {
@@ -146,7 +146,7 @@ class Curl
     /**
      * 
      * @param string|array $type
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setContentType($type)
     {
@@ -159,7 +159,7 @@ class Curl
     /**
      * 
      * @param array $params
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setParams($params)
     {
@@ -173,7 +173,7 @@ class Curl
      * 
      * @param string $key
      * @param string|int $value
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setParam($key, $value)
     {
@@ -183,7 +183,7 @@ class Curl
 
     /**
      * 
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function clearParams()
     {
@@ -195,7 +195,7 @@ class Curl
      * 
      * @param int $key
      * @param mixed $value
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setOption($key, $value)
     {
@@ -214,7 +214,7 @@ class Curl
     /**
      * 
      * @param array $options
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function setOptions($options)
     {
@@ -227,7 +227,7 @@ class Curl
 
     /**
      * 
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function execute()
     {
@@ -339,7 +339,7 @@ class Curl
 
     /**
      * 
-     * @return \FPHP\Http\Curl
+     * @return \FPHP\Http\Client\Curl
      */
     public function reset()
     {

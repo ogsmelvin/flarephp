@@ -57,7 +57,7 @@ class Facebook
 
     /**
      * 
-     * @var \FPHP\Http\Curl
+     * @var \FPHP\Http\Client\Curl
      */
     private $_curl;
 

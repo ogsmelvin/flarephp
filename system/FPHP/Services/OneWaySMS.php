@@ -25,7 +25,7 @@ class OneWaySMS
 
     /**
      * 
-     * @var \FPHP\Http\CUrl
+     * @var \FPHP\Http\Client\Curl
      */
     private $_curl;
 
