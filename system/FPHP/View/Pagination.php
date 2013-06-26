@@ -1,12 +1,8 @@
 <?php
 
-namespace FPHP\UI;
+namespace FPHP\View;
 
 use FPHP\Fphp as F;
-
-if(!function_exists('http_build_url')){
-    F::mvc()->helper('url');
-}
 
 /**
  * 

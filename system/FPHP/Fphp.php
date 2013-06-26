@@ -10,7 +10,6 @@ use FPHP\Http\Response;
 use FPHP\Http\Session;
 use FPHP\Http\Uri;
 use \ReflectionClass;
-use \Exception;
 
 /**
  *
@@ -121,7 +120,7 @@ class Fphp
                 self::$config->session['auto_start']
             );
         } else {
-            throw new Exception("Config[session][namespace] must be set");
+            show_error("Config[session][namespace] must be set");
         }
         if(self::$config->require_https){
             self::$router->secure();
@@ -147,7 +146,7 @@ class Fphp
         if(!isset(self::$_db[$name])){
             if(!$config){
                 if(!isset(self::$config->database[$name])){
-                    throw new Exception("No database configuration found");
+                    show_error("No database configuration found");
                 }
                 $config = self::$config->database[$name];
             }
@@ -175,7 +174,7 @@ class Fphp
         if(!isset(self::$_ns[$key])){
             if(!$config){
                 if(!isset(self::$config->nosql[$key])){
-                    throw new Exception("Config for service '{$key}' is not defined");
+                    show_error("Config for service '{$key}' is not defined");
                 }
                 $config = self::$config->nosql[$key];
             }
@@ -209,7 +208,7 @@ class Fphp
         if(!isset(self::$_services[$service])){
             if(!$config){
                 if(!isset(self::$config->services[$service])){
-                    throw new Exception("Config for service '{$service}' is not defined");
+                    show_error("Config for service '{$service}' is not defined");
                 }
                 $config = self::$config->services[$service];
             }

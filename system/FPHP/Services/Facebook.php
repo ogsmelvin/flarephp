@@ -2,9 +2,8 @@
 
 namespace FPHP\Services;
 
+use FPHP\Http\Client\Curl;
 use FPHP\Objects\Json;
-use FPHP\Http\Curl;
-use \Exception;
 use FPHP\Fphp as A;
 
 /**
@@ -371,7 +370,7 @@ class Facebook
                         ->getContent();
             
             if($this->_curl->hasError()){
-                throw new Exception($this->_curl->getError());
+                show_error($this->_curl->getError());
             }
             
             parse_str($result, $params);

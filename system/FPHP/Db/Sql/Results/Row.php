@@ -4,7 +4,6 @@ namespace FPHP\Db\Sql\Results;
 
 use FPHP\Db\Sql\Query\ARQuery;
 use FPHP\Security\Xss;
-use \Exception;
 
 /**
  * 
@@ -118,7 +117,7 @@ class Row
     public function __get($key)
     {
         if(!isset($this->_data[$key])){
-            show_response(500, "'{$key}' doesn't exist in the row object");
+            show_error("'{$key}' doesn't exist in the row object");
         }
         return $this->_data[$key];
     }
@@ -176,7 +175,7 @@ class Row
         if(isset($this->_data[$field])){
             return Xss::filter($this->_data[$field]);
         }
-        show_response(500, "'{$key}' doesn't exist in the row object");
+        show_error("'{$key}' doesn't exist in the row object");
     }
 
     /**

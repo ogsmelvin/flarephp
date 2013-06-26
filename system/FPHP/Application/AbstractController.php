@@ -6,7 +6,6 @@ use FPHP\Application\Http\Request;
 use FPHP\Http\Response;
 use FPHP\Security\Xss;
 use FPHP\Fphp as F;
-use \Exception;
 
 /**
  * 
@@ -107,7 +106,7 @@ abstract class AbstractController
             if(F::service($service)){
                 $this->_services[$shortKey] = $service;
             } else {
-                show_response(500, "Error initializing service '{$service}'");
+                show_error("Error initializing service '{$service}'");
             }
         }
         return $this;
@@ -121,7 +120,7 @@ abstract class AbstractController
     public function getService($service)
     {
         if(!isset($this->_services[$service])){
-            show_response(500, "'{$service}' was not set");
+            show_error("'{$service}' was not set");
         }
         return F::service($this->_services[$service]);
     }
@@ -235,7 +234,7 @@ abstract class AbstractController
         if(!isset($this->{$tmpKey})){
             $ns = & F::ns($key);
             if(!$ns){
-                show_response(500, "Initialize nosql '{$key}' failed");
+                show_error("Initialize nosql '{$key}' failed");
             }
             $this->{$tmpKey} = & $ns;
         }

@@ -3,7 +3,7 @@
 namespace FPHP\Security;
 
 if(!function_exists('mcrypt_encrypt')){
-    show_response(500, 'FPHP\Security\Crypt requires mcrypt library');
+    show_error('FPHP\Security\Crypt requires mcrypt library');
 }
 
 use FPHP\Security;

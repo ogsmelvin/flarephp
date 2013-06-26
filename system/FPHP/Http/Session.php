@@ -2,8 +2,6 @@
 
 namespace FPHP\Http;
 
-use \Exception;
-
 /**
  * 
  * @author

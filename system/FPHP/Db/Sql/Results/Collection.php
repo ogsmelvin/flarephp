@@ -2,7 +2,7 @@
 
 namespace FPHP\Db\Sql\Results;
 
-use FPHP\UI\Pagination;
+use FPHP\View\Pagination;
 use FPHP\Objects\Json;
 use \ArrayObject;
 use \PDO;
@@ -28,7 +28,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @var \FPHP\UI\Pagination
+     * @var \FPHP\View\Pagination
      */
     private $_pagination = null;
 
@@ -47,7 +47,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @param \FPHP\UI\Pagination $pagination
+     * @param \FPHP\View\Pagination $pagination
      * @return \FPHP\Db\Sql\Results\Collection
      */
     public function setPagination(Pagination $pagination)
@@ -58,7 +58,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @return \FPHP\UI\Pagination
+     * @return \FPHP\View\Pagination
      */
     public function getPagination()
     {
@@ -148,19 +148,6 @@ class Collection extends ArrayObject
     public function toXMLObject()
     {
         //TODO
-    }
-
-    /**
-     * 
-     * @param string $tag
-     * @param string $name
-     * @return \FPHP\UI\Html\Element
-     */
-    public function toHtml($tag, $name)
-    {
-        $tag = ucwords(strtolower($tag));
-        $tag = "\\FPHP\\UI\\Html\\{$tag}";
-        return new $tag($name, $this);
     }
 
     /**

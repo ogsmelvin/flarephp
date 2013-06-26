@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\UI;
+namespace FPHP\View;
 
 use FPHP\Fphp as F;
 

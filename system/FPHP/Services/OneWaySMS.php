@@ -2,7 +2,7 @@
 
 namespace FPHP\Services;
 
-use FPHP\Http\Curl;
+use FPHP\Http\Client\Curl;
 
 /**
  * 

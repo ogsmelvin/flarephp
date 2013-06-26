@@ -4,7 +4,7 @@ namespace FPHP\Db\Sql\Query;
 
 use FPHP\Db\Sql\Results\Collection;
 use FPHP\Db\Sql\Results\Row;
-use FPHP\UI\Pagination;
+use FPHP\View\Pagination;
 use FPHP\Objects\Json;
 use \PDOException;
 use \PDOStatement;
@@ -656,14 +656,14 @@ class ARQuery
             unset($newRow);
             $stmt = null;
         } catch(PDOException $ex) {
-            show_response(500, $ex->getMessage());
+            show_error($ex->getMessage());
         }
         return $result;
     }
 
     /**
      *
-     * @return \FPHP\UI\Pagination
+     * @return \FPHP\View\Pagination
      */
     protected function _paginate()
     {
@@ -712,7 +712,7 @@ class ARQuery
             $stmt = null;
             unset($row);
         } catch(PDOException $ex) {
-            show_response(500, $ex->getMessage());
+            show_error($ex->getMessage());
         }
         return $result;
     }
@@ -757,7 +757,7 @@ class ARQuery
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt = null;
         } catch(PDOException $ex) {
-            show_response(500, $ex->getMessage());
+            show_error($ex->getMessage());
         }
         return $result;
     }
@@ -776,7 +776,7 @@ class ARQuery
             $result = $stmt->fetchAll(PDO::FETCH_OBJ);
             $stmt = null;
         } catch(PDOException $ex) {
-            show_response(500, $ex->getMessage());
+            show_error($ex->getMessage());
         }
         return $result;
     }
@@ -799,7 +799,7 @@ class ARQuery
             $stmt = null;
             unset($row);
         } catch(PDOException $ex) {
-            show_response(500, $ex->getMessage());
+            show_error($ex->getMessage());
         }
         return $result;
     }
@@ -937,7 +937,7 @@ class ARQuery
             }
             $stmt = null;
         } catch(PDOException $ex) {
-            show_response(500, $ex->getMessage());
+            show_error($ex->getMessage());
         }
         return $return;
     }

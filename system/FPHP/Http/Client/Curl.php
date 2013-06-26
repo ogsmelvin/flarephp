@@ -1,14 +1,13 @@
 <?php
 
-namespace FPHP\Http;
+namespace FPHP\Http\Client;
 
 use FPHP\Objects\Json;
 use FPHP\Objects\Xml;
 use FPHP\Fphp as F;
-use \Exception;
 
 if(!function_exists('curl_init')){
-    show_response(500, 'CURL is not supported by your server');
+    show_error('CURL is not supported by your server');
 }
 
 /**
@@ -139,7 +138,7 @@ class Curl
             $this->_method = self::GET;
             curl_setopt($this->_curl, CURLOPT_POST, false);
         } else {
-            throw new Exception("Invalid request method");
+            show_error("Invalid request method");
         }
         return $this;
     }
@@ -260,7 +259,7 @@ class Curl
             $this->_url = http_build_url($url);
             $this->setOption(CURLOPT_URL, $this->_url);
         } else {
-            throw new Exception("Invalid request method");
+            show_error("Invalid request method");
         }
         return;
     }

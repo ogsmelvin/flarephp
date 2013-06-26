@@ -88,7 +88,7 @@ class Hash extends Security;
             $supportedMethod = '_digest'.ucfirst($type);
             $result = self::$supportedMethod($algo, $str, $binaryOutput);
         } else {
-            dislay_error("{$algo} is not supported by your server");
+            show_error("{$algo} is not supported by your server");
         }
         return $result;
     }

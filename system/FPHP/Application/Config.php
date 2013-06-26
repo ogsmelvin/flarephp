@@ -2,8 +2,6 @@
 
 namespace FPHP\Application;
 
-use \Exception;
-
 /**
  *
  * @author anthony

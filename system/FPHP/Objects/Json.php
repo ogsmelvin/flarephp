@@ -3,7 +3,6 @@
 namespace FPHP\Objects;
 
 use \ArrayObject;
-use \Exception;
 
 /**
  * 
@@ -23,12 +22,12 @@ class Json extends ArrayObject
             if($is_url){
                 $data = @file_get_contents($data);
                 if($data === false){
-                    throw new Exception("Error encountered accessing JSON URL");
+                    show_error("Error encountered accessing JSON URL");
                 }
             }
             $data = json_decode($data, true);
             if(!is_array($data)){
-                throw new Exception("Invalid JSON Format");
+                show_error("Invalid JSON Format");
             }
         }
         parent::__construct($data);

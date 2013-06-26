@@ -4,7 +4,6 @@ namespace FPHP\Http;
 
 use FPHP\Security\File as FileSec;
 use FPHP\Security\Hash;
-use \Exception;
 
 /**
  * 

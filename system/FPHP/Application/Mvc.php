@@ -4,11 +4,10 @@ namespace FPHP\Application;
 
 use FPHP\Application\Data;
 use FPHP\Http\Response;
-use FPHP\UI\Javascript;
+use FPHP\View\Javascript;
 use \ReflectionMethod;
-use FPHP\UI\Html;
+use FPHP\View\Html;
 use FPHP\Fphp as F;
-use \Exception;
 
 /**
  * 
