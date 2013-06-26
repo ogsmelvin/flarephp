@@ -25,7 +25,7 @@ $routes = array(
      * to use the built in just leave the value blank
      * statusCode => 'module.controller.action'
      */
-    'error_controllers' => array(
+    'errors' => array(
         404 => 'module.controller.action',
         500 => 'module.controller.action'
     ),
