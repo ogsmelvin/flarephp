@@ -226,6 +226,19 @@ if(!function_exists('_fphp_show_error')){
     }
 }
 
+if(!function_exists('fphp')){
+
+    /**
+     * 
+     * @param mixed $object
+     * @return mixed
+     */
+    function fphp($object)
+    {
+        return $object;
+    }
+}
+
 set_error_handler('_fphp_show_error');
 spl_autoload_register('fphp_load_class');
 

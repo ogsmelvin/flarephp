@@ -38,7 +38,8 @@ class File
         UPLOAD_ERR_NO_FILE => 'Upload no file selected', // 4
         UPLOAD_ERR_NO_TMP_DIR => 'Upload no temp directory', // 6
         UPLOAD_ERR_CANT_WRITE => 'Upload unable to write file', // 7
-        UPLOAD_ERR_EXTENSION => 'Upload stopped by extension' // 8
+        UPLOAD_ERR_EXTENSION => 'Upload stopped by extension', // 8
+        0 => 'Unkown error' // 0
         // UPLOAD_ERR_OK => 'No Error'
     );
 
@@ -208,7 +209,7 @@ class File
     public function getErrorMessage()
     {
         if(!isset(self::$_errorCodes[$this->_error])){
-            return self::$_errorCodes[UPLOAD_ERR_NO_FILE];
+            return self::$_errorCodes[0];
         }
         return self::$_errorCodes[$this->_error];
     }
@@ -226,7 +227,7 @@ class File
      * 
      * @param string $to
      * @param array $config
-     * @return array|false
+     * @return boolean
      */
     public function move($to, $config = array())
     {
@@ -236,6 +237,8 @@ class File
         if($to){
             if(is_uploaded_file($this->_tmpname)){
                 
+            } else {
+                $this->_setMoveError($this->getErrorMessage());
             }
         } else {
             $this->_setMoveError("Upload path doesn't exists or not writable");
