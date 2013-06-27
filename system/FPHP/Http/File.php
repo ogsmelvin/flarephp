@@ -225,11 +225,11 @@ class File
 
     /**
      * 
-     * @param string $to
-     * @param array $config
+     * @param string $destination
+     * @param string $filename
      * @return boolean
      */
-    public function move($to, $config = array())
+    public function move($destination, $filename = null)
     {
         $result = false;
         $config = !$config ? self::$_config : array_merge(self::$_config, $config);
@@ -244,6 +244,15 @@ class File
             $this->_setMoveError("Upload path doesn't exists or not writable");
         }
         return $result;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function valid()
+    {
+        return true;
     }
 
     /**
@@ -295,15 +304,6 @@ class File
 
     /**
      * 
-     * @return string
-     */
-    public function getMoveError()
-    {
-        return $this->_moveError;
-    }
-
-    /**
-     * 
      * @param string $to
      * @return string|boolean
      */
@@ -321,25 +321,21 @@ class File
 
     /**
      * 
-     * @param array $config
+     * @param array $validation
      * @return void
      */
-    public static function setUploadConfig(array $config)
+    public static function setValidation(array $validation)
     {
-        foreach($config as $key => $conf){
-            if(array_key_exists($key, self::$_config)){
-                self::$_config[$key] = $conf;
-            }
-        }
+        self::$_validation = array_merge(self::$_validation, $validation);
     }
 
     /**
      * 
      * @return array
      */
-    public static function getUploadConfig()
+    public static function getValidation()
     {
-        return self::$_config;
+        return self::$_validation;
     }
 
     /**
