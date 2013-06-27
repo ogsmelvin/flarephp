@@ -4,7 +4,6 @@ namespace FPHP\Application\Db\Sql;
 
 use FPHP\Application\Model as ParentModel;
 use FPHP\Fphp as F;
-use \Exception;
 
 /**
  * 
@@ -57,7 +56,7 @@ class Model extends ParentModel
         if(isset(self::getController()->db)){
             $this->_adapter = & self::getController()->db;
         } else {
-            show_response(500, "No database connection");
+            show_error("No database connection");
         }
         if(empty(static::$primaryKey)){
             static::$primaryKey = $this->_adapter->getPrimaryKey(static::$table);
@@ -138,7 +137,7 @@ class Model extends ParentModel
     public static function query()
     {
         if(empty(static::$table)){
-            throw new Exception('Table must be set');
+            show_error('Table must be set');
         } else if(!isset(self::$_instances[static::$table])){
             self::$_instances[static::$table] = new static;
         }

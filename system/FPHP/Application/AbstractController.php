@@ -219,7 +219,7 @@ abstract class AbstractController
      */
     public function setHelper($helper)
     {
-        F::mvc()->helper($helper);
+        F::getApp()->helper($helper);
         return $this;
     }
 
@@ -272,7 +272,7 @@ abstract class AbstractController
      */
     public function view($path, $data = null, $layout = null)
     {
-        return F::mvc()->view($path, $data, $layout);
+        return F::getApp()->view($path, $data, $layout);
     }
 
     /**
@@ -281,7 +281,7 @@ abstract class AbstractController
      */
     public function getAppDirectory()
     {
-        return F::mvc()->getAppDirectory();
+        return F::getApp()->getAppDirectory();
     }
 
     /**

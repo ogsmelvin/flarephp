@@ -17,6 +17,6 @@ abstract class Model
      */
     public static function getController()
     {
-        return F::mvc()->getController();
+        return F::getApp()->getController();
     }
 }

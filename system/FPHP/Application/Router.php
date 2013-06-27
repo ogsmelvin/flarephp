@@ -146,17 +146,17 @@ class Router
             ->setController($controller)
             ->setAction($action);
 
-        $path = F::mvc()->getModulesDirectory()
+        $path = F::getApp()->getModulesDirectory()
             .$request->getModule()
             .'/'
-            .F::mvc()->getControllersDirectory()
+            .F::getApp()->getControllersDirectory()
             .strtolower(urldecode($request->getController()))
             .'.php';
         if(!file_exists($path)){
             return null;
         }
 
-        require F::mvc()->getModulesDirectory().$request->getModule().'/bootstrap.php';
+        require F::getApp()->getModulesDirectory().$request->getModule().'/bootstrap.php';
         require $path;
         
         $controller = ucwords($request->getModule())."\\Controllers\\".$request->getControllerClassName();

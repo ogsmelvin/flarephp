@@ -4,12 +4,12 @@ namespace FPHP;
 
 use FPHP\Application\Config;
 use FPHP\Application\Router;
-use FPHP\Application\Mvc;
-use FPHP\Http\Request;
 use FPHP\Http\Response;
+use FPHP\Http\Request;
 use FPHP\Http\Session;
-use FPHP\Http\Uri;
+use FPHP\Application;
 use \ReflectionClass;
+use FPHP\Http\Uri;
 
 /**
  *
@@ -56,9 +56,9 @@ class Fphp
 
     /**
      *
-     * @var \FPHP\Application\Mvc
+     * @var \FPHP\Application
      */
-    private static $_mvc = null;
+    private static $_application = null;
 
     /**
      *
@@ -73,12 +73,6 @@ class Fphp
     private static $_ns = array();
 
     /**
-     *
-     * @var boolean
-     */
-    private static $_init = false;
-
-    /**
      * 
      * @var array
      */
@@ -89,9 +83,9 @@ class Fphp
      * @param string
      * @return void
      */
-    public static function init($config_file)
+    public static function createApp($config_file)
     {
-        if(self::$_init){
+        if(self::$_application){
             return;
         }
         self::$config = Config::load($config_file);
@@ -132,7 +126,7 @@ class Fphp
                 show_response(500, 'output compression failed');
             }
         }
-        self::$_init = true;
+        self::$_application = new Application();
     }
 
     /**
@@ -187,14 +181,14 @@ class Fphp
 
     /**
      *
-     * @return \FPHP\Application\Mvc
+     * @return \FPHP\Application
      */
-    public static function mvc()
+    public static function getApp()
     {
-        if(!self::$_mvc){
-            self::$_mvc = new Mvc();
+        if(!self::$_application){
+            show_error("FPHP is not yet initialized");
         }
-        return self::$_mvc;
+        return self::$_application;
     }
 
     /**

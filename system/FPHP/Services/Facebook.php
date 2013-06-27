@@ -4,7 +4,7 @@ namespace FPHP\Services;
 
 use FPHP\Http\Client\Curl;
 use FPHP\Objects\Json;
-use FPHP\Fphp as A;
+use FPHP\Fphp as F;
 
 /**
  * 
@@ -91,9 +91,9 @@ class Facebook
     {
         if($userId){
             $this->_user = $userId;
-            A::$session->set('fb_'.$this->_appId.'_user', $userId);
+            F::$session->set('fb_'.$this->_appId.'_user', $userId);
         } else {
-            $this->_user = A::$session->get('fb_'.$this->_appId.'_user');
+            $this->_user = F::$session->get('fb_'.$this->_appId.'_user');
         }
     }
 
@@ -145,12 +145,12 @@ class Facebook
             'state' => $value,
             'scope' => implode(',', $permission)
         );
-        A::$session->set('fb_'.$this->_appId.'_perms', $permission);
-        A::$session->set('fb_'.$this->_appId.'_state', $value);
-        A::$session->set('fb_'.$this->_appId.'_uri', $data['redirect_uri']);
+        F::$session->set('fb_'.$this->_appId.'_perms', $permission);
+        F::$session->set('fb_'.$this->_appId.'_state', $value);
+        F::$session->set('fb_'.$this->_appId.'_uri', $data['redirect_uri']);
         $loginUrl = self::HOST.'dialog/oauth?'.http_build_query($data);
         if($auto_redirect){
-            A::$response->redirect($loginUrl);
+            F::$response->redirect($loginUrl);
         }
         return $loginUrl;
     }
@@ -161,7 +161,7 @@ class Facebook
      */
     public function getPermission()
     {
-        return A::$session->get('fb_'.$this->_appId.'_perms');
+        return F::$session->get('fb_'.$this->_appId.'_perms');
     }
 
     /**
@@ -351,21 +351,21 @@ class Facebook
      */
     public function setAccessToken($token = null)
     {
-        $code = A::$request->get('code');
-        $state = A::$request->get('state');
+        $code = F::$request->get('code');
+        $state = F::$request->get('state');
         if($token){
             $this->_accessToken = (string) $token;
-            A::$session->set('fb_'.$this->_appId.'_token', $this->_accessToken);
-        } else if(A::$session->has('fb_'.$this->_appId.'_token')){
-            $this->_accessToken = A::$session->get('fb_'.$this->_appId.'_token');
+            F::$session->set('fb_'.$this->_appId.'_token', $this->_accessToken);
+        } else if(F::$session->has('fb_'.$this->_appId.'_token')){
+            $this->_accessToken = F::$session->get('fb_'.$this->_appId.'_token');
         } else if(($code && $state) 
-            && strcmp($state, A::$session->get('fb_'.$this->_appId.'_state')) === 0){
+            && strcmp($state, F::$session->get('fb_'.$this->_appId.'_state')) === 0){
 
             $result = $this->_curl
                         ->setParam('code', $code)
                         ->setParam('client_id', $this->_appId)
                         ->setParam('client_secret', $this->_appSecret)
-                        ->setParam('redirect_uri', A::$session->get('fb_'.$this->_appId.'_uri'))
+                        ->setParam('redirect_uri', F::$session->get('fb_'.$this->_appId.'_uri'))
                         ->setUrl(self::API_HOST.'oauth/access_token')
                         ->getContent();
             
@@ -375,14 +375,14 @@ class Facebook
             
             parse_str($result, $params);
             $this->_accessToken = $params['access_token'];
-            A::$session->set('fb_'.$this->_appId.'_token', $params['access_token']);
+            F::$session->set('fb_'.$this->_appId.'_token', $params['access_token']);
         }
 
-        $s_request = A::$request->request('signed_request');
+        $s_request = F::$request->request('signed_request');
         if(!$s_request){
-            $s_request = A::$session->get('fb_'.$this->_appId.'_signed_request');
+            $s_request = F::$session->get('fb_'.$this->_appId.'_signed_request');
         } else {
-            A::$session->set('fb_'.$this->_appId.'_signed_request', $s_request);
+            F::$session->set('fb_'.$this->_appId.'_signed_request', $s_request);
         }
         $this->_parseSignedRequest($s_request);
         return $this;
@@ -446,7 +446,7 @@ class Facebook
     public function getAccessToken()
     {
         if(!$this->_accessToken){
-            return A::$session->get('fb_'.$this->_appId.'_token');
+            return F::$session->get('fb_'.$this->_appId.'_token');
         }
         return $this->_accessToken;
     }
