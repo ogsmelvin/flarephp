@@ -83,7 +83,7 @@ if(!function_exists('render')){
      */
     function render($path, $data = array())
     {
-        return \FPHP\Fphp::mvc()->view($path, $data, false);
+        return \FPHP\Fphp::getApp()->view($path, $data, false);
     }
 }
 
@@ -190,7 +190,7 @@ if(!function_exists('show_response')){
      */
     function show_response($code, $message = '')
     {
-        FPHP\Fphp::mvc()->error($code, $message);
+        FPHP\Fphp::getApp()->error($code, $message);
     }
 }
 
@@ -204,7 +204,7 @@ if(!function_exists('show_error')){
      */
     function show_error($message)
     {
-        FPHP\Fphp::mvc()->error(500, $message);
+        FPHP\Fphp::getApp()->error(500, $message);
     }
 }
 

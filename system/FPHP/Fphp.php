@@ -79,15 +79,22 @@ class Fphp
     private static $_services = array();
 
     /**
+     * 
+     * @var boolean
+     */
+    private static $_init = false;
+
+    /**
      *
      * @param string
      * @return void
      */
-    public static function createApp($config_file)
+    public static function init($config_file)
     {
-        if(self::$_application){
+        if(self::$_init){
             return;
         }
+
         self::$config = Config::load($config_file);
         if(self::$config->time_limit !== null){
             set_time_limit(self::$config->time_limit);
@@ -126,7 +133,8 @@ class Fphp
                 show_response(500, 'output compression failed');
             }
         }
-        self::$_application = new Application();
+        
+        self::$_init = true;
     }
 
     /**
@@ -180,14 +188,24 @@ class Fphp
     }
 
     /**
+     * 
+     * @return \FPHP\Application
+     */
+    public static function createApp()
+    {
+        if(self::$_application && self::$_application instanceof Application){
+            show_error("FPHP Application is already created");
+        }
+        self::$_application = new Application();
+        return self::$_application;
+    }
+
+    /**
      *
      * @return \FPHP\Application
      */
     public static function getApp()
     {
-        if(!self::$_application){
-            show_error("FPHP is not yet initialized");
-        }
         return self::$_application;
     }
 
