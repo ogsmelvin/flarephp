@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Util;
+namespace Flare\Util;
 
 /**
  * 

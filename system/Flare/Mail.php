@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP;
+namespace Flare;
 
 /**
  * 
@@ -72,7 +72,7 @@ class Mail
     /**
      * 
      * @param array $details
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function setSmtp(array $details)
     {
@@ -98,7 +98,7 @@ class Mail
     /**
      * 
      * @param string $content
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function setContent($content)
     {
@@ -110,7 +110,7 @@ class Mail
      * 
      * @param string $path
      * @param array $data
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function setContentPath($path, $data = array())
     {
@@ -130,7 +130,7 @@ class Mail
     /**
      * 
      * @param string $file
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function addAttachment($file)
     {
@@ -141,7 +141,7 @@ class Mail
     /**
      * 
      * @param string $type
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function setContentType($type, $additional_parameters = '')
     {
@@ -171,7 +171,7 @@ class Mail
      * 
      * @param string $from
      * @param string $name
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function setSender($email, $name = null)
     {
@@ -186,7 +186,7 @@ class Mail
      * 
      * @param string $email
      * @param string $name
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function addRecipient($email, $name = null)
     {
@@ -201,7 +201,7 @@ class Mail
      * 
      * @param string $email
      * @param string $name
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function addCc($email, $name = null)
     {
@@ -216,7 +216,7 @@ class Mail
      * 
      * @param string $email
      * @param string $name
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function addBcc($email, $name = null)
     {
@@ -230,7 +230,7 @@ class Mail
     /**
      * 
      * @param string $subject
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function setSubject($subject)
     {
@@ -250,7 +250,7 @@ class Mail
     /**
      * 
      * @param string $header
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function addHeader($header)
     {
@@ -335,7 +335,7 @@ class Mail
 
     /**
      * 
-     * @return \FPHP\Mail
+     * @return \Flare\Mail
      */
     public function clear()
     {

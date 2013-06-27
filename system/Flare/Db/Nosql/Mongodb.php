@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Db\Nosql;
+namespace Flare\Db\Nosql;
 
 /**
  * 

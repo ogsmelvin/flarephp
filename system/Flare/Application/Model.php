@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Application;
+namespace Flare\Application;
 
-use FPHP\Fphp as F;
+use Flare\Flare as F;
 
 /**
  * 
@@ -13,7 +13,7 @@ abstract class Model
 {
     /**
      * 
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public static function getController()
     {

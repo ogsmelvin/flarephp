@@ -1,11 +1,11 @@
 <?php
 
-namespace FPHP\Application;
+namespace Flare\Application;
 
-use FPHP\Application\Http\Request;
-use FPHP\Http\Response;
-use FPHP\Security\Xss;
-use FPHP\Fphp as F;
+use Flare\Application\Http\Request;
+use Flare\Http\Response;
+use Flare\Security\Xss;
+use Flare\Flare as F;
 
 /**
  * 
@@ -16,37 +16,37 @@ abstract class AbstractController
 {
     /**
      * 
-     * @var \FPHP\Http\Session
+     * @var \Flare\Http\Session
      */
     protected $session;
 
     /**
      * 
-     * @var \FPHP\Application\Config
+     * @var \Flare\Application\Config
      */
     protected $config;
 
     /**
      * 
-     * @var \FPHP\Application\Http\Request
+     * @var \Flare\Application\Http\Request
      */
     protected $request;
 
     /**
      * 
-     * @var \FPHP\Http\Response
+     * @var \Flare\Http\Response
      */
     protected $response;
 
     /**
      * 
-     * @var \FPHP\Application\Router
+     * @var \Flare\Application\Router
      */
     protected $router;
 
     /**
      * 
-     * @var \FPHP\Http\Uri
+     * @var \Flare\Http\Uri
      */
     protected $uri;
 
@@ -58,8 +58,8 @@ abstract class AbstractController
 
     /**
      * 
-     * @param \FPHP\Application\Http\Request $request
-     * @param \FPHP\Http\Response $response
+     * @param \Flare\Application\Http\Request $request
+     * @param \Flare\Http\Response $response
      */
     public function __construct(Request &$request, Response &$response)
     {
@@ -95,7 +95,7 @@ abstract class AbstractController
      * 
      * @param string $service
      * @param string $shortKey
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function setService($service, $shortKey = null)
     {
@@ -204,7 +204,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function setDb($key = 'default')
     {
@@ -215,7 +215,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $helper
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function setHelper($helper)
     {
@@ -226,7 +226,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function setNosql($key)
     {
@@ -244,7 +244,7 @@ abstract class AbstractController
     /**
      * 
      * @param boolean $switch
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function setAutoLayout($switch)
     {
@@ -255,7 +255,7 @@ abstract class AbstractController
     /**
      * 
      * @param boolean $switch
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function setAutoXssFilter($switch)
     {
@@ -297,7 +297,7 @@ abstract class AbstractController
 
     /**
      * 
-     * @return \FPHP\Application\Http\Request
+     * @return \Flare\Application\Http\Request
      */
     public function getAppRequest()
     {

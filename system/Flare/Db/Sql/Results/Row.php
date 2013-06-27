@@ -1,9 +1,9 @@
 <?php
 
-namespace FPHP\Db\Sql\Results;
+namespace Flare\Db\Sql\Results;
 
-use FPHP\Db\Sql\Query\ARQuery;
-use FPHP\Security\Xss;
+use Flare\Db\Sql\Query\ARQuery;
+use Flare\Security\Xss;
 
 /**
  * 
@@ -14,7 +14,7 @@ class Row
 {
     /**
      * 
-     * @var \FPHP\Db\Sql\Query\ARQuery
+     * @var \Flare\Db\Sql\Query\ARQuery
      */
     private $_query;
 
@@ -44,7 +44,7 @@ class Row
 
     /**
      * 
-     * @param \FPHP\Db\Sql\Query\ARQuery $query
+     * @param \Flare\Db\Sql\Query\ARQuery $query
      * @param string $table
      * @param string|int $id
      */
@@ -59,7 +59,7 @@ class Row
     /**
      * 
      * @param string $table
-     * @return \FPHP\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Results\Row
      */
     public function setTable($table)
     {
@@ -70,7 +70,7 @@ class Row
     /**
      * 
      * @param string $key
-     * @return \FPHP\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Results\Row
      */
     public function setPrimaryKey($key)
     {
@@ -90,7 +90,7 @@ class Row
     /**
      * 
      * @param string|int $id
-     * @return \FPHP\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Results\Row
      */
     public function setId($id)
     {
@@ -101,7 +101,7 @@ class Row
     /**
      * 
      * @param array $data
-     * @return \FPHP\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Results\Row
      */
     public function setData(array $data)
     {

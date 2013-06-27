@@ -1,9 +1,9 @@
 <?php
 
-namespace FPHP\Db\Sql\Results;
+namespace Flare\Db\Sql\Results;
 
-use FPHP\View\Pagination;
-use FPHP\Objects\Json;
+use Flare\View\Pagination;
+use Flare\Objects\Json;
 use \ArrayObject;
 use \PDO;
 
@@ -28,7 +28,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @var \FPHP\View\Pagination
+     * @var \Flare\View\Pagination
      */
     private $_pagination = null;
 
@@ -47,8 +47,8 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @param \FPHP\View\Pagination $pagination
-     * @return \FPHP\Db\Sql\Results\Collection
+     * @param \Flare\View\Pagination $pagination
+     * @return \Flare\Db\Sql\Results\Collection
      */
     public function setPagination(Pagination $pagination)
     {
@@ -58,7 +58,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @return \FPHP\View\Pagination
+     * @return \Flare\View\Pagination
      */
     public function getPagination()
     {
@@ -108,7 +108,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @return \FPHP\Objects\JSON
+     * @return \Flare\Objects\JSON
      */
     public function toJSONObject()
     {
@@ -143,7 +143,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @return \FPHP\Objects\Xml
+     * @return \Flare\Objects\Xml
      */
     public function toXMLObject()
     {

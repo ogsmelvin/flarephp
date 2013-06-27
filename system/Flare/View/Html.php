@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\View;
+namespace Flare\View;
 
-use FPHP\Fphp as F;
+use Flare\Flare as F;
 
 /**
  * 
@@ -31,7 +31,7 @@ class Html
 
     /**
      * 
-     * @var \FPHP\UI\Javascript
+     * @var \Flare\UI\Javascript
      */
     public $js;
 
@@ -57,7 +57,7 @@ class Html
      * 
      * @param string $key
      * @param mixed $value
-     * @return \FPHP\UI\Html
+     * @return \Flare\UI\Html
      */
     public function set($key, $value)
     {
@@ -98,7 +98,7 @@ class Html
     /**
      * 
      * @param string $file
-     * @return \FPHP\UI\Html
+     * @return \Flare\UI\Html
      */
     public function setLayout($file)
     {

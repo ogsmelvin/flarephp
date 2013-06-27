@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Db\Sql\Query;
+namespace Flare\Db\Sql\Query;
 
-use FPHP\Objects\Json;
+use Flare\Objects\Json;
 use \PDOException;
 use \PDO;
 
@@ -63,7 +63,7 @@ class Query
     /**
      * 
      * @param string $query
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function setQuery($query)
     {
@@ -74,7 +74,7 @@ class Query
     /**
      * 
      * @param array $bindings
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function setBindings($bindings)
     {
@@ -87,7 +87,7 @@ class Query
     /**
      * 
      * @param array $columns
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function setColumns($columns)
     {
@@ -100,7 +100,7 @@ class Query
     /**
      * 
      * @param array $tables
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function setTables($tables)
     {
@@ -118,7 +118,7 @@ class Query
      * 
      * @param string $key
      * @param string|int $value
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function bind($key, $value)
     {
@@ -134,7 +134,7 @@ class Query
      * 
      * @param string $key
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function column($key, $value)
     {
@@ -147,7 +147,7 @@ class Query
      * @param string $key
      * @param string $value
      * @param string $alias
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function table($key, $value, $alias = null)
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Objects;
+namespace Flare\Objects;
 
 use \SimpleXMLElement;
 

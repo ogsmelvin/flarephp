@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Application;
+namespace Flare\Application;
 
-use FPHP\Fphp as F;
+use Flare\Flare as F;
 
 /**
  * 
@@ -35,7 +35,7 @@ class Error
     /**
      * 
      * @param int $code
-     * @return \FPHP\Application\Error
+     * @return \Flare\Application\Error
      */
     public function setErrorCode($code)
     {
@@ -55,7 +55,7 @@ class Error
     /**
      * 
      * @param string $message
-     * @return \FPHP\Application\Error
+     * @return \Flare\Application\Error
      */
     public function setMessage($message)
     {

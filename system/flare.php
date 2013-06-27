@@ -4,15 +4,15 @@
  * 
  * @var string
  */
-define('FPHP_DIR', dirname(__FILE__).'/');
+define('FLARE_DIR', dirname(__FILE__).'/');
 
 /**
  * 
  * @var string
  */
-define('FPHP_VERSION', '1.0');
+define('FLARE_VERSION', '1.0');
 
-if(!function_exists('fphp_load_class')){
+if(!function_exists('flare_load_class')){
 
     /**
      * 
@@ -20,10 +20,10 @@ if(!function_exists('fphp_load_class')){
      * @param string $class
      * @return void
      */
-    function fphp_load_class($class)
+    function flare_load_class($class)
     {
-        if(strpos($class, 'FPHP') === 0){
-            require FPHP_DIR.str_replace("\\", '/', $class).'.php';
+        if(strpos($class, 'Flare') === 0){
+            require FLARE_DIR.str_replace("\\", '/', $class).'.php';
         }
     }
 }
@@ -68,7 +68,7 @@ if(!function_exists('html')){
      */
     function escape($string)
     {
-        return \FPHP\Security\Xss::filter($string);
+        return \Flare\Security\Xss::filter($string);
     }
 }
 
@@ -83,11 +83,11 @@ if(!function_exists('render')){
      */
     function render($path, $data = array())
     {
-        return \FPHP\Fphp::getApp()->view($path, $data, false);
+        return \Flare\Flare::getApp()->view($path, $data, false);
     }
 }
 
-$fphp_sections = array();
+$flare_sections = array();
 
 if(!function_exists('section_open')){
 
@@ -99,8 +99,8 @@ if(!function_exists('section_open')){
      */
     function section_open($name)
     {
-        global $fphp_sections;
-        $fphp_sections[$name] = true;
+        global $flare_sections;
+        $flare_sections[$name] = true;
         ob_start();
     }
 }
@@ -115,11 +115,11 @@ if(!function_exists('section_close')){
      */
     function section_close($name)
     {
-        global $fphp_sections;
-        if(!isset($fphp_sections[$name])){
-            throw new Exception("{$name} is not yet open");
+        global $flare_sections;
+        if(!isset($flare_sections[$name])){
+            show_error("{$name} is not yet open");
         }
-        $fphp_sections[$name] = (string) ob_get_clean();
+        $flare_sections[$name] = (string) ob_get_clean();
     }
 }
 
@@ -133,11 +133,11 @@ if(!function_exists('get_section')){
      */
     function get_section($name)
     {
-        global $fphp_sections;
-        if(!isset($fphp_sections[$name])){
+        global $flare_sections;
+        if(!isset($flare_sections[$name])){
             return null;
         }
-        return $fphp_sections[$name];
+        return $flare_sections[$name];
     }
 }
 
@@ -150,8 +150,8 @@ if(!function_exists('get_sections')){
      */
     function get_sections()
     {
-        global $fphp_sections;
-        return $fphp_sections;
+        global $flare_sections;
+        return $flare_sections;
     }
 }
 
@@ -190,7 +190,7 @@ if(!function_exists('show_response')){
      */
     function show_response($code, $message = '')
     {
-        FPHP\Fphp::getApp()->error($code, $message);
+        Flare\Flare::getApp()->error($code, $message);
     }
 }
 
@@ -204,11 +204,11 @@ if(!function_exists('show_error')){
      */
     function show_error($message)
     {
-        FPHP\Fphp::getApp()->error(500, $message);
+        Flare\Flare::getApp()->error(500, $message);
     }
 }
 
-if(!function_exists('_fphp_show_error')){
+if(!function_exists('_flare_show_error')){
 
     /**
      * 
@@ -220,30 +220,30 @@ if(!function_exists('_fphp_show_error')){
      * @param array $errcontext
      * @return void
      */
-    function _fphp_show_error($errno, $errstr, $errfile, $errline, $errcontext)
+    function _flare_show_error($errno, $errstr, $errfile, $errline, $errcontext)
     {
         show_response(500, 'Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
     }
 }
 
-if(!function_exists('fphp')){
+if(!function_exists('flare')){
 
     /**
      * 
      * @param mixed $object
      * @return mixed
      */
-    function fphp($object)
+    function flare($object)
     {
         return $object;
     }
 }
 
-set_error_handler('_fphp_show_error');
-spl_autoload_register('fphp_load_class');
+set_error_handler('_flare_show_error');
+spl_autoload_register('flare_load_class');
 
-if(!class_exists("\\FPHP\\Fphp")){
-    require FPHP_DIR.'FPHP/Fphp.php';
+if(!class_exists("\\Flare\\Flare")){
+    require FLARE_DIR.'Flare/Flare.php';
 }
 
 

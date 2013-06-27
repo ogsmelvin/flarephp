@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Application\Router\Route;
+namespace Flare\Application\Router\Route;
 
-use FPHP\Application\AbstractController;
+use Flare\Application\AbstractController;
 use \ReflectionException;
 use \ReflectionMethod;
 
@@ -21,7 +21,7 @@ class Action extends ReflectionMethod
 
     /**
      * 
-     * @param \FPHP\Application\AbstractController $controller
+     * @param \Flare\Application\AbstractController $controller
      * @param string $actionMethodName
      */
     public function __construct(AbstractController $controller, $actionMethodName)

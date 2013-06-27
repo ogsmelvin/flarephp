@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Services;
+namespace Flare\Services;
 
 /**
  * 

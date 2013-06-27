@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\View;
+namespace Flare\View;
 
-use FPHP\Fphp as F;
+use Flare\Flare as F;
 
 /**
  * 

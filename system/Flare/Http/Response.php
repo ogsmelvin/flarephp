@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Http;
+namespace Flare\Http;
 
-use FPHP\Fphp as F;
+use Flare\Flare as F;
 
 /**
  *
@@ -105,7 +105,7 @@ class Response
      *
      * @param string $key
      * @param string $value
-     * @return \FPHP\Http\Response
+     * @return \Flare\Http\Response
      */
     public function setHeader($key, $value, $auto_send = false)
     {
@@ -119,7 +119,7 @@ class Response
     /**
      *
      * @param string $type
-     * @return \FPHP\Http\Response
+     * @return \Flare\Http\Response
      */
     public function setContentType($type)
     {
@@ -157,7 +157,7 @@ class Response
     /**
      *
      * @param string $view
-     * @return \FPHP\Http\Response
+     * @return \Flare\Http\Response
      */
     public function setBody($view)
     {
@@ -169,7 +169,7 @@ class Response
      *
      * @param string $url
      * @param int $code
-     * @return \FPHP\Http\Response
+     * @return \Flare\Http\Response
      */
     public function setRedirect($url, $code = 302)
     {
@@ -213,7 +213,7 @@ class Response
     /**
      *
      * @param int $code
-     * @return \FPHP\Http\Response
+     * @return \Flare\Http\Response
      */
     public function setCode($code)
     {
@@ -253,7 +253,7 @@ class Response
     }
 
     /**
-     * This must be the last method executed in \FPHP\Application\Mvc::dispatch()
+     * This must be the last method executed in \Flare\Application\Mvc::dispatch()
      * @return void
      */
     public function send($output_body = true)

@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Application;
+namespace Flare\Application;
 
 /**
  *
@@ -17,7 +17,7 @@ class Config
 
     /**
      *
-     * @var \FPHP\Application\Config
+     * @var \Flare\Application\Config
      */
     private static $_instance = null;
 
@@ -33,7 +33,7 @@ class Config
     /**
      *
      * @param string|array $config
-     * @return \FPHP\Application\Config
+     * @return \Flare\Application\Config
      */
     public static function load($config_file)
     {
@@ -90,7 +90,7 @@ class Config
      * 
      * @param string $key
      * @param mixed $value
-     * @return \FPHP\Application\Config
+     * @return \Flare\Application\Config
      */
     public function set($key, $value)
     {

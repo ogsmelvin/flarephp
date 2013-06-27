@@ -1,12 +1,12 @@
 <?php
 
-namespace FPHP;
+namespace Flare;
 
-use FPHP\Application\Data;
-use FPHP\View\Javascript;
-use FPHP\Http\Response;
-use FPHP\View\Html;
-use FPHP\Fphp as F;
+use Flare\Application\Data;
+use Flare\View\Javascript;
+use Flare\Http\Response;
+use Flare\View\Html;
+use Flare\Flare as F;
 
 /**
  * 
@@ -84,7 +84,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setControllersDirectory($directory)
     {
@@ -104,7 +104,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setErrorsDirectory($directory)
     {
@@ -124,7 +124,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setViewsDirectory($directory)
     {
@@ -144,7 +144,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setModulesDirectory($directory)
     {
@@ -164,7 +164,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setLayoutsDirectory($directory)
     {
@@ -184,7 +184,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setHelpersDirectory($directory)
     {
@@ -204,7 +204,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setAppDirectory($directory)
     {
@@ -224,7 +224,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setSystemDirectory($directory)
     {
@@ -244,7 +244,7 @@ class Application
     /**
      * 
      * @param array $modules
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setModules($modules)
     {
@@ -267,7 +267,7 @@ class Application
     /**
      * 
      * @param string $directory
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function setModelsDirectory($directory)
     {
@@ -303,7 +303,7 @@ class Application
 
     /**
      * 
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public function preDispatch()
     {
@@ -344,12 +344,12 @@ class Application
         if(!F::$response->hasContentType()){
             if($view instanceof Html){
                 F::$response->setContentType('text/html');
-            } else if($view instanceof \FPHP\Objects\Xml){
+            } else if($view instanceof \Flare\Objects\Xml){
                 $view = $view->asXml();
                 F::$response->setContentType('text/xml');
-            } else if($view instanceof \FPHP\Objects\Json){
+            } else if($view instanceof \Flare\Objects\Json){
                 F::$response->setContentType('application/json');
-            } else if($view instanceof \FPHP\Objects\Image){
+            } else if($view instanceof \Flare\Objects\Image){
                 //TODO
             }
         }
@@ -365,7 +365,7 @@ class Application
      * @param string $path
      * @param array $data
      * @param string|boolean $layout
-     * @return \FPHP\Objects\Html
+     * @return \Flare\Objects\Html
      */
     public function view($path, $data = null, $layout = null)
     {
@@ -441,8 +441,8 @@ class Application
     public function helper($helper)
     {
         $helper = ucwords(strtolower($helper));
-        if(file_exists(FPHP_DIR.'FPHP/Helpers/'.$helper.'.php')){
-            require_once FPHP_DIR.'FPHP/Helpers/'.$helper.'.php';
+        if(file_exists(FLARE_DIR.'Flare/Helpers/'.$helper.'.php')){
+            require_once FLARE_DIR.'Flare/Helpers/'.$helper.'.php';
         } else if(file_exists($this->_helpersDirectory.$helper.'.php')){
             require_once $this->_helpersDirectory.$helper.'.php';
         }
@@ -450,7 +450,7 @@ class Application
 
     /**
      * 
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function getController()
     {

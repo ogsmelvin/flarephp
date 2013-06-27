@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Db\Sql;
+namespace Flare\Db\Sql;
 
 /**
  * 
@@ -22,14 +22,14 @@ interface Sql
      * @param string $table
      * @param array $data
      * @param boolean $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function insert($table, $data = array(), $check_columns = true);
 
     /**
      * 
      * @param string|array $select
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function select($select);
 
@@ -38,14 +38,14 @@ interface Sql
      * @param string $table
      * @param array $data
      * @param boolean $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function update($table, $data = array(), $check_columns = true);
 
     /**
      * 
      * @param string $table
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function delete($table);
 

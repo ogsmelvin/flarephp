@@ -1,10 +1,10 @@
 <?php
 
-namespace FPHP\Db\Sql\Drivers;
+namespace Flare\Db\Sql\Drivers;
 
-use FPHP\Db\Sql\Query\ARQuery;
-use FPHP\Db\Sql\Query\Query;
-use FPHP\Db\Sql\Sql;
+use Flare\Db\Sql\Query\ARQuery;
+use Flare\Db\Sql\Query\Query;
+use Flare\Db\Sql\Sql;
 use \PDOStatement;
 use \PDO;
 
@@ -95,7 +95,7 @@ class Mysql extends PDO implements Sql
      * 
      * @param string $query
      * @param array $bindings
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function sql($query = null, $bindings = null)
     {
@@ -107,7 +107,7 @@ class Mysql extends PDO implements Sql
      * @param string $table
      * @param array $data
      * @param boolean $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function insert($table, $data = array(), $check_columns = true)
     {
@@ -119,7 +119,7 @@ class Mysql extends PDO implements Sql
     /**
      * 
      * @param string|array $select
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function select($select = '*')
     {
@@ -136,7 +136,7 @@ class Mysql extends PDO implements Sql
      * @param string $table
      * @param array $data
      * @param boolean $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function update($table, $data = array(), $check_columns = true)
     {
@@ -148,7 +148,7 @@ class Mysql extends PDO implements Sql
     /**
      * 
      * @param string $table
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function delete($table)
     {

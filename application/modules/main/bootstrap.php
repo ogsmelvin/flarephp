@@ -2,7 +2,7 @@
 
 namespace Main;
 
-use FPHP\Application\AbstractController;
+use Flare\Application\AbstractController;
 
 class Controller extends AbstractController
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace FPHP\Http;
+namespace Flare\Http;
 
-use FPHP\Security\Uri as UriSec;
-use FPHP\Fphp as F;
+use Flare\Security\Uri as UriSec;
+use Flare\Flare as F;
 
 /**
  *
@@ -91,7 +91,7 @@ class Uri
 
     /**
      *
-     * @return \FPHP\Http\Uri
+     * @return \Flare\Http\Uri
      */
     private function _setSegments()
     {

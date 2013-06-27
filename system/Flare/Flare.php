@@ -1,62 +1,62 @@
 <?php
 
-namespace FPHP;
+namespace Flare;
 
-use FPHP\Application\Config;
-use FPHP\Application\Router;
-use FPHP\Http\Response;
-use FPHP\Http\Request;
-use FPHP\Http\Session;
-use FPHP\Application;
+use Flare\Application\Config;
+use Flare\Application\Router;
+use Flare\Http\Response;
+use Flare\Http\Request;
+use Flare\Http\Session;
+use Flare\Application;
 use \ReflectionClass;
-use FPHP\Http\Uri;
+use Flare\Http\Uri;
 
 /**
  *
  * @author anthony
  *
  */
-class Fphp
+class Flare
 {
     /**
      *
-     * @var \FPHP\Http\Request
+     * @var \Flare\Http\Request
      */
     public static $request = null;
 
     /**
      *
-     * @var \FPHP\Http\Response
+     * @var \Flare\Http\Response
      */
     public static $response = null;
 
     /**
      *
-     * @var \FPHP\Http\Uri
+     * @var \Flare\Http\Uri
      */
     public static $uri = null;
 
     /**
      *
-     * @var \FPHP\Http\Session
+     * @var \Flare\Http\Session
      */
     public static $session = null;
 
     /**
      *
-     * @var \FPHP\Application\Config
+     * @var \Flare\Application\Config
      */
     public static $config = null;
 
     /**
      * 
-     * @var \FPHP\Application\Router
+     * @var \Flare\Application\Router
      */
     public static $router = null;
 
     /**
      *
-     * @var \FPHP\Application
+     * @var \Flare\Application
      */
     private static $_application = null;
 
@@ -154,7 +154,7 @@ class Fphp
             }
             $config['driver'] = strtolower($config['driver']);
             $dns = $config['driver'].':host='.$config['host'].';dbname='.$config['dbname'];
-            $pdo = "\\FPHP\\Db\\Sql\\Drivers\\".ucwords($config['driver']);
+            $pdo = "\\Flare\\Db\\Sql\\Drivers\\".ucwords($config['driver']);
             self::$_db[$name] = new $pdo(
                 $dns,
                 $config['username'],
@@ -181,7 +181,7 @@ class Fphp
                 $config = self::$config->nosql[$key];
             }
 
-            $ref = new ReflectionClass("\\FPHP\\Db\\Nosql\\".$key);
+            $ref = new ReflectionClass("\\Flare\\Db\\Nosql\\".$key);
             self::$_ns[$key] = $ref->newInstanceArgs($config);
         }
         return self::$_ns[$key];
@@ -189,12 +189,12 @@ class Fphp
 
     /**
      * 
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public static function createApp()
     {
         if(self::$_application && self::$_application instanceof Application){
-            show_error("FPHP Application is already created");
+            show_error("Flare Application is already created");
         }
         self::$_application = new Application();
         return self::$_application;
@@ -202,7 +202,7 @@ class Fphp
 
     /**
      *
-     * @return \FPHP\Application
+     * @return \Flare\Application
      */
     public static function getApp()
     {
@@ -225,7 +225,7 @@ class Fphp
                 $config = self::$config->services[$service];
             }
 
-            $ref = new ReflectionClass("\\FPHP\\Services\\".$service);
+            $ref = new ReflectionClass("\\Flare\\Services\\".$service);
             self::$_services[$service] = $ref->newInstanceArgs($config);
         }
         return self::$_services[$service];

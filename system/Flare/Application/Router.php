@@ -1,11 +1,11 @@
 <?php
 
-namespace FPHP\Application;
+namespace Flare\Application;
 
-use FPHP\Application\Router\Route\Action;
-use FPHP\Application\Http\Request;
-use FPHP\Application\Router\Route;
-use FPHP\Fphp as F;
+use Flare\Application\Router\Route\Action;
+use Flare\Application\Http\Request;
+use Flare\Application\Router\Route;
+use Flare\Flare as F;
 
 /**
  * 
@@ -16,7 +16,7 @@ class Router
 {
     /**
      * 
-     * @var \FPHP\Application\Router\Route
+     * @var \Flare\Application\Router\Route
      */
     private $_currentRoute = null;
 
@@ -44,7 +44,7 @@ class Router
     /**
      * 
      * @param array $modules
-     * @return \FPHP\Application\Router
+     * @return \Flare\Application\Router
      */
     public function setRoutingModules($modules)
     {
@@ -65,7 +65,7 @@ class Router
      * 
      * @param string $url
      * @param string $method
-     * @return \FPHP\Application\Router
+     * @return \Flare\Application\Router
      */
     public function addRoute($url, $method)
     {
@@ -76,7 +76,7 @@ class Router
     /**
      * 
      * @param array $routes
-     * @return \FPHP\Application\Router
+     * @return \Flare\Application\Router
      */
     public function addRoutes(array $routes)
     {
@@ -107,7 +107,7 @@ class Router
 
     /**
      * 
-     * @return \FPHP\Application\Router\Route|null
+     * @return \Flare\Application\Router\Route|null
      */
     public function getMatchedCustomRoute()
     {
@@ -137,7 +137,7 @@ class Router
      * @param string $controller
      * @param string $action
      * @param array $params
-     * @return \FPHP\Application\Router\Route
+     * @return \Flare\Application\Router\Route
      */
     private function _route($module, $controller, $action, $params = array())
     {
@@ -173,7 +173,7 @@ class Router
 
     /**
      * 
-     * @return \FPHP\Application\Router\Route|null
+     * @return \Flare\Application\Router\Route|null
      */
     public function getRoute()
     {
@@ -219,7 +219,7 @@ class Router
 
     /**
      * 
-     * @param \FPHP\Application\Router\Route
+     * @param \Flare\Application\Router\Route
      * @return void
      */
     private function _setActionParams(Route &$route, &$validUriForParams = null)
@@ -282,7 +282,7 @@ class Router
 
     /**
      * 
-     * @return \FPHP\Application\Router
+     * @return \Flare\Application\Router
      */
     public function clearRoutesList()
     {

@@ -2,7 +2,7 @@
 
 $appDirectory = dirname(dirname(__FILE__));
 
-require $appDirectory.'/system/fphp.php';
-use FPHP\Fphp as F;
+require $appDirectory.'/system/flare.php';
+use Flare\Flare as F;
 
 F::createApp()->setAppDirectory($appDirectory.'/application')->start();

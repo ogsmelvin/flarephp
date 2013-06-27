@@ -1,9 +1,9 @@
 <?php
 
-namespace FPHP\Http;
+namespace Flare\Http;
 
-use FPHP\Security\File as FileSec;
-use FPHP\Security\Hash;
+use Flare\Security\File as FileSec;
+use Flare\Security\Hash;
 
 /**
  * 
@@ -115,7 +115,7 @@ class File
      * 
      * @param string $name
      * @param mixed $default
-     * @return \FPHP\Http\File|array
+     * @return \Flare\Http\File|array
      */
     public static function get($name, $default = null)
     {
@@ -259,7 +259,7 @@ class File
      * 
      * @param string $base64String
      * @param string $path
-     * @return \FPHP\Http\File|boolean
+     * @return \Flare\Http\File|boolean
      */
     public static function createFromString($base64String, $path)
     {

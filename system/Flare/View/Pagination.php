@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\View;
+namespace Flare\View;
 
-use FPHP\Fphp as F;
+use Flare\Flare as F;
 
 /**
  * 
@@ -56,7 +56,7 @@ class Pagination
     /**
      * 
      * @param int $page
-     * @return \FPHP\UI\Pagination
+     * @return \Flare\UI\Pagination
      */
     public function setCurrentPage($page)
     {
@@ -67,7 +67,7 @@ class Pagination
     /**
      * 
      * @param int $limit
-     * @return \FPHP\UI\Pagination
+     * @return \Flare\UI\Pagination
      */
     public function setLimitPerPage($limit)
     {
@@ -87,7 +87,7 @@ class Pagination
     /**
      * 
      * @param int $count
-     * @return \FPHP\UI\Pagination
+     * @return \Flare\UI\Pagination
      */
     public function setTotalCount($count)
     {
@@ -116,7 +116,7 @@ class Pagination
     /**
      * 
      * @param int $offset
-     * @return \FPHP\UI\Pagination
+     * @return \Flare\UI\Pagination
      */
     public function setOffset($offset)
     {
@@ -136,7 +136,7 @@ class Pagination
     /**
      * 
      * @param string $url
-     * @return \FPHP\UI\Pagination
+     * @return \Flare\UI\Pagination
      */
     public function setBaseUrl($url)
     {
@@ -156,7 +156,7 @@ class Pagination
     /**
      * 
      * @param string $alignment
-     * @return \FPHP\UI\Pagination
+     * @return \Flare\UI\Pagination
      */
     public function setAlignment($alignment)
     {
@@ -167,7 +167,7 @@ class Pagination
     /**
      * 
      * @param string $size
-     * @return \FPHP\UI\Pagination
+     * @return \Flare\UI\Pagination
      */
     public function setSize($size)
     {

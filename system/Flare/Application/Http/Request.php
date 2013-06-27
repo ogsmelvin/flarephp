@@ -1,9 +1,9 @@
 <?php
 
-namespace FPHP\Application\Http;
+namespace Flare\Application\Http;
 
-use FPHP\Http\Request as ParentRequest;
-use FPHP\Security\Xss;
+use Flare\Http\Request as ParentRequest;
+use Flare\Security\Xss;
 
 /**
  * 
@@ -33,7 +33,7 @@ class Request extends ParentRequest
     /**
      *
      * @param string $module
-     * @return \FPHP\Application\Http\Request
+     * @return \Flare\Application\Http\Request
      */
     public function setModule($module)
     {
@@ -44,7 +44,7 @@ class Request extends ParentRequest
     /**
      *
      * @param string $controller
-     * @return \FPHP\Application\Http\Request
+     * @return \Flare\Application\Http\Request
      */
     public function setController($controller)
     {
@@ -69,7 +69,7 @@ class Request extends ParentRequest
     /**
      *
      * @param string $action
-     * @return \FPHP\Application\Http\Request
+     * @return \Flare\Application\Http\Request
      */
     public function setAction($action)
     {

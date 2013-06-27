@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Objects;
+namespace Flare\Objects;
 
 if(!extension_loaded('gd') || !function_exists('gd_info')){
     show_error("GD Library is not supported");
@@ -129,7 +129,7 @@ class Image
     /**
      * 
      * @param int $height
-     * @return \FPHP\Objects\Image
+     * @return \Flare\Objects\Image
      */
     public function resizeHeight($height)
     {
@@ -140,7 +140,7 @@ class Image
     /**
      * 
      * @param int $width
-     * @return \FPHP\Objects\Image
+     * @return \Flare\Objects\Image
      */
     public function resizeWidth($width)
     {
@@ -152,7 +152,7 @@ class Image
      * 
      * @param int $width
      * @param int $height
-     * @return \FPHP\Objects\Image
+     * @return \Flare\Objects\Image
      */
     private function _resize($width = null, $height = null)
     {
@@ -166,7 +166,7 @@ class Image
      * 
      * @param int $width
      * @param int $height
-     * @return \FPHP\Objects\Image
+     * @return \Flare\Objects\Image
      */
     public function resize($width, $height)
     {
@@ -176,7 +176,7 @@ class Image
     /**
      * 
      * @param string $location
-     * @return \FPHP\Objects\Image
+     * @return \Flare\Objects\Image
      */
     public function copy($location)
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Application;
+namespace Flare\Application;
 
-use FPHP\Objects\Json;
+use Flare\Objects\Json;
 
 /**
  * 
@@ -81,7 +81,7 @@ class Data
 
     /**
      * 
-     * @return \FPHP\Objects\Json
+     * @return \Flare\Objects\Json
      */
     public function toJSONObject()
     {

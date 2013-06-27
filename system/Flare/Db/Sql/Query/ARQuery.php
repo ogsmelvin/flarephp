@@ -1,11 +1,11 @@
 <?php
 
-namespace FPHP\Db\Sql\Query;
+namespace Flare\Db\Sql\Query;
 
-use FPHP\Db\Sql\Results\Collection;
-use FPHP\Db\Sql\Results\Row;
-use FPHP\View\Pagination;
-use FPHP\Objects\Json;
+use Flare\Db\Sql\Results\Collection;
+use Flare\Db\Sql\Results\Row;
+use Flare\View\Pagination;
+use Flare\Objects\Json;
 use \PDOException;
 use \PDOStatement;
 use \Exception;
@@ -144,7 +144,7 @@ class ARQuery
     /**
      *
      * @param string|array $fields
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function select()
     {
@@ -171,7 +171,7 @@ class ARQuery
     /**
      *
      * @param string $field
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function groupBy($field)
     {
@@ -183,7 +183,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $order
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orderBy($field, $order = 'ASC')
     {
@@ -194,7 +194,7 @@ class ARQuery
     /**
      *
      * @param array|string $tables
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function from($tables)
     {
@@ -215,7 +215,7 @@ class ARQuery
      * @param string|int|array $value
      * @param string $comparison
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     protected function _where($field, $value, $comparison, $condition)
     {
@@ -252,7 +252,7 @@ class ARQuery
      * @param string|int $value
      * @param string $comparison
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     protected function _having($field, $value, $comparison, $condition)
     {
@@ -266,7 +266,7 @@ class ARQuery
      * @param string $field
      * @param string $value
      * @param string $comparison
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function having($field, $value, $comparison = '=')
     {
@@ -278,7 +278,7 @@ class ARQuery
      * @param string $field
      * @param string $value
      * @param string $comparison
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orHaving($field, $value, $comparison = '=')
     {
@@ -290,7 +290,7 @@ class ARQuery
      * @param string $field
      * @param string|int $value
      * @param string $comparison
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function where($field, $value, $comparison = '=')
     {
@@ -302,7 +302,7 @@ class ARQuery
      * @param string $field
      * @param string|int $value
      * @param string $comparison
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orWhere($field, $value, $comparison = '=')
     {
@@ -313,7 +313,7 @@ class ARQuery
      *
      * @param string $field
      * @param array $values
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function whereIn($field, $values)
     {
@@ -324,7 +324,7 @@ class ARQuery
      *
      * @param string $field
      * @param array $values
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orWhereIn($field, $values)
     {
@@ -335,7 +335,7 @@ class ARQuery
      *
      * @param string $field
      * @param array $values
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orWhereNotIn($field, $values)
     {
@@ -346,7 +346,7 @@ class ARQuery
      *
      * @param string $field
      * @param array $values
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function whereNotIn($field, $values)
     {
@@ -446,7 +446,7 @@ class ARQuery
      * @param string $comparison
      * @param string $condition
      * @param string $place
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     protected function _like($field, $value, $comparison, $condition, $place = null)
     {
@@ -469,7 +469,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function like($field, $value)
     {
@@ -480,7 +480,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function likeBefore($field, $value)
     {
@@ -491,7 +491,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function likeAfter($field, $value)
     {
@@ -502,7 +502,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function notLike($field, $value)
     {
@@ -513,7 +513,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function notLikeBefore($field, $value)
     {
@@ -524,7 +524,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function notLikeAfter($field, $value)
     {
@@ -535,7 +535,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orNotLike($field, $value)
     {
@@ -546,7 +546,7 @@ class ARQuery
      *
      * @param type $field
      * @param type $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orNotLikeBefore($field, $value)
     {
@@ -557,7 +557,7 @@ class ARQuery
      *
      * @param type $field
      * @param type $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orNotLikeAfter($field, $value)
     {
@@ -568,7 +568,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orLike($field, $value)
     {
@@ -579,7 +579,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orLikeBefore($field, $value)
     {
@@ -590,7 +590,7 @@ class ARQuery
      *
      * @param string $field
      * @param string $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function orLikeAfter($field, $value)
     {
@@ -600,7 +600,7 @@ class ARQuery
     /**
      *
      * @param int $limit
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function limit($limit)
     {
@@ -613,7 +613,7 @@ class ARQuery
     /**
      *
      * @param int $offset
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function offset($offset)
     {
@@ -623,7 +623,7 @@ class ARQuery
 
     /**
      *
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function count($field = '*')
     {
@@ -632,7 +632,7 @@ class ARQuery
 
     /**
      *
-     * @return \FPHP\Db\Sql\Results\Collection
+     * @return \Flare\Db\Sql\Results\Collection
      */
     public function getCollection()
     {
@@ -663,7 +663,7 @@ class ARQuery
 
     /**
      *
-     * @return \FPHP\View\Pagination
+     * @return \Flare\View\Pagination
      */
     protected function _paginate()
     {
@@ -719,7 +719,7 @@ class ARQuery
 
     /**
      * Clear all
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function clear()
     {
@@ -824,7 +824,7 @@ class ARQuery
 
     /**
      *
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function delete()
     {
@@ -835,7 +835,7 @@ class ARQuery
     /**
      *
      * @param array $set
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function update($table, $set = array(), $check_columns = true)
     {
@@ -856,7 +856,7 @@ class ARQuery
      *
      * @param string $key
      * @param string|int $value
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function set($key, $value)
     {
@@ -873,7 +873,7 @@ class ARQuery
      * @param string $table
      * @param array $set
      * @param boolen $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function insert($table, $set = array(), $check_columns = true)
     {
@@ -895,7 +895,7 @@ class ARQuery
      * @param string $table
      * @param array $inserts
      * @param boolen $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function insertByBatch($table, $inserts, $check_columns = true)
     {
@@ -953,7 +953,7 @@ class ARQuery
 
     /**
      *
-     * @return \FPHP\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Results\Row
      */
     public function pull()
     {
@@ -991,7 +991,7 @@ class ARQuery
      * @param string|array $table
      * @param string $condition
      * @param string $type
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     protected function _join($table, $condition, $type)
     {
@@ -1010,7 +1010,7 @@ class ARQuery
      *
      * @param string $table
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function join($table, $condition)
     {
@@ -1021,7 +1021,7 @@ class ARQuery
      *
      * @param string $table
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function joinInner($table, $condition)
     {
@@ -1032,7 +1032,7 @@ class ARQuery
      *
      * @param string $table
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function joinLeft($table, $condition)
     {
@@ -1043,7 +1043,7 @@ class ARQuery
      *
      * @param string $table
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function joinRight($table, $condition)
     {
@@ -1054,7 +1054,7 @@ class ARQuery
      *
      * @param string $table
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function joinLeftOuter($table, $condition)
     {
@@ -1065,7 +1065,7 @@ class ARQuery
      *
      * @param string $table
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function joinRightOuter($table, $condition)
     {
@@ -1076,7 +1076,7 @@ class ARQuery
      *
      * @param string $table
      * @param string $condition
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function joinOuter($table, $condition)
     {
@@ -1087,7 +1087,7 @@ class ARQuery
      *
      * @param int $page
      * @param int $limit
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function page($page, $limit = null)
     {
@@ -1106,7 +1106,7 @@ class ARQuery
 
     /**
      *
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function distinct()
     {

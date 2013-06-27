@@ -1,10 +1,10 @@
 <?php
 
-namespace FPHP\Services;
+namespace Flare\Services;
 
-use FPHP\Http\Client\Curl;
-use FPHP\Objects\Json;
-use FPHP\Fphp as F;
+use Flare\Http\Client\Curl;
+use Flare\Objects\Json;
+use Flare\Flare as F;
 
 /**
  * 
@@ -57,7 +57,7 @@ class Facebook
 
     /**
      * 
-     * @var \FPHP\Http\Client\Curl
+     * @var \Flare\Http\Client\Curl
      */
     private $_curl;
 
@@ -231,7 +231,7 @@ class Facebook
     /**
      * 
      * @param string $id
-     * @return \FPHP\Objects\Json
+     * @return \Flare\Objects\Json
      */
     public function getProfile($id = 'me')
     {
@@ -251,7 +251,7 @@ class Facebook
      * 
      * @param string $id
      * @param array $fields
-     * @return \FPHP\Objects\Json
+     * @return \Flare\Objects\Json
      */
     public function getUserDetails($id = 'me', $fields = array())
     {
@@ -279,7 +279,7 @@ class Facebook
     /**
      * 
      * @param string $fql
-     * @return \FPHP\Objects\Json
+     * @return \Flare\Objects\Json
      */
     public function fql($fql)
     {
@@ -296,7 +296,7 @@ class Facebook
      * @param int $limit
      * @param int $page
      * @param string $order
-     * @return \FPHP\Objects\Json
+     * @return \Flare\Objects\Json
      */
     public function getFriends($fields = array(), $limit = 0, $page = 0, $order = null)
     {
@@ -347,7 +347,7 @@ class Facebook
     /**
      * 
      * @param string $token
-     * @return \FPHP\Services\Facebook
+     * @return \Flare\Services\Facebook
      */
     public function setAccessToken($token = null)
     {
@@ -391,7 +391,7 @@ class Facebook
     /**
      * 
      * @param boolean $upload
-     * @return \FPHP\Services\Facebook
+     * @return \Flare\Services\Facebook
      */
     public function setFileUpload($upload)
     {
@@ -402,7 +402,7 @@ class Facebook
     /**
      * 
      * @param string $id
-     * @return \FPHP\Services\Facebook
+     * @return \Flare\Services\Facebook
      */
     public function setAppId($id)
     {
@@ -413,7 +413,7 @@ class Facebook
     /**
      * 
      * @param string $secret
-     * @return \FPHP\Services\Facebook
+     * @return \Flare\Services\Facebook
      */
     public function setAppSecret($secret)
     {
@@ -463,7 +463,7 @@ class Facebook
     /**
      * 
      * @param string $userId
-     * @return \FPHP\Services\Facebook
+     * @return \Flare\Services\Facebook
      */
     public function setUser($userId)
     {

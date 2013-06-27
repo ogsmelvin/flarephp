@@ -1,9 +1,9 @@
 <?php
 
-namespace FPHP\Application\Router;
+namespace Flare\Application\Router;
 
-use FPHP\Application\AbstractController;
-use FPHP\Application\Router\Route\Action;
+use Flare\Application\AbstractController;
+use Flare\Application\Router\Route\Action;
 
 /**
  * 
@@ -14,7 +14,7 @@ class Route
 {
     /**
      * 
-     * @var \FPHP\Application\AbstractController
+     * @var \Flare\Application\AbstractController
      */
     private $_controller = null;
 
@@ -38,7 +38,7 @@ class Route
 
     /**
      * 
-     * @return \FPHP\Application\AbstractController
+     * @return \Flare\Application\AbstractController
      */
     public function getController()
     {
@@ -47,8 +47,8 @@ class Route
 
     /**
      * 
-     * @param \FPHP\Application\AbstractController
-     * @return \FPHP\Application\Router\Route
+     * @param \Flare\Application\AbstractController
+     * @return \Flare\Application\Router\Route
      */
     public function setController(AbstractController $controller)
     {
@@ -68,7 +68,7 @@ class Route
     /**
      * 
      * @param string $module
-     * @return \FPHP\Application\Router\Route
+     * @return \Flare\Application\Router\Route
      */
     public function setModule($module)
     {
@@ -78,7 +78,7 @@ class Route
 
     /**
      * 
-     * @return \FPHP\Application\Router\Route\Action
+     * @return \Flare\Application\Router\Route\Action
      */
     public function getAction()
     {
@@ -87,8 +87,8 @@ class Route
 
     /**
      * 
-     * @param \FPHP\Application\Router\Route\Action $action
-     * @return \FPHP\Application\Router\Route
+     * @param \Flare\Application\Router\Route\Action $action
+     * @return \Flare\Application\Router\Route
      */
     public function setAction(Action $action)
     {
@@ -99,7 +99,7 @@ class Route
     /**
      * 
      * @param array $params
-     * @return \FPHP\Application\Router\Route
+     * @return \Flare\Application\Router\Route
      */
     public function setActionParams($params)
     {

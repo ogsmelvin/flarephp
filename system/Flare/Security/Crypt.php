@@ -1,12 +1,12 @@
 <?php
 
-namespace FPHP\Security;
+namespace Flare\Security;
 
 if(!function_exists('mcrypt_encrypt')){
-    show_error('FPHP\Security\Crypt requires mcrypt library');
+    show_error('Flare\Security\Crypt requires mcrypt library');
 }
 
-use FPHP\Security;
+use Flare\Security;
 
 /**
  * 

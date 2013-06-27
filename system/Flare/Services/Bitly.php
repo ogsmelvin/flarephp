@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Services;
+namespace Flare\Services;
 
-use FPHP\Http\Client\Curl;
+use Flare\Http\Client\Curl;
 
 /**
  * 
@@ -25,7 +25,7 @@ class Bitly
 
     /**
      * 
-     * @var \FPHP\Http\Client\Curl
+     * @var \Flare\Http\Client\Curl
      */
     private $_curl;
 

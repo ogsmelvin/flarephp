@@ -1,9 +1,9 @@
 <?php
 
-namespace FPHP\Application\Db\Sql;
+namespace Flare\Application\Db\Sql;
 
-use FPHP\Application\Model as ParentModel;
-use FPHP\Fphp as F;
+use Flare\Application\Model as ParentModel;
+use Flare\Flare as F;
 
 /**
  * 
@@ -76,7 +76,7 @@ class Model extends ParentModel
      * 
      * @param string $query
      * @param array $bindings
-     * @return \FPHP\Db\Sql\Query\Query
+     * @return \Flare\Db\Sql\Query\Query
      */
     public function sql($query = null, $bindings = null)
     {
@@ -87,7 +87,7 @@ class Model extends ParentModel
      * 
      * @param array $data
      * @param boolean $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function insert($data = array(), $check_columns = true)
     {
@@ -97,7 +97,7 @@ class Model extends ParentModel
     /**
      * 
      * @param string|array $select
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function select($select = '*')
     {
@@ -114,7 +114,7 @@ class Model extends ParentModel
      * 
      * @param array $data
      * @param boolean $check_columns
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function update($data = array(), $check_columns = true)
     {
@@ -123,7 +123,7 @@ class Model extends ParentModel
 
     /**
      * 
-     * @return \FPHP\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function delete()
     {
@@ -132,7 +132,7 @@ class Model extends ParentModel
 
     /**
      * 
-     * @return \FPHP\Application\Db\Sql\Model
+     * @return \Flare\Application\Db\Sql\Model
      */
     public static function query()
     {
@@ -160,7 +160,7 @@ class Model extends ParentModel
      * 
      * @param int $limit
      * @param int $page
-     * @return \FPHP\Db\Sql\Results\Collection
+     * @return \Flare\Db\Sql\Results\Collection
      */
     public static function getAll($limit = null, $page = null)
     {

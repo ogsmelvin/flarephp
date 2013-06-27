@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Http;
+namespace Flare\Http;
 
-use FPHP\Fphp as F;
+use Flare\Flare as F;
 
 /**
  *

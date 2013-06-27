@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Http;
+namespace Flare\Http;
 
 /**
  * 
@@ -63,7 +63,7 @@ class Cookie
     /**
      * 
      * @param string $value
-     * @return \FPHP\Http\Cookie
+     * @return \Flare\Http\Cookie
      */
     public function setValue($value)
     {
@@ -74,7 +74,7 @@ class Cookie
     /**
      * 
      * @param int $expire
-     * @return \FPHP\Http\Cookie
+     * @return \Flare\Http\Cookie
      */
     public function setExpiration($expire)
     {
@@ -85,7 +85,7 @@ class Cookie
     /**
      * 
      * @param string $path
-     * @return \FPHP\Http\Cookie
+     * @return \Flare\Http\Cookie
      */
     public function setPath($path)
     {
@@ -96,7 +96,7 @@ class Cookie
     /**
      * 
      * @param string $domain
-     * @return \FPHP\Http\Cookie
+     * @return \Flare\Http\Cookie
      */
     public function setDomain($domain)
     {
@@ -107,7 +107,7 @@ class Cookie
     /**
      * 
      * @param boolean $secure
-     * @return \FPHP\Http\Cookie
+     * @return \Flare\Http\Cookie
      */
     public function setSecure($secure)
     {
@@ -118,7 +118,7 @@ class Cookie
     /**
      * 
      * @param boolean $httponly
-     * @return \FPHP\Http\Cookie
+     * @return \Flare\Http\Cookie
      */
     public function setHttpOnly($httponly)
     {
@@ -128,7 +128,7 @@ class Cookie
 
     /**
      * 
-     * @return \FPHP\Http\Cookies
+     * @return \Flare\Http\Cookies
      */
     public function save()
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace FPHP\Security;
+namespace Flare\Security;
 
-use FPHP\Security;
+use Flare\Security;
 
 /**
  * 

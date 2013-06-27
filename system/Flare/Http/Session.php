@@ -1,6 +1,6 @@
 <?php
 
-namespace FPHP\Http;
+namespace Flare\Http;
 
 /**
  * 
@@ -11,7 +11,7 @@ class Session
 {
     /**
      * 
-     * @var \FPHP\Http\Session
+     * @var \Flare\Http\Session
      */
     private static $_instance = null;
 
@@ -19,7 +19,7 @@ class Session
      * 
      * @var string
      */
-    private static $_keySettings = '__FPHP_session';
+    private static $_keySettings = '__Flare_session';
 
     /**
      * 
@@ -47,7 +47,7 @@ class Session
 
     /**
      * 
-     * @return \FPHP\Http\Session
+     * @return \Flare\Http\Session
      */
     public function start()
     {
@@ -63,7 +63,7 @@ class Session
 
     /**
      * 
-     * @return \FPHP\Http\Session
+     * @return \Flare\Http\Session
      */
     public static function & getInstance($namespace, $start = false)
     {
@@ -133,7 +133,7 @@ class Session
      * 
      * @param string $key
      * @param mixed $value
-     * @return \FPHP\Http\Session
+     * @return \Flare\Http\Session
      */
     public function set($key, $value)
     {
@@ -146,7 +146,7 @@ class Session
      * @param string $key
      * @param int $seconds
      * @param int $now
-     * @return \FPHP\Http\Session
+     * @return \Flare\Http\Session
      */
     public function setExpiration($key, $seconds = 1800, $now = null)
     {
@@ -223,7 +223,7 @@ class Session
 
     /**
      * 
-     * @return \FPHP\Http\Session
+     * @return \Flare\Http\Session
      */
     public function destroy()
     {
@@ -238,7 +238,7 @@ class Session
 
     /**
      * 
-     * @return \FPHP\Http\Session
+     * @return \Flare\Http\Session
      */
     public function resetId()
     {
@@ -251,7 +251,7 @@ class Session
 
     /**
      * 
-     * @return \FPHP\Http\Session
+     * @return \Flare\Http\Session
      */
     public function clear()
     {
