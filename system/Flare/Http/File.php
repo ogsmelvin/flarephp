@@ -22,9 +22,13 @@ class File
      * 
      * @var array
      */
-    private static $_config = array(
-        'overwrite' => true,
-        'filename' => ''
+    private static $_validations = array(
+        'is_image' => null,
+        'max_size' => null,
+        'min_size' => null,
+        'image_height' => null,
+        'image_width' => null,
+        'types' => null
     );
 
     /**
@@ -89,63 +93,144 @@ class File
      * 
      * @var string
      */
+    private $_mimeType;
+
+    /**
+     * 
+     * @var string
+     */
     private $_moveError = null;
 
     /**
      * 
      * @param string $name
-     * @param string $filename
-     * @param string $tmpname
-     * @param string $type
-     * @param int $error
-     * @param int $size
+     * @return \Flare\Http\File|null
      */
-    private function __construct($name, $filename, $tmpname, $type, $error, $size)
+    public static function & get($name)
     {
-        $this->_name = $name;
-        $this->_tmpname = $tmpname;
-        $this->_type = $type;
-        $this->_error = (int) $error;
-        $this->_size = (int) $size;
-        $this->_filename = FileSec::sanitizeFilename($filename, false);
-        $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
+        if(!isset(self::$_instances[$name])){
+            if(!isset($_FILES[$name])){
+                return null;
+            }
+            self::$_instances[$name] = new self($name);
+        }
+        return self::$_instances[$name];
+    }
+
+    /**
+     * 
+     * @param array $validations
+     * @return void
+     */
+    public static function validations(array $validations)
+    {
+        foreach($validations as $key => $value){
+            self::validation($key, $value);
+        }
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public static function validation($key, $value)
+    {
+        if(!isset(self::$_validations[$key])){
+            show_error("File validation '{$key}' : unknown validation");
+        }
+        self::$_validations[$key] = $value;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function getErrorCodes()
+    {
+        return self::$_errorCodes;
+    }
+
+    /**
+     * 
+     * @param string $base64String
+     * @param string $path
+     * @return \Flare\Http\File|boolean
+     */
+    public static function createFromString($base64String, $path)
+    {
+        $result = false;
+        $source = explode(',', $base64String, 2);
+        if(count($source) !== 2){
+            show_error("Invalid base64 string");
+        }
+
+        $type = substr(substr($source[0], 0, -7), 5);
+        $ext = explode('/', $type);
+        $createpath = realpath($path);
+        $createpath = $createpath !== false ? rtrim(str_replace("\\", "/", $createpath), "/") : rtrim($path, "/");
+        
+        if(@is_dir($createpath) === true){
+            $filename = Hash::create($source[1]).'.'.end($ext);
+            $createpath .= '/'.$filename;
+        } else {
+            $filename = pathinfo($createpath, PATHINFO_FILENAME);
+            $fileExt = pathinfo($createpath, PATHINFO_EXTENSION);
+            if(!$fileExt){
+                $createpath .= $filename.'.'.end($ext);
+            } else {
+                $createpath .= $filename.'.'.$fileExt;
+            }
+        }
+        if(file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))){
+            $result = new self(null, $filename, $filename, $type, 0, 0);
+        }
+        return $result;
     }
 
     /**
      * 
      * @param string $name
-     * @param mixed $default
-     * @return \Flare\Http\File|array
      */
-    public static function get($name, $default = null)
+    private function __construct($name)
     {
-        if(!isset(self::$_instances[$name])){
-            if(!isset($_FILES[$name])){
-                return $default;
-            }
-            if(is_array($_FILES[$name]['name'])){
-                foreach($_FILES[$name]['name'] as $key => $file){
-                    self::$_instances[$name][] = new self(
-                        $name,
-                        $file,
-                        $_FILES[$name]['tmp_name'][$key],
-                        $_FILES[$name]['type'][$key],
-                        $_FILES[$name]['error'][$key],
-                        $_FILES[$name]['size'][$key]
-                    );
+        $this->_name = $name;
+        $this->_tmpname = $_FILES[$name]['tmp_name'];
+        $this->_type = $_FILES[$name]['type'];
+        $this->_error = (int) $_FILES[$name]['error'];
+        $this->_size = (int) $_FILES[$name]['size'];
+        $this->_filename = FileSec::sanitizeFilename($_FILES[$name]['name'], false);
+        $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
+        $this->_detectMimeType();
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    private function _detectMimeType()
+    {
+        $regexp = '/^([a-z\-]+\/[a-z0-9\-\.\+]+)(;\s.+)?$/';
+        if(function_exists('finfo_file')){
+            $finfo = finfo_open(FILEINFO_MIME);
+            if($finfo){
+                $mime = finfo_file($finfo, $this->_tmpname);
+                if($mime){
+                    
                 }
-            } else {
-                self::$_instances[$name] = new self(
-                    $name,
-                    $_FILES[$name]['name'],
-                    $_FILES[$name]['tmp_name'],
-                    $_FILES[$name]['type'],
-                    $_FILES[$name]['error'],
-                    $_FILES[$name]['size']
-                );
+                finfo_close($finfo);
             }
         }
-        return self::$_instances[$name];
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isImage()
+    {
+        return true;
     }
 
     /**
@@ -154,7 +239,7 @@ class File
      */
     public function getFilename()
     {
-        return $this->_name;
+        return $this->_filename;
     }
 
     /**
@@ -170,7 +255,7 @@ class File
      * 
      * @return string
      */
-    public function getType()
+    public function getMimeType()
     {
         return $this->_type;
     }
@@ -232,7 +317,6 @@ class File
     public function move($destination, $filename = null)
     {
         $result = false;
-        $config = !$config ? self::$_config : array_merge(self::$_config, $config);
         $to = $this->_validateUploadPath($to);
         if($to){
             if(is_uploaded_file($this->_tmpname)){
@@ -252,44 +336,10 @@ class File
      */
     public function valid()
     {
+        if(self::$_validations['is_image']){
+
+        }
         return true;
-    }
-
-    /**
-     * 
-     * @param string $base64String
-     * @param string $path
-     * @return \Flare\Http\File|boolean
-     */
-    public static function createFromString($base64String, $path)
-    {
-        $result = false;
-        $source = explode(',', $base64String, 2);
-        if(count($source) !== 2){
-            show_error("Invalid base64 string");
-        }
-
-        $type = substr(substr($source[0], 0, -7), 5);
-        $ext = explode('/', $type);
-        $createpath = realpath($path);
-        $createpath = $createpath !== false ? rtrim(str_replace("\\", "/", $createpath), "/") : rtrim($path, "/");
-        
-        if(@is_dir($createpath) === true){
-            $filename = Hash::create($source[1]).'.'.end($ext);
-            $createpath .= '/'.$filename;
-        } else {
-            $filename = pathinfo($createpath, PATHINFO_FILENAME);
-            $fileExt = pathinfo($createpath, PATHINFO_EXTENSION);
-            if(!$fileExt){
-                $createpath .= $filename.'.'.end($ext);
-            } else {
-                $createpath .= $filename.'.'.$fileExt;
-            }
-        }
-        if(file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))){
-            $result = new self(null, $filename, $filename, $type, 0, 0);
-        }
-        return $result;
     }
 
     /**
@@ -317,33 +367,5 @@ class File
             return $moveTo."/";
         }
         return false;
-    }
-
-    /**
-     * 
-     * @param array $validation
-     * @return void
-     */
-    public static function setValidation(array $validation)
-    {
-        self::$_validation = array_merge(self::$_validation, $validation);
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public static function getValidation()
-    {
-        return self::$_validation;
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public static function getErrorCodes()
-    {
-        return self::$_errorCodes;
     }
 }
