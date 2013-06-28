@@ -95,44 +95,44 @@ class Uri
      */
     private function _setSegments()
     {
-        if(!isset($_SERVER['REQUEST_URI']) || !isset($_SERVER['SCRIPT_NAME'])
-            || !isset($_SERVER['SCRIPT_FILENAME'])){
-            throw new Exception("REQUEST_URI / SCRIPT_NAME was not set");
+        if (!isset($_SERVER['REQUEST_URI']) || !isset($_SERVER['SCRIPT_NAME'])
+            || !isset($_SERVER['SCRIPT_FILENAME'])) {
+            show_error("REQUEST_URI / SCRIPT_NAME was not set");
         }
         $this->_indexPage = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_BASENAME);
         $this->_baseUrl = str_replace($this->_indexPage, '', $_SERVER['SCRIPT_NAME']);
         $this->_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : self::DEFAULT_PORT;
-        if(strpos($_SERVER['REQUEST_URI'], $this->_baseUrl) !== 0){
+        if (strpos($_SERVER['REQUEST_URI'], $this->_baseUrl) !== 0) {
             $this->_baseUrl = '/';
         }
         $search = array('?'.$_SERVER['QUERY_STRING']);
-        if($this->_baseUrl !== '/'){
+        if ($this->_baseUrl !== '/') {
             $search[] = $this->_baseUrl;
         }
-        if($this->_indexPage){
+        if ($this->_indexPage) {
             $search[] = $this->_indexPage;
         }
         $this->_uri = '/'.ltrim(str_replace($search, '', $_SERVER['REQUEST_URI']), '/');
         $valid = UriSec::validate($this->_uri, $this->_segments);
-        if(!$valid){
+        if (!$valid) {
             show_response(400);
         }
         $this->_suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
         
         $this->_protocol = 'http://';
-        if(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'){
+        if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
             $this->_protocol = 'https://';
         }
 
         $this->_host = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
-        if($this->_port == self::DEFAULT_PORT || $this->_protocol == 'https://'){
+        if ($this->_port == self::DEFAULT_PORT || $this->_protocol == 'https://') {
             $this->_baseUrl = $this->_protocol.$this->_host.$this->_baseUrl;
         } else {
             $this->_baseUrl = $this->_protocol.$this->_host.':'.$this->_port.$this->_baseUrl;
         }
 
         $this->_currentUrl = $this->_baseUrl.ltrim($this->_uri, '/');
-        if(!empty($_SERVER['QUERY_STRING'])){
+        if (!empty($_SERVER['QUERY_STRING'])) {
             $this->_fullUrl = $this->_currentUrl.'?'.$_SERVER['QUERY_STRING'];
         } else {
             $this->_fullUrl = $this->_currentUrl;
@@ -167,7 +167,7 @@ class Uri
      */
     public function getSegments($start = null)
     {
-        if($start !== null){
+        if ($start !== null) {
             return array_slice($this->_segments, $start);
         }
         return $this->_segments;
@@ -198,7 +198,7 @@ class Uri
      */
     public function getSegment($index)
     {
-        if(!empty($this->_segments[$index])){
+        if (!empty($this->_segments[$index])) {
             return $this->_segments[$index];
         }
         return null;
@@ -238,7 +238,7 @@ class Uri
     public function getSegmentCount()
     {
         $length = count($this->_segments);
-        if(empty($this->_segments[$length - 1])){
+        if (empty($this->_segments[$length - 1])) {
             $length--;
         }
         return --$length;
@@ -286,9 +286,9 @@ class Uri
      */
     public function getModuleUrl()
     {
-        if(!$this->_moduleUrl){
+        if (!$this->_moduleUrl) {
             $this->_moduleUrl = F::getApp()->getController()->getAppRequest()->getModule();
-            if($this->_moduleUrl !== F::$config->router['default_module']){
+            if ($this->_moduleUrl !== F::$config->router['default_module']) {
                 $this->_moduleUrl .= '/';
             }
             $this->_moduleUrl = $this->_baseUrl.$this->_moduleUrl;

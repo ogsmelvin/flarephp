@@ -91,18 +91,18 @@ class Flare
      */
     public static function init($config_file)
     {
-        if(self::$_init){
+        if (self::$_init) {
             return;
         }
 
         self::$config = Config::load($config_file);
-        if(self::$config->time_limit !== null){
+        if (self::$config->time_limit !== null) {
             set_time_limit(self::$config->time_limit);
         }
-        if(self::$config->memory_limit !== null){
+        if (self::$config->memory_limit !== null) {
             ini_set('memory_limit', self::$config->memory_limit);
         }
-        if(self::$config->timezone !== null){
+        if (self::$config->timezone !== null) {
             date_default_timezone_set(self::$config->timezone);
         }
         self::$request = new Request();
@@ -110,12 +110,12 @@ class Flare
         self::$uri = new Uri();
         
         $routes = array();
-        if(self::$config->router['routes']){
+        if (self::$config->router['routes']) {
             $routes = self::$config->router['routes'];
         }
         self::$router = new Router($routes);
 
-        if(self::$config->session['namespace']){
+        if (self::$config->session['namespace']) {
             self::$session = Session::getInstance(
                 self::$config->session['namespace'],
                 self::$config->session['auto_start']
@@ -123,13 +123,14 @@ class Flare
         } else {
             show_error("Config[session][namespace] must be set");
         }
-        if(self::$config->require_https){
+        if (self::$config->require_https) {
             self::$router->secure();
         }
-        if(self::$config->auto_compress && !@ini_get('zlib.output_compression')
+        if (self::$config->auto_compress && !@ini_get('zlib.output_compression')
             && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
-            && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE){
-            if(!ob_start('ob_gzhandler')){
+            && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+        {
+            if (!ob_start('ob_gzhandler')) {
                 show_response(500, 'output compression failed');
             }
         }
@@ -145,9 +146,9 @@ class Flare
      */
     public static function & db($name = 'default', $config = null)
     {
-        if(!isset(self::$_db[$name])){
-            if(!$config){
-                if(!isset(self::$config->database[$name])){
+        if (!isset(self::$_db[$name])) {
+            if (!$config) {
+                if (!isset(self::$config->database[$name])) {
                     show_error("No database configuration found");
                 }
                 $config = self::$config->database[$name];
@@ -173,9 +174,9 @@ class Flare
      */
     public static function & ns($key, $config = null)
     {
-        if(!isset(self::$_ns[$key])){
-            if(!$config){
-                if(!isset(self::$config->nosql[$key])){
+        if (!isset(self::$_ns[$key])) {
+            if (!$config) {
+                if (!isset(self::$config->nosql[$key])) {
                     show_error("Config for service '{$key}' is not defined");
                 }
                 $config = self::$config->nosql[$key];
@@ -193,7 +194,7 @@ class Flare
      */
     public static function createApp()
     {
-        if(self::$_application && self::$_application instanceof Application){
+        if (self::$_application && self::$_application instanceof Application) {
             show_error("Flare Application is already created");
         }
         self::$_application = new Application();
@@ -217,9 +218,9 @@ class Flare
      */
     public static function service($service, $config = null)
     {
-        if(!isset(self::$_services[$service])){
-            if(!$config){
-                if(!isset(self::$config->services[$service])){
+        if (!isset(self::$_services[$service])) {
+            if (!$config) {
+                if (!isset(self::$config->services[$service])) {
                     show_error("Config for service '{$service}' is not defined");
                 }
                 $config = self::$config->services[$service];

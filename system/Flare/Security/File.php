@@ -34,7 +34,7 @@ class File extends Security
                     "%3b",      // ;
                     "%3d"       // =
                 );
-        if(!$relativepath){
+        if (!$relativepath) {
             $bad[] = './';
             $bad[] = '/';
         }

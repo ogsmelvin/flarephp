@@ -49,7 +49,7 @@ class Request extends ParentRequest
     public function setController($controller)
     {
         $sections = explode('_', urldecode($controller));
-        foreach($sections as &$section){
+        foreach ($sections as &$section) {
             $section = strtolower($section);
         }
 

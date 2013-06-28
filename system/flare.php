@@ -12,7 +12,7 @@ define('FLARE_DIR', dirname(__FILE__).'/');
  */
 define('FLARE_VERSION', '1.0');
 
-if(!function_exists('flare_load_class')){
+if (!function_exists('flare_load_class')) {
 
     /**
      * 
@@ -22,13 +22,13 @@ if(!function_exists('flare_load_class')){
      */
     function flare_load_class($class)
     {
-        if(strpos($class, 'Flare') === 0){
+        if (strpos($class, 'Flare') === 0) {
             require FLARE_DIR.str_replace("\\", '/', $class).'.php';
         }
     }
 }
 
-if(!function_exists('debug')){
+if (!function_exists('debug')) {
 
     /**
      * 
@@ -40,13 +40,13 @@ if(!function_exists('debug')){
     function debug($var, $vardump = false)
     {
         echo '<pre>';
-        if(!$vardump){
-            if(empty($var)){
-                if(is_array($var)){
+        if (!$vardump) {
+            if (empty($var)) {
+                if (is_array($var)) {
                     $var = "[[ Empty array ]]";
-                } else if(is_string($var)){
+                } elseif (is_string($var)) {
                     $var = "[[ Empty string ]]";
-                } else if(is_bool($var)){
+                } elseif (is_bool($var)) {
                     $var = "[[ Bool: false ]]";
                 }
             }
@@ -58,7 +58,7 @@ if(!function_exists('debug')){
     }
 }
 
-if(!function_exists('html')){
+if (!function_exists('html')) {
     
     /**
      * 
@@ -72,7 +72,7 @@ if(!function_exists('html')){
     }
 }
 
-if(!function_exists('render')){
+if (!function_exists('render')) {
 
     /**
      * 
@@ -89,7 +89,7 @@ if(!function_exists('render')){
 
 $flare_sections = array();
 
-if(!function_exists('section_open')){
+if (!function_exists('section_open')) {
 
     /**
      * 
@@ -105,7 +105,7 @@ if(!function_exists('section_open')){
     }
 }
 
-if(!function_exists('section_close')){
+if (!function_exists('section_close')) {
 
     /**
      * 
@@ -116,14 +116,14 @@ if(!function_exists('section_close')){
     function section_close($name)
     {
         global $flare_sections;
-        if(!isset($flare_sections[$name])){
+        if (!isset($flare_sections[$name])) {
             show_error("{$name} is not yet open");
         }
         $flare_sections[$name] = (string) ob_get_clean();
     }
 }
 
-if(!function_exists('get_section')){
+if (!function_exists('get_section')) {
 
     /**
      * 
@@ -134,14 +134,14 @@ if(!function_exists('get_section')){
     function get_section($name)
     {
         global $flare_sections;
-        if(!isset($flare_sections[$name])){
+        if (!isset($flare_sections[$name])) {
             return null;
         }
         return $flare_sections[$name];
     }
 }
 
-if(!function_exists('get_sections')){
+if (!function_exists('get_sections')) {
 
     /**
      * 
@@ -155,7 +155,7 @@ if(!function_exists('get_sections')){
     }
 }
 
-if(!function_exists('http_build_url')){
+if (!function_exists('http_build_url')) {
 
     /**
      * 
@@ -165,21 +165,21 @@ if(!function_exists('http_build_url')){
      */
     function http_build_url($parsed_url)
     {
-        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
         $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
-        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+        $port     = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
         $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
-        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+        $pass     = isset($parsed_url['pass']) ? ':'.$parsed_url['pass']  : '';
         $pass     = ($user || $pass) ? "$pass@" : '';
         $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
-        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
-        $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+        $query    = isset($parsed_url['query']) ? '?'.$parsed_url['query'] : '';
+        $fragment = isset($parsed_url['fragment']) ? '#'.$parsed_url['fragment'] : '';
         return "$scheme$user$pass$host$port$path$query$fragment";
     }
 }
 
 
-if(!function_exists('show_response')){
+if (!function_exists('show_response')) {
 
     /**
      * 
@@ -194,7 +194,7 @@ if(!function_exists('show_response')){
     }
 }
 
-if(!function_exists('show_error')){
+if (!function_exists('show_error')) {
 
     /**
      * 
@@ -208,7 +208,7 @@ if(!function_exists('show_error')){
     }
 }
 
-if(!function_exists('_flare_show_error')){
+if (!function_exists('_flare_show_error')) {
 
     /**
      * 
@@ -226,7 +226,7 @@ if(!function_exists('_flare_show_error')){
     }
 }
 
-if(!function_exists('flare')){
+if (!function_exists('flare')) {
 
     /**
      * 
@@ -242,7 +242,7 @@ if(!function_exists('flare')){
 set_error_handler('_flare_show_error');
 spl_autoload_register('flare_load_class');
 
-if(!class_exists("\\Flare\\Flare")){
+if (!class_exists("\\Flare\\Flare")) {
     require FLARE_DIR.'Flare/Flare.php';
 }
 

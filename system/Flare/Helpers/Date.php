@@ -1,6 +1,6 @@
 <?php
 
-if(!function_exists('now')){
+if (!function_exists('now')) {
     
     /**
      * 
@@ -9,14 +9,14 @@ if(!function_exists('now')){
      */
     function now($with_time = true)
     {
-        if($with_time){
+        if ($with_time) {
             return date('Y-m-d H:i:s');
         }
         return date('Y-m-d');
     }
 }
 
-if(!function_exists('format_date')){
+if (!function_exists('format_date')) {
     
     /**
      * Format date from MySql format to word format
@@ -32,9 +32,9 @@ if(!function_exists('format_date')){
         $sec = 0;
         $date = explode('-', $date);
         $day = isset($date[2]) ? $date[2] : '00';
-        if(strlen($day) > 2){
+        if (strlen($day) > 2) {
             $day = explode(' ', $day);
-            if(isset($day[1])){
+            if (isset($day[1])) {
                 $time = explode(':', $day[1]);
                 $hour = (int) $time[0];
                 $min = (int) $time[1];
@@ -48,7 +48,7 @@ if(!function_exists('format_date')){
     }
 }
 
-if(!function_exists('time_elapsed')){
+if (!function_exists('time_elapsed')) {
 
     /**
      * Param must be in timestamp
@@ -57,7 +57,7 @@ if(!function_exists('time_elapsed')){
      */
     function time_elapsed($ptime, $auto_strtotime = true)
     {
-        if($auto_strtotime){
+        if ($auto_strtotime) {
             $ptime = strtotime($ptime);
         }
         $etime = time() - $ptime;

@@ -75,7 +75,7 @@ class OneWaySMS
     {
         $this->_username = $username;
         $this->_password = $password;
-        if($host){
+        if ($host) {
             $this->_host = rtrim($host, '/').'/';
         }
         $this->_curl = new Curl();
@@ -102,13 +102,13 @@ class OneWaySMS
             ->setUrl($this->_host.'api.aspx')
             ->getContent();
 
-        if($this->_curl->hasError()){
+        if ($this->_curl->hasError()) {
             $this->_error = array(
                 'code' => $this->_curl->getErrorCode(),
                 'message' => $this->_curl->getError()
             );
             $result = null;
-        } else if($result < 0){
+        } elseif ($result < 0) {
             $this->_setError('send_sms', $result);
             $result = null;
         }
@@ -128,13 +128,13 @@ class OneWaySMS
             ->setUrl($this->_host.'bulktrx.aspx')
             ->getContent();
 
-        if($this->_curl->hasError()){
+        if ($this->_curl->hasError()) {
             $this->_error = array(
                 'code' => $this->_curl->getErrorCode(),
                 'message' => $this->_curl->getError()
             );
             return false;
-        } else if($result != 0){
+        } elseif ($result != 0) {
             $this->_setError('transaction_status', $result);
             return false;
         }
@@ -154,13 +154,13 @@ class OneWaySMS
             ->setUrl($this->_host.'bulkcredit.aspx')
             ->getContent();
 
-        if($this->_curl->hasError()){
+        if ($this->_curl->hasError()) {
             $this->_error = array(
                 'code' => $this->_curl->getErrorCode(),
                 'message' => $this->_curl->getError()
             );
             return null;
-        } else if($result < 0){
+        } elseif ($result < 0) {
             $this->_setError('credit_balance', $result);
             return null;
         }
@@ -176,7 +176,7 @@ class OneWaySMS
     private function _setError($type, $code)
     {
         $this->_error = array('code' => $code);
-        if(isset(self::$_errorMessages[$type][$code])){
+        if (isset(self::$_errorMessages[$type][$code])) {
             $this->_error['message'] = self::$_errorMessages[$type][$code];
         }
     }

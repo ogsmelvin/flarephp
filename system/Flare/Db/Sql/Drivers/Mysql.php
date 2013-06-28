@@ -36,7 +36,7 @@ class Mysql extends PDO implements Sql
      */
     public function quote($value, $parameter_type = PDO::PARAM_STR)
     {
-        if($value === null){
+        if ($value === null) {
             return "NULL";
         }
         return parent::quote($value, $parameter_type);
@@ -60,7 +60,7 @@ class Mysql extends PDO implements Sql
      */
     public function quoteIdentifier($name)
     {
-        if($name === '*'){
+        if ($name === '*') {
             return $name;
         }
         return $this->_quote.$name.$this->_quote;
@@ -75,7 +75,7 @@ class Mysql extends PDO implements Sql
     public function quoteColumn($field)
     {
         $field = explode('.', $field);
-        if(isset($field[1])){
+        if (isset($field[1])) {
             $field[1] = $this->quoteIdentifier($field[1]);
         }
         $field[0] = $this->quoteIdentifier($field[0]);
@@ -125,7 +125,7 @@ class Mysql extends PDO implements Sql
     {
         $query = new ARQuery($this);
         $args = func_get_args();
-        if(!isset($args[0])){
+        if (!isset($args[0])) {
             $args[0] = $select;
         }
         return call_user_func_array(array($query, 'select'), $args);
@@ -179,7 +179,7 @@ class Mysql extends PDO implements Sql
      */
     public function getColumns($table, $get_from_cache = false)
     {
-        if($get_from_cache && !empty(self::$_metaCache[$table]['columns'])){
+        if ($get_from_cache && !empty(self::$_metaCache[$table]['columns'])) {
             return self::$_metaCache[$table]['columns'];
         }
 
@@ -188,13 +188,13 @@ class Mysql extends PDO implements Sql
             ->fetchAll();
 
         $fields = array();
-        foreach($columns as $column){
+        foreach ($columns as $column) {
             $fields[] = $column['Field'];
         }
         unset($columns);
 
-        if($get_from_cache){
-            if(!isset(self::$_metaCache[$table])){
+        if ($get_from_cache) {
+            if (!isset(self::$_metaCache[$table])) {
                 self::$_metaCache[$table] = array();
             }
             self::$_metaCache[$table]['columns'] = $fields;
@@ -210,7 +210,7 @@ class Mysql extends PDO implements Sql
     public function printError(PDOStatement $stmt)
     {
         $error = $stmt->errorInfo();
-        if(!empty($error[1]) || !empty($error[2])){
+        if (!empty($error[1]) || !empty($error[2])) {
             show_response(500, $error[2]);
         }
         return;

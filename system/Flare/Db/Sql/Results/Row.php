@@ -116,7 +116,7 @@ class Row
      */
     public function __get($key)
     {
-        if(!isset($this->_data[$key])){
+        if (!isset($this->_data[$key])) {
             show_error("'{$key}' doesn't exist in the row object");
         }
         return $this->_data[$key];
@@ -149,7 +149,7 @@ class Row
      */
     public function getString($field, $xss = true)
     {
-        if($xss){
+        if ($xss) {
             return $this->getXssClean($field);
         }
         return (string) $this->__get($field);
@@ -172,7 +172,7 @@ class Row
      */
     public function getXssClean($field)
     {
-        if(isset($this->_data[$field])){
+        if (isset($this->_data[$field])) {
             return Xss::filter($this->_data[$field]);
         }
         show_error("'{$key}' doesn't exist in the row object");

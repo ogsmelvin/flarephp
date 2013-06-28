@@ -248,7 +248,7 @@ class Application
      */
     public function setModules($modules)
     {
-        if(!in_array(F::$config->router['default_module'], $modules)){
+        if (!in_array(F::$config->router['default_module'], $modules)) {
             $modules[] = F::$config->router['default_module'];
         }
         F::$router->setRoutingModules($modules);
@@ -271,7 +271,7 @@ class Application
      */
     public function setModelsDirectory($directory)
     {
-        if(!$this->_modelsDirectory){
+        if (!$this->_modelsDirectory) {
             spl_autoload_register(array($this, 'autoloadModel'));
         }
         $this->_modelsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
@@ -295,7 +295,7 @@ class Application
     public function autoloadModel($class)
     {
         $class = explode("\\", $class);
-        if(isset($class[1]) && $class[1] == 'Models'){
+        if (isset($class[1]) && $class[1] == 'Models') {
             $className = array_pop($class);
             require $this->_modulesDirectory.strtolower(implode("/", $class))."/".$className.'.php';
         }
@@ -308,7 +308,7 @@ class Application
     public function preDispatch()
     {
         $route = F::$router->getRoute();
-        if(!$route){
+        if (!$route) {
             show_response(404);
         }
         $this->_controller = $route->getController();
@@ -321,18 +321,18 @@ class Application
      */
     public function dispatch()
     {
-        if($this->_dispatched){
+        if ($this->_dispatched) {
             show_error("Already dispatched");
         }
 
-        if(!$this->_controller){
+        if (!$this->_controller) {
             return;
         }
 
         $this->_controller->init();
         $this->_controller->preDispatch();
         $view = null;
-        if(!F::$router->getRoute()->getActionParams()){
+        if (!F::$router->getRoute()->getActionParams()) {
             $view = $this->_controller->{$this->_controller->getAppRequest()->getActionMethodName()}();
         } else {
             $view = call_user_func_array(
@@ -341,15 +341,15 @@ class Application
             );
         }
 
-        if(!F::$response->hasContentType()){
-            if($view instanceof Html){
+        if (!F::$response->hasContentType()) {
+            if ($view instanceof Html) {
                 F::$response->setContentType('text/html');
-            } else if($view instanceof \Flare\Objects\Xml){
+            } elseif ($view instanceof \Flare\Objects\Xml) {
                 $view = $view->asXml();
                 F::$response->setContentType('text/xml');
-            } else if($view instanceof \Flare\Objects\Json){
+            } elseif ($view instanceof \Flare\Objects\Json) {
                 F::$response->setContentType('application/json');
-            } else if($view instanceof \Flare\Objects\Image){
+            } elseif ($view instanceof \Flare\Objects\Image) {
                 //TODO
             }
         }
@@ -370,13 +370,13 @@ class Application
     public function view($path, $data = null, $layout = null)
     {
         $module = $this->_controller->getAppRequest()->getModule();
-        if($layout === null 
+        if ($layout === null 
             && isset(F::$config->layout[$module]) 
             && F::$config->layout[$module]['auto'])
         {
             $layout = $this->_layoutsDirectory
                 .F::$config->layout[$module]['layout'].'_layout.php';
-        } else if($layout !== false && $layout !== null){
+        } elseif ($layout !== false && $layout !== null) {
             $layout = $this->_layoutsDirectory.$layout.'_layout.php';
         }
 
@@ -386,7 +386,7 @@ class Application
             .$this->_viewsDirectory
             .$path
             .'.php';
-        if(!file_exists($path)){
+        if (!file_exists($path)) {
             show_error("{$path} not found");
         }
         $html = new Html($path);
@@ -395,13 +395,13 @@ class Application
             ->set('session', F::$session)
             ->set('js', new Javascript())
             ->set('config', F::$config);
-        if($data === null){
+        if ($data === null) {
             $data = new Data();
-        } else if(!($data instanceof Data) && is_array($data)){
+        } elseif (!($data instanceof Data) && is_array($data)) {
             $data = new Data($data);
         }
         $html->set('data', $data);
-        if($layout){
+        if ($layout) {
             $html->setLayout($layout);
         }
         return $html;
@@ -416,15 +416,14 @@ class Application
     public function error($code, $message = '')
     {
         $html = null;
-        if(isset(F::$config->router['errors'][$code]) 
-            && file_exists($this->_errorLayoutsDirectory.$code.'.php')){
-
+        if (isset(F::$config->router['errors'][$code]) 
+            && file_exists($this->_errorLayoutsDirectory.$code.'.php'))
+        {
             $html = new Html($this->_errorLayoutsDirectory.$code.'.php');
             $html->set('message', $message);
-
-        } else if($message){
+        } elseif ($message) {
             $html = '<pre>'.$message.'</pre>';
-        } else if(isset(Response::$messages[$code])){
+        } elseif (isset(Response::$messages[$code])) {
             $html = '<pre>'.Response::$messages[$code].'</pre>';
         }
         F::$response->setCode($code)
@@ -441,9 +440,9 @@ class Application
     public function helper($helper)
     {
         $helper = ucwords(strtolower($helper));
-        if(file_exists(FLARE_DIR.'Flare/Helpers/'.$helper.'.php')){
+        if (file_exists(FLARE_DIR.'Flare/Helpers/'.$helper.'.php')) {
             require_once FLARE_DIR.'Flare/Helpers/'.$helper.'.php';
-        } else if(file_exists($this->_helpersDirectory.$helper.'.php')){
+        } elseif (file_exists($this->_helpersDirectory.$helper.'.php')) {
             require_once $this->_helpersDirectory.$helper.'.php';
         }
     }
@@ -463,9 +462,9 @@ class Application
      */
     public function start()
     {
-        if($this->_dispatched){
+        if ($this->_dispatched) {
             show_error("Application is already started");
-        } else if(!$this->_appDirectory){
+        } elseif (!$this->_appDirectory) {
             show_error("App Directory and System Directory must be set");
         }
         F::init(require $this->_appDirectory.'config/config.php');

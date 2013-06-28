@@ -1,6 +1,6 @@
 <?php
 
-if(!function_exists('html_select_day')){
+if (!function_exists('html_select_day')) {
 
     /**
      * 
@@ -10,7 +10,7 @@ if(!function_exists('html_select_day')){
     function html_select_day()
     {
         $string = "<option value=''>Day</option>";
-        foreach(range(1, 31) as $day){
+        foreach (range(1, 31) as $day) {
             $string .= "<option value='".str_pad($day, 2, "0", STR_PAD_LEFT)."'>{$day}</option>";
         }
         return $string;
@@ -18,7 +18,7 @@ if(!function_exists('html_select_day')){
 }
 
 
-if(!function_exists('html_select_month')){
+if (!function_exists('html_select_month')) {
 
     /**
      * 
@@ -43,7 +43,7 @@ if(!function_exists('html_select_month')){
     }
 }
 
-if(!function_exists('html_select_province')){
+if (!function_exists('html_select_province')) {
 
     /**
      * 
@@ -138,7 +138,7 @@ if(!function_exists('html_select_province')){
     }
 }
 
-if(!function_exists('html_select_year')){
+if (!function_exists('html_select_year')) {
 
     /**
      * 
@@ -148,7 +148,7 @@ if(!function_exists('html_select_year')){
     function html_select_year($start = 1994, $end = 1920)
     {
         $string = "<option value=''>Year</option>";
-        foreach(range((int) $start, (int) $end) as $year){
+        foreach (range((int) $start, (int) $end) as $year) {
             $string .= "<option value='{$year}'>{$year}</option>";
         }
         return $string;

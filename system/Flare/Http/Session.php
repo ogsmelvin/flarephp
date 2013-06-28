@@ -40,7 +40,7 @@ class Session
     private function __construct($namespace, $start = false)
     {
         $this->_name = $namespace;
-        if($start){
+        if ($start) {
             $this->start();
         }
     }
@@ -52,7 +52,7 @@ class Session
     public function start()
     {
         session_start();
-        if(!isset($_SESSION[$this->_name])){
+        if (!isset($_SESSION[$this->_name])) {
             $_SESSION[$this->_name] = array(
                 self::$_keySettings => array()
             );
@@ -67,7 +67,7 @@ class Session
      */
     public static function & getInstance($namespace, $start = false)
     {
-        if(!self::$_instance){
+        if (!self::$_instance) {
             self::$_instance = new self($namespace, $start);
         }
         return self::$_instance;
@@ -98,12 +98,12 @@ class Session
      */
     public function __get($key)
     {
-        if(!$this->_started){
+        if (!$this->_started) {
             show_error("Session must be started first");
         }
-        if(!isset($_SESSION[$this->_name][$key]) || $key === self::$_keySettings){
+        if (!isset($_SESSION[$this->_name][$key]) || $key === self::$_keySettings) {
             return null;
-        } else if(isset($_SESSION[$this->_name][self::$_keySettings][$key])
+        } elseif (isset($_SESSION[$this->_name][self::$_keySettings][$key])
             && (time() - $_SESSION[$this->_name][self::$_keySettings][$key]['create_time'] 
                 > $_SESSION[$this->_name][self::$_keySettings][$key]['expiration']))
         {
@@ -121,9 +121,9 @@ class Session
      */
     public function __set($key, $value)
     {
-        if(!$this->_started){
+        if (!$this->_started) {
             show_error("Session must be started first");
-        } else if(strpos($key, '__') === 0){
+        } elseif (strpos($key, '__') === 0) {
             show_error("Key must not have '__' ( underscore )");
         }
         $_SESSION[$this->_name][$key] = $value;
@@ -150,7 +150,7 @@ class Session
      */
     public function setExpiration($key, $seconds = 1800, $now = null)
     {
-        if(!$now){
+        if (!$now) {
             $now = time();
         }
         $_SESSION[$this->_name][self::$_keySettings][$key] = array(
@@ -167,7 +167,7 @@ class Session
      */
     public function get($key = null)
     {
-        if(!$key){
+        if (!$key) {
             $session = $_SESSION[$this->_name];
             unset($session[self::$_keySettings]);
             return $session;
@@ -192,7 +192,7 @@ class Session
      */
     public function __isset($key)
     {
-        if(!$this->_started){
+        if (!$this->_started) {
             show_error("Session must be started first");
         }
         return isset($_SESSION[$this->_name][$key]);
@@ -205,7 +205,7 @@ class Session
      */
     public function __unset($key)
     {
-        if(!$this->_started){
+        if (!$this->_started) {
             show_error("Session must be started first");
         }
         unset($_SESSION[$this->_name][$key]);
@@ -227,7 +227,7 @@ class Session
      */
     public function destroy()
     {
-        if(!$this->_started){
+        if (!$this->_started) {
             show_error("Session must be started first");
         }
         session_destroy();
@@ -242,7 +242,7 @@ class Session
      */
     public function resetId()
     {
-        if(!$this->_started){
+        if (!$this->_started) {
             show_error("Session must be started first");
         }
         session_regenerate_id();
@@ -255,7 +255,7 @@ class Session
      */
     public function clear()
     {
-        if(!$this->_started){
+        if (!$this->_started) {
             show_error("Session must be started first");
         }
         unset($_SESSION[$this->_name]);
@@ -270,7 +270,7 @@ class Session
     public function flash($key)
     {
         $val = $this->__get($key);
-        if($val !== null){
+        if ($val !== null) {
             unset($_SESSION[$this->_name][$key]);
         }
         return $val;

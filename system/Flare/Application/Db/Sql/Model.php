@@ -53,12 +53,12 @@ class Model extends ParentModel
      */
     protected function _setup()
     {
-        if(isset(self::getController()->db)){
+        if (isset(self::getController()->db)) {
             $this->_adapter = & self::getController()->db;
         } else {
             show_error("No database connection");
         }
-        if(empty(static::$primaryKey)){
+        if (empty(static::$primaryKey)) {
             static::$primaryKey = $this->_adapter->getPrimaryKey(static::$table);
         }
     }
@@ -102,7 +102,7 @@ class Model extends ParentModel
     public function select($select = '*')
     {
         $sql = $this->_adapter->select($select);
-        if(isset(static::$alias)){
+        if (isset(static::$alias)) {
             $sql->from(array(static::$alias => static::$table));
         } else {
             $sql->from(static::$table);
@@ -136,9 +136,9 @@ class Model extends ParentModel
      */
     public static function query()
     {
-        if(empty(static::$table)){
+        if (empty(static::$table)) {
             show_error('Table must be set');
-        } else if(!isset(self::$_instances[static::$table])){
+        } elseif (!isset(self::$_instances[static::$table])) {
             self::$_instances[static::$table] = new static;
         }
         return self::$_instances[static::$table];
@@ -150,7 +150,7 @@ class Model extends ParentModel
      */
     public static function getPrimaryKey()
     {
-        if(isset(static::$primaryKey)){
+        if (isset(static::$primaryKey)) {
             return static::$primaryKey;
         }
         return self::query()->getAdapter()->getPrimaryKey(static::$table);
@@ -166,10 +166,10 @@ class Model extends ParentModel
     {
         $sql = self::query()->select()
             ->from(static::$table);
-        if($limit){
+        if ($limit) {
             $sql->limit($limit);
         }
-        if($page){
+        if ($page) {
             $sql->page($page);
         }
         return $sql->getCollection();
@@ -186,14 +186,14 @@ class Model extends ParentModel
         $sql = self::query()->select()
             ->from(static::$table);
         $pk = self::getPrimaryKey();
-        if(!$column){
+        if (!$column) {
             $column = $pk;
         }
         $row = $sql->where($column, $value)->getOne();
-        if($row){
+        if ($row) {
             $row->setTable(static::$table);
             $row->setPrimaryKey($pk);
-            if($row->{$pk} !== null){
+            if ($row->{$pk} !== null) {
                 $row->setId($row->{$pk});
             }
         }

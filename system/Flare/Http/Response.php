@@ -110,7 +110,7 @@ class Response
     public function setHeader($key, $value, $auto_send = false)
     {
         $this->_headers[$key] = $value;
-        if($auto_send){
+        if ($auto_send) {
             header("{$key}: {$value}");
         }
         return $this;
@@ -133,10 +133,10 @@ class Response
      */
     public function getContentType()
     {
-        if(!$this->_contentType){
-            foreach(headers_list() as $header){
+        if (!$this->_contentType) {
+            foreach (headers_list() as $header) {
                 $header = strtolower($header);
-                if(strpos($header, 'content-type') === 0){
+                if (strpos($header, 'content-type') === 0) {
                     return trim(str_replace('content-type: ', '', $header));
                 }
             }
@@ -185,7 +185,7 @@ class Response
      */
     public function redirect($url, $code = 302)
     {
-        if(parse_url($url, PHP_URL_SCHEME) === null){
+        if (parse_url($url, PHP_URL_SCHEME) === null) {
             $url = F::$uri->getBaseUrl().ltrim($url, '/');
         }
         $this->setRedirect($url, $code)->send(false);
@@ -199,12 +199,12 @@ class Response
      */
     public function setRefresh($seconds = 0, $url = null)
     {
-        if(is_string($seconds)){
+        if (is_string($seconds)) {
             $seconds = (int) $seconds;
         }
-        if(!$url){
+        if (!$url) {
             $url = F::$uri->getCurrentUrl();
-        } else if(parse_url($url, PHP_URL_SCHEME) === null){
+        } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
             $url = F::$uri->getBaseUrl().ltrim($url, '/');
         }
         $this->setHeader('Refresh', '{$seconds};url="{$url}"');
@@ -258,26 +258,26 @@ class Response
      */
     public function send($output_body = true)
     {
-        if($this->_sent){
+        if ($this->_sent) {
             show_response(500, "Response::send already executed");
         }
-        if($this->_code !== 200 && isset(self::$messages[$this->_code])){
-            if(!empty($_SERVER['SERVER_PROTOCOL'])){
+        if ($this->_code !== 200 && isset(self::$messages[$this->_code])) {
+            if (!empty($_SERVER['SERVER_PROTOCOL'])) {
                 header($_SERVER['SERVER_PROTOCOL'].' '.$this->_code.' '.self::$messages[$this->_code]);
             } else {
                 header('HTTP/1.1 '.$this->_code.' '.self::$messages[$this->_code]);
             }
         }
-        if(isset($this->_headers['Location']) && (300 <= $this->_code) && (307 >= $this->_code)){
+        if (isset($this->_headers['Location']) && (300 <= $this->_code) && (307 >= $this->_code)) {
             header('Location: '.$this->_headers['Location']);
             exit;
         }
 
-        foreach($this->_headers as $key => $header){
+        foreach ($this->_headers as $key => $header) {
             header("{$key}: {$header}");
         }
 
-        if($output_body){
+        if ($output_body) {
             echo $this->_body;
         }
         $this->_sent = true;

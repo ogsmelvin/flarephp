@@ -70,21 +70,21 @@ abstract class AbstractController
         $this->request = & $request;
         $this->response = & $response;
 
-        if($this->config->autoload['database']){
+        if ($this->config->autoload['database']) {
             $this->setDb($this->config->autoload['database']);
         }
 
-        if(!empty($this->config->autoload['helpers'])){
-            foreach($this->config->autoload['helpers'] as $helper){
+        if (!empty($this->config->autoload['helpers'])) {
+            foreach ($this->config->autoload['helpers'] as $helper) {
                 $this->setHelper($helper);
             }
         }
 
-        if(!empty($this->config->autoload['services'])){
-            foreach($this->config->autoload['services'] as $service){
-                if(!is_array($service)){
+        if (!empty($this->config->autoload['services'])) {
+            foreach ($this->config->autoload['services'] as $service) {
+                if (!is_array($service)) {
                     $this->setService($service);
-                } else if(isset($service[0], $service[1])){
+                } elseif (isset($service[0], $service[1])) {
                     $this->setService($service[0], $service[1]);
                 }
             }
@@ -99,11 +99,11 @@ abstract class AbstractController
      */
     public function setService($service, $shortKey = null)
     {
-        if(!$shortKey){
+        if (!$shortKey) {
             $shortKey = $service;
         }
-        if(!isset($this->_services[$shortKey])){
-            if(F::service($service)){
+        if (!isset($this->_services[$shortKey])) {
+            if (F::service($service)) {
                 $this->_services[$shortKey] = $service;
             } else {
                 show_error("Error initializing service '{$service}'");
@@ -119,7 +119,7 @@ abstract class AbstractController
      */
     public function getService($service)
     {
-        if(!isset($this->_services[$service])){
+        if (!isset($this->_services[$service])) {
             show_error("'{$service}' was not set");
         }
         return F::service($this->_services[$service]);
@@ -134,11 +134,11 @@ abstract class AbstractController
     public function getPost($key = null, $xss = null)
     {
         $value = $this->request->post($key);
-        if($xss === null){
-            if($this->config->get('auto_xss_filter') && $value){
+        if ($xss === null) {
+            if ($this->config->get('auto_xss_filter') && $value) {
                 return Xss::filter($value);
             }
-        } else if($value){
+        } elseif ($value) {
             return $xss === true ? Xss::filter($value) : $value;
         }
         return $value;
@@ -153,11 +153,11 @@ abstract class AbstractController
     public function getRequest($key = null, $xss = null)
     {
         $value = $this->request->request($key);
-        if($xss === null){
-            if($this->config->get('auto_xss_filter') && $value){
+        if ($xss === null) {
+            if ($this->config->get('auto_xss_filter') && $value) {
                 return Xss::filter($value);
             }
-        } else if($value){
+        } elseif ($value) {
             return $xss === true ? Xss::filter($value) : $value;
         }
         return $value;
@@ -172,11 +172,11 @@ abstract class AbstractController
     public function getQuery($key = null, $xss = null)
     {
         $value = $this->request->get($key);
-        if($xss === null){
-            if($this->config->get('auto_xss_filter') && $value){
+        if ($xss === null) {
+            if ($this->config->get('auto_xss_filter') && $value) {
                 return Xss::filter($value);
             }
-        } else if($value){
+        } elseif ($value) {
             return $xss === true ? Xss::filter($value) : $value;
         }
         return $value;
@@ -191,11 +191,11 @@ abstract class AbstractController
     public function getServer($key = null, $xss = null)
     {
         $value = $this->request->server($key);
-        if($xss === null){
-            if($this->config->get('auto_xss_filter') && $value){
+        if ($xss === null) {
+            if ($this->config->get('auto_xss_filter') && $value) {
                 return Xss::filter($value);
             }
-        } else if($value){
+        } elseif ($value) {
             return $xss === true ? Xss::filter($value) : $value;
         }
         return $value;
@@ -231,9 +231,9 @@ abstract class AbstractController
     public function setNosql($key)
     {
         $tmpKey = strtolower($key);
-        if(!isset($this->{$tmpKey})){
+        if (!isset($this->{$tmpKey})) {
             $ns = & F::ns($key);
-            if(!$ns){
+            if (!$ns) {
                 show_error("Initialize nosql '{$key}' failed");
             }
             $this->{$tmpKey} = & $ns;
@@ -320,11 +320,11 @@ abstract class AbstractController
      * 
      * @return void
      */
-    public function preDispatch(){}
+    public function preDispatch() {}
 
     /**
      * 
      * @return void
      */
-    public function postDispatch(){}
+    public function postDispatch() {}
 }

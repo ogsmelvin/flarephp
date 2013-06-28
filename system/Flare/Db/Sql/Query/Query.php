@@ -52,10 +52,10 @@ class Query
     public function __construct(PDO &$conn, $sql = null, $bindings = null)
     {
         $this->_conn = & $conn;
-        if($sql){
+        if ($sql) {
             $this->setQuery($sql);
         }
-        if($bindings){
+        if ($bindings) {
             $this->setBindings($bindings);
         }
     }
@@ -78,7 +78,7 @@ class Query
      */
     public function setBindings($bindings)
     {
-        foreach($bindings as $key => $value){
+        foreach ($bindings as $key => $value) {
             $this->bind($key, $value);
         }
         return $this;
@@ -91,7 +91,7 @@ class Query
      */
     public function setColumns($columns)
     {
-        foreach($columns as $key => $value){
+        foreach ($columns as $key => $value) {
             $this->column($key, $value);
         }
         return $this;
@@ -104,8 +104,8 @@ class Query
      */
     public function setTables($tables)
     {
-        foreach($tables as $key => $value){
-            if(isset($value[1])){
+        foreach ($tables as $key => $value) {
+            if (isset($value[1])) {
                 $this->table($key, $value[0], $value[1]);
             } else {
                 $this->table($key, $value[0]);
@@ -123,7 +123,7 @@ class Query
     public function bind($key, $value)
     {
         $type = PDO::PARAM_STR;
-        if(is_numeric($value)){
+        if (is_numeric($value)) {
             $type = PDO::PARAM_INT;
         }
         $this->_bindings[$key] = $this->_conn->quote($value, $type);
@@ -151,7 +151,7 @@ class Query
      */
     public function table($key, $value, $alias = null)
     {
-        if($alias){
+        if ($alias) {
             $this->_tables[$key] = $this->_conn->quoteAs($value, $alias);
         } else {
             $this->_tables[$key] = $this->_conn->quoteIdentifier($value);
@@ -166,17 +166,17 @@ class Query
     private function _compile()
     {
         $str = $this->_qstring;
-        if($this->_tables){
+        if ($this->_tables) {
             $keys = array_keys($this->_tables);
             $values = array_values($this->_tables);
             $str = str_replace($keys, $values, $str);
         }
-        if($this->_columns){
+        if ($this->_columns) {
             $keys = array_keys($this->_columns);
             $values = array_values($this->_columns);
             $str = str_replace($keys, $values, $str);
         }
-        if($this->_bindings){
+        if ($this->_bindings) {
             $keys = array_keys($this->_bindings);
             $values = array_values($this->_bindings);
             $str = str_replace($keys, $values, $str);

@@ -25,17 +25,17 @@ class Uri extends Security
      */
     public static function validate(&$uri, &$segments, $invalidChars = null)
     {
-        if(!$invalidChars){
+        if (!$invalidChars) {
             $invalidChars = self::INVALID_URI_CHARS;
         }
         $uri = self::removeInvisibleChars($uri, false);
-        if(!is_array($segments)){
+        if (!is_array($segments)) {
             $segments = array();
         }
-        foreach(explode('/', $uri) as $segment){
-            if($segment == ''){
+        foreach (explode('/', $uri) as $segment) {
+            if ($segment == '') {
                 $segments[] = $segment;
-            } else if(!preg_match("|^[".str_replace(array('\\-', '\-'), '-', preg_quote($invalidChars, '-'))."]+$|i", $segment)){
+            } elseif (!preg_match("|^[".str_replace(array('\\-', '\-'), '-', preg_quote($invalidChars, '-'))."]+$|i", $segment)) {
                 return false;
             } else {
                 $segments[] = self::filter($segment);

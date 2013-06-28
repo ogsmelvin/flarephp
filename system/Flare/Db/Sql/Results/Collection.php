@@ -100,7 +100,7 @@ class Collection extends ArrayObject
     public function toJSON()
     {
         $array = array();
-        foreach($this as $key => $value){
+        foreach ($this as $key => $value) {
             $array[] = $value->toArray();
         }
         return json_encode($array);
@@ -113,7 +113,7 @@ class Collection extends ArrayObject
     public function toJSONObject()
     {
         $array = array();
-        foreach($this as $key => $value){
+        foreach ($this as $key => $value) {
             $array[] = $value->toArray();
         }
         return new Json($array);
@@ -126,7 +126,7 @@ class Collection extends ArrayObject
     public function toArray()
     {
         $array = array();
-        foreach($this as $key => $value){
+        foreach ($this as $key => $value) {
             $array[] = $value->toArray();
         }
         return $array;
@@ -157,8 +157,8 @@ class Collection extends ArrayObject
      */
     public function each($callback)
     {
-        if(is_callable($callback)){
-            foreach($this as $key => &$row){
+        if (is_callable($callback)) {
+            foreach ($this as $key => &$row) {
                 $callback($key, $row);
             }
         } else {

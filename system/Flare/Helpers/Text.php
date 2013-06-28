@@ -1,6 +1,6 @@
 <?php
 
-if(!function_exists('one_space')){
+if (!function_exists('one_space')) {
 
     /**
      * 
@@ -13,7 +13,7 @@ if(!function_exists('one_space')){
     }
 }
 
-if(!function_exists('title_case')){
+if (!function_exists('title_case')) {
 
     /**
      * 
@@ -27,7 +27,7 @@ if(!function_exists('title_case')){
     }
 }
 
-if(!function_exists('format_number')){
+if (!function_exists('format_number')) {
 
     /**
      * 
@@ -43,7 +43,7 @@ if(!function_exists('format_number')){
     }
 }
 
-if(!function_exists('unique_code')){
+if (!function_exists('unique_code')) {
 
     /**
      * 

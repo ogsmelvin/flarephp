@@ -6,7 +6,7 @@ use Flare\Objects\Json;
 use Flare\Objects\Xml;
 use Flare\Flare as F;
 
-if(!function_exists('curl_init')){
+if (!function_exists('curl_init')) {
     show_error('CURL is not supported by your server');
 }
 
@@ -105,7 +105,7 @@ class Curl
     public function open($url = null)
     {
         $this->_curl = curl_init($url);
-        if($url){
+        if ($url) {
             $this->_url = $url;
         }
         return $this;
@@ -131,10 +131,10 @@ class Curl
     public function setRequestMethod($method)
     {
         $method = strtoupper($method);
-        if($method === self::POST){
+        if ($method === self::POST) {
             $this->_method = self::POST;
             curl_setopt($this->_curl, CURLOPT_POST, true);
-        } else if($method === self::GET){
+        } elseif ($method === self::GET) {
             $this->_method = self::GET;
             curl_setopt($this->_curl, CURLOPT_POST, false);
         } else {
@@ -150,7 +150,7 @@ class Curl
      */
     public function setContentType($type)
     {
-        if(strpos($type, 'Content-Type: ') !== 0){
+        if (strpos($type, 'Content-Type: ') !== 0) {
             $type = 'Content-Type: '.$type;
         }
         return $this->setOption(CURLOPT_HTTPHEADER, $type);
@@ -163,7 +163,7 @@ class Curl
      */
     public function setParams($params)
     {
-        foreach($params as $k => $v){
+        foreach ($params as $k => $v) {
             $this->setParam($k, $v);
         }
         return $this;
@@ -199,10 +199,10 @@ class Curl
      */
     public function setOption($key, $value)
     {
-        if($key === CURLOPT_URL){
+        if ($key === CURLOPT_URL) {
             $this->_url = $value;
-        } else if($key === CURLOPT_HTTPHEADER){
-            if(is_string($value)){
+        } elseif ($key === CURLOPT_HTTPHEADER) {
+            if (is_string($value)) {
                 $value = (array) $value;
                 $this->_httpHeaders = $value;
             }
@@ -218,7 +218,7 @@ class Curl
      */
     public function setOptions($options)
     {
-        if(isset($options[CURLOPT_URL])){
+        if (isset($options[CURLOPT_URL])) {
             $this->_url = $options[CURLOPT_URL];
         }
         curl_setopt_array($this->_curl, $options);
@@ -234,10 +234,10 @@ class Curl
         $this->_prepare();
         curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, false);
         curl_exec($this->_curl);
-        if($this->_errorCode = curl_errno($this->_curl)){
+        if ($this->_errorCode = curl_errno($this->_curl)) {
             $this->_error = curl_error($this->_curl);
         }
-        if($this->_autoReset){
+        if ($this->_autoReset) {
             $this->reset();
         }
         return $this;
@@ -249,11 +249,11 @@ class Curl
      */
     private function _prepare()
     {
-        if($this->_method === self::POST){
+        if ($this->_method === self::POST) {
             curl_setopt($this->_curl, CURLOPT_POSTFIELDS, $this->_params);
-        } else if($this->_method === self::GET){
+        } elseif ($this->_method === self::GET) {
             $url = parse_url($this->_url);
-            if(!isset($url['query'])){
+            if (!isset($url['query'])) {
                 $url['query'] = http_build_query($this->_params);
             }
             $this->_url = http_build_url($url);
@@ -273,10 +273,10 @@ class Curl
         $this->_prepare();
         curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
         $return = (string) curl_exec($this->_curl);
-        if($this->_errorCode = curl_errno($this->_curl)){
+        if ($this->_errorCode = curl_errno($this->_curl)) {
             $this->_error = curl_error($this->_curl);
         }
-        if($this->_autoReset){
+        if ($this->_autoReset) {
             $this->reset();
         }
         return $return;

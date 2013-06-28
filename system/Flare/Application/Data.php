@@ -44,7 +44,7 @@ class Data
      */
     public function __get($key)
     {
-        if(!isset($this->_data[$key])){
+        if (!isset($this->_data[$key])) {
             return null;
         }
         return $this->_data[$key];

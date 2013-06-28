@@ -115,11 +115,11 @@ class Mail
     public function setContentPath($path, $data = array())
     {
         $content = @file_get_contents($path);
-        if($content === false){
+        if ($content === false) {
             throw new Exception("Error occured while parsing given path");
         }
 
-        if($this->_type === 'html'){
+        if ($this->_type === 'html') {
             $keys = array_keys($data);
             $content = str_replace($keys, $data, $content);
         }
@@ -176,7 +176,7 @@ class Mail
     public function setSender($email, $name = null)
     {
         $this->_from = $email;
-        if($name){
+        if ($name) {
             $this->_from = $name." <".$email.">";
         }
         return $this;
@@ -190,7 +190,7 @@ class Mail
      */
     public function addRecipient($email, $name = null)
     {
-        if($name){
+        if ($name) {
             $email = $name." <".$email.">";
         }
         $this->_to[] = $email;
@@ -205,7 +205,7 @@ class Mail
      */
     public function addCc($email, $name = null)
     {
-        if($name){
+        if ($name) {
             $email = $name." <".$email.">";
         }
         $this->_cc[] = $email;
@@ -220,7 +220,7 @@ class Mail
      */
     public function addBcc($email, $name = null)
     {
-        if($name){
+        if ($name) {
             $email = $name." <".$email.">";
         }
         $this->_bcc[] = $email;
@@ -317,7 +317,7 @@ class Mail
     public function send()
     {
         $mail = $this->_compose();
-        if($this->_smtp){
+        if ($this->_smtp) {
             fsockopen($this->_smtp['host'], $this->_smtp['port'], $errno, $this->_error);
 
 

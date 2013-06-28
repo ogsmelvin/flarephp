@@ -18,15 +18,15 @@ class Json extends ArrayObject
      */
     public function __construct($data = array(), $is_url = false)
     {
-        if(is_string($data)){
-            if($is_url){
+        if (is_string($data)) {
+            if ($is_url) {
                 $data = @file_get_contents($data);
-                if($data === false){
+                if ($data === false) {
                     show_error("Error encountered accessing JSON URL");
                 }
             }
             $data = json_decode($data, true);
-            if(!is_array($data)){
+            if (!is_array($data)) {
                 show_error("Invalid JSON Format");
             }
         }

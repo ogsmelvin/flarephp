@@ -77,7 +77,7 @@ class Html
         $session = null;
         $js = null;
 
-        foreach($this->_data as $key => $value){
+        foreach ($this->_data as $key => $value) {
             ${$key} = $value;
         }
 
@@ -86,7 +86,7 @@ class Html
         include $this->_contentPath;
         $content = (string) ob_get_clean();
 
-        if(isset($this->_layoutPath)){
+        if (isset($this->_layoutPath)) {
             ob_start();
             include $this->_layoutPath;
             $content = (string) ob_get_clean();

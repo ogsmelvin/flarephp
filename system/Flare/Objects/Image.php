@@ -2,7 +2,7 @@
 
 namespace Flare\Objects;
 
-if(!extension_loaded('gd') || !function_exists('gd_info')){
+if (!extension_loaded('gd') || !function_exists('gd_info')) {
     show_error("GD Library is not supported");
 }
 
@@ -65,13 +65,13 @@ class Image
         $realpath = $realpath !== false ? rtrim(str_replace("\\", "/", $realpath), "/") : rtrim($path, "/");
         $this->_fileinfo = pathinfo($path);
         $image = getimagesize($path);
-        if(isset($image[2]) && in_array($image[2], self::$_types)){
+        if (isset($image[2]) && in_array($image[2], self::$_types)) {
             $this->_imageType = $image[2];
-            if($this->_imageType == IMAGETYPE_JPEG){
+            if ($this->_imageType == IMAGETYPE_JPEG) {
                 $this->_image = imagecreatefromjpeg($filename);
-            } else if($this->_imageType == IMAGETYPE_GIF){
-                $this->_image = imagecreatefromgif($filename);
-            } else if($this->_imageType == IMAGETYPE_PNG){
+            } elseif ($this->_imageType == IMAGETYPE_GIF) {
+                $this->_image = imagecreatefromgif ($filename);
+            } elseif ($this->_imageType == IMAGETYPE_PNG) {
                 $this->_image = imagecreatefrompng($filename);
             } else {
                 show_error("Can't load image, not supported image type");
@@ -216,18 +216,18 @@ class Image
      */
     private function _save($filename = null, $image_type = IMAGETYPE_JPEG, $compression = 75, $permissions = null)
     {
-        if($image_type){
+        if ($image_type) {
             $image_type = $this->_imageType;
         }
-        if($image_type == IMAGETYPE_JPEG){
+        if ($image_type == IMAGETYPE_JPEG) {
             imagejpeg($this->_image, $filename, $compression);
-        } else if($image_type == IMAGETYPE_GIF){
-            imagegif($this->_image, $filename);         
-        } else if($image_type == IMAGETYPE_PNG){
+        } elseif ($image_type == IMAGETYPE_GIF) {
+            imagegif ($this->_image, $filename);         
+        } elseif ($image_type == IMAGETYPE_PNG) {
             imagepng($this->_image, $filename);
         }
 
-        if($permissions != null){
+        if ($permissions != null) {
             chmod($filename, $permissions);
         }
     }

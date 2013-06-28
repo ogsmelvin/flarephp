@@ -80,11 +80,11 @@ class Hash extends Security;
     {
         $result = null;
         $algo = strtolower($algo);
-        if(function_exists($algo)){
+        if (function_exists($algo)) {
             return $algo($str, $binaryOutput);
         }
         $type = self::getHashSupport($algo);
-        if($type){
+        if ($type) {
             $supportedMethod = '_digest'.ucfirst($type);
             $result = self::$supportedMethod($algo, $str, $binaryOutput);
         } else {
@@ -101,15 +101,15 @@ class Hash extends Security;
     public static function getHashSupport($algo)
     {
         $support = null;
-        if(function_exists('hash') && in_array($algo, hash_algos())){
+        if (function_exists('hash') && in_array($algo, hash_algos())) {
             $support = self::TYPE_HASH;
-        } else if(function_exists('mhash') && in_array($algo, self::$_supportedAlgosMhash)){
+        } elseif (function_exists('mhash') && in_array($algo, self::$_supportedAlgosMhash)) {
             $support = self::TYPE_MHASH;
-        } else if(function_exists('openssl_digest')){
-            if($algo == 'ripemd160'){
+        } elseif (function_exists('openssl_digest')) {
+            if ($algo == 'ripemd160') {
                 $algo = 'rmd160';
             }
-            if(in_array($algo, self::$_supportedAlgosOpenssl)){
+            if (in_array($algo, self::$_supportedAlgosOpenssl)) {
                $support = self::TYPE_OPENSSL;
             }
         }
@@ -139,7 +139,7 @@ class Hash extends Security;
     {
         $constant = constant('MHASH_' . strtoupper($algorithm));
         $binary = mhash($constant, $data);
-        if($binaryOutput){
+        if ($binaryOutput) {
             return $binary;
         }
         return bin2hex($binary);
@@ -154,7 +154,7 @@ class Hash extends Security;
      */
     private static function _digestOpenssl($algorithm, $data, $binaryOutput)
     {
-        if($algorithm == 'ripemd160'){
+        if ($algorithm == 'ripemd160') {
             $algorithm = 'rmd160';
         }
         return openssl_digest($data, $algorithm, $binaryOutput);

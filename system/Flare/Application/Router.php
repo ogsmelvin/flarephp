@@ -80,7 +80,7 @@ class Router
      */
     public function addRoutes(array $routes)
     {
-        foreach($routes as $key => $route){
+        foreach ($routes as $key => $route) {
             $this->addRoute($key, $route);
         }
         return $this;
@@ -93,11 +93,11 @@ class Router
     private function _getMatchedCustomRoute()
     {
         $uri = trim((string) F::$uri, '/');
-        if(isset($this->_routes[$uri])){
+        if (isset($this->_routes[$uri])) {
             return $this->_routes[$uri];
         } else {
-            foreach($this->_routes as $key => $class){
-                if(preg_match('#^'.$key.'$#', $uri)){
+            foreach ($this->_routes as $key => $class) {
+                if (preg_match('#^'.$key.'$#', $uri)) {
                     return $class;
                 }
             }
@@ -111,19 +111,19 @@ class Router
      */
     public function getMatchedCustomRoute()
     {
-        if($this->_currentRoute){
+        if ($this->_currentRoute) {
             return $this->_currentRoute;
         }
 
         $route = $this->_getMatchedCustomRoute();
-        if($route){
+        if ($route) {
             // list($route, $params) = explode(':', $route, 2);
-            // if($params){
+            // if ($params) {
             //     $params = explode(',', ltrim(rtrim($params, ')'), '('));
             // }
             list($module, $controller, $action) = explode('.', $route, 3);
             $route = $this->_route($module, $controller, $action);
-            if($route){
+            if ($route) {
                 $this->_currentRoute = $route;
             }
         }
@@ -152,7 +152,7 @@ class Router
             .F::getApp()->getControllersDirectory()
             .strtolower(urldecode($request->getController()))
             .'.php';
-        if(!file_exists($path)){
+        if (!file_exists($path)) {
             return null;
         }
 
@@ -164,7 +164,7 @@ class Router
         $route->setModule($request->getModule());
         $route->setController(new $controller($request, F::$response));
         $route->setAction(new Action($route->getController(), $request->getActionMethodName()));
-        if($params){
+        if ($params) {
             $route->setActionParams($params);
         }
 
@@ -177,7 +177,7 @@ class Router
      */
     public function getRoute()
     {
-        if($this->_currentRoute){
+        if ($this->_currentRoute) {
             return $this->_currentRoute;
         }
 
@@ -186,13 +186,13 @@ class Router
         $controller = F::$uri->getSegment(2);
         $action = F::$uri->getSegment(3);
 
-        if($customRoute){
+        if ($customRoute) {
             list($module, $controller, $action) = explode('.', $customRoute, 3);
-        } else if($module === null){
+        } elseif ($module === null) {
             $module = F::$config->router['default_module'];
             $action = F::$config->router['default_action'];
             $controller = F::$config->router['default_controller'];
-        } else if(!in_array($module, $this->_routeModules)){
+        } elseif (!in_array($module, $this->_routeModules)) {
             $action = $controller;
             $controller = $module;
             $module = F::$config->router['default_module'];
@@ -202,13 +202,13 @@ class Router
         $action = $action === null ? F::$config->router['default_action'] : $action;
 
         $route = $this->_route($module, $controller, $action);
-        if($route){
-            if(!$customRoute){
+        if ($route) {
+            if (!$customRoute) {
                 $this->_setActionParams($route, $validUriForParams);
-                if(!$validUriForParams){
+                if (!$validUriForParams) {
                     return null;
                 }
-            } else if(!$route->getAction()->exists()){
+            } elseif (!$route->getAction()->exists()) {
                 return null;
             }
             $this->_currentRoute = $route;
@@ -225,7 +225,7 @@ class Router
     private function _setActionParams(Route &$route, &$validUriForParams = null)
     {
         $actionParams = array();
-        if(!$route->getAction()->exists()){
+        if (!$route->getAction()->exists()) {
             $validUriForParams = false;
             return;
         } else {
@@ -234,24 +234,24 @@ class Router
             $firstSegment = F::$uri->getSegment(1);
             $params = $route->getAction()->getParameters();
             $indexStart = 3;
-            if($params){
-                if($firstSegment){
-                    if(in_array($firstSegment, $this->_routeModules)){
+            if ($params) {
+                if ($firstSegment) {
+                    if (in_array($firstSegment, $this->_routeModules)) {
                         $indexStart = 4;
                     }
                 } else {
                     $validUriForParams = false;
                     return;
                 }
-                if(!$params[0]->isOptional() && $segmentCount < $indexStart){
+                if (!$params[0]->isOptional() && $segmentCount < $indexStart) {
                     $validUriForParams = false;
                     return;
                 }
 
                 $i = $indexStart;
-                foreach($params as $param){
-                    if($i <= $segmentCount){
-                        if($segmentValue = F::$uri->getSegment($i++)){
+                foreach ($params as $param) {
+                    if ($i <= $segmentCount) {
+                        if ($segmentValue = F::$uri->getSegment($i++)) {
                             $actionParams[] = $segmentValue;
                         }
                     }
@@ -259,16 +259,16 @@ class Router
                 
                 $segmentParamsCount = ($segmentCount - $indexStart) + 1;
                 $segmentParamsCount = $segmentParamsCount < 0 ? 1 : $segmentParamsCount;
-                if($segmentParamsCount > $route->getAction()->getNumberOfParameters()
-                    || $segmentParamsCount < $route->getAction()->getNumberOfRequiredParameters()){
+                if ($segmentParamsCount > $route->getAction()->getNumberOfParameters()
+                    || $segmentParamsCount < $route->getAction()->getNumberOfRequiredParameters()) {
                     $validUriForParams = false;
                     return;
                 }
             } else {
-                if($firstSegment && in_array($firstSegment, $this->_routeModules)){
+                if ($firstSegment && in_array($firstSegment, $this->_routeModules)) {
                     $indexStart = 4;
                 }
-                if($segmentCount >= $indexStart){
+                if ($segmentCount >= $indexStart) {
                     $validUriForParams = false;
                     return;
                 }
@@ -306,10 +306,10 @@ class Router
      */
     public function secure($redirectCode = 301)
     {
-        if(!F::$uri->isHttps()){
+        if (!F::$uri->isHttps()) {
             $url = 'https://'.F::$uri->getHost();
             $url .= F::$uri;
-            if(!empty($_SERVER['QUERY_STRING'])){
+            if (!empty($_SERVER['QUERY_STRING'])) {
                 $url .= '?'.$_SERVER['QUERY_STRING'];
             }
             F::$response->redirect($url, $redirectCode);

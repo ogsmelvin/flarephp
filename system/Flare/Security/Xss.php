@@ -30,16 +30,16 @@ class Xss extends Security
      */
     public static function filter($value, $options = array())
     {
-        if($options){
+        if ($options) {
             $options = array_merge(self::$_defaultOptions, $options);
         }
-        if(is_array($value)){
-            foreach($value as &$val){
+        if (is_array($value)) {
+            foreach ($value as &$val) {
                 $val = self::filter($val, $options);
             }
             return $value;
         }
-        if($options['strip_tags']){
+        if ($options['strip_tags']) {
             $value = strip_tags($value);
         }
         return htmlentities((string) $value, $options['flags'], $options['encoding'], $options['double_encode']); 

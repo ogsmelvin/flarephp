@@ -18,7 +18,7 @@ class Security
     public static function removeInvisibleChars($str, $urlEnconded = true)
     {
         $non_displayables = array();
-        if($urlEnconded){
+        if ($urlEnconded) {
             $non_displayables[] = '/%0[0-8bcef]/';
             $non_displayables[] = '/%1[0-9a-f]/';
         }

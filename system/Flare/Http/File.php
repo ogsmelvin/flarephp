@@ -108,8 +108,8 @@ class File
      */
     public static function & get($name)
     {
-        if(!isset(self::$_instances[$name])){
-            if(!isset($_FILES[$name])){
+        if (!isset(self::$_instances[$name])) {
+            if (!isset($_FILES[$name])) {
                 return null;
             }
             self::$_instances[$name] = new self($name);
@@ -124,7 +124,7 @@ class File
      */
     public static function validations(array $validations)
     {
-        foreach($validations as $key => $value){
+        foreach ($validations as $key => $value) {
             self::validation($key, $value);
         }
     }
@@ -137,7 +137,7 @@ class File
      */
     public static function validation($key, $value)
     {
-        if(!isset(self::$_validations[$key])){
+        if (!isset(self::$_validations[$key])) {
             show_error("File validation '{$key}' : unknown validation");
         }
         self::$_validations[$key] = $value;
@@ -162,7 +162,7 @@ class File
     {
         $result = false;
         $source = explode(',', $base64String, 2);
-        if(count($source) !== 2){
+        if (count($source) !== 2) {
             show_error("Invalid base64 string");
         }
 
@@ -171,19 +171,19 @@ class File
         $createpath = realpath($path);
         $createpath = $createpath !== false ? rtrim(str_replace("\\", "/", $createpath), "/") : rtrim($path, "/");
         
-        if(@is_dir($createpath) === true){
+        if (@is_dir($createpath) === true) {
             $filename = Hash::create($source[1]).'.'.end($ext);
             $createpath .= '/'.$filename;
         } else {
             $filename = pathinfo($createpath, PATHINFO_FILENAME);
             $fileExt = pathinfo($createpath, PATHINFO_EXTENSION);
-            if(!$fileExt){
+            if (!$fileExt) {
                 $createpath .= $filename.'.'.end($ext);
             } else {
                 $createpath .= $filename.'.'.$fileExt;
             }
         }
-        if(file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))){
+        if (file_put_contents($createpath, base64_decode(str_replace(' ', '+', $source[1])))) {
             $result = new self(null, $filename, $filename, $type, 0, 0);
         }
         return $result;
@@ -212,11 +212,11 @@ class File
     private function _detectMimeType()
     {
         $regexp = '/^([a-z\-]+\/[a-z0-9\-\.\+]+)(;\s.+)?$/';
-        if(function_exists('finfo_file')){
+        if (function_exists('finfo_file')) {
             $finfo = finfo_open(FILEINFO_MIME);
-            if($finfo){
+            if ($finfo) {
                 $mime = finfo_file($finfo, $this->_tmpname);
-                if($mime){
+                if ($mime) {
                     
                 }
                 finfo_close($finfo);
@@ -293,7 +293,7 @@ class File
      */
     public function getErrorMessage()
     {
-        if(!isset(self::$_errorCodes[$this->_error])){
+        if (!isset(self::$_errorCodes[$this->_error])) {
             return self::$_errorCodes[0];
         }
         return self::$_errorCodes[$this->_error];
@@ -318,8 +318,8 @@ class File
     {
         $result = false;
         $to = $this->_validateUploadPath($to);
-        if($to){
-            if(is_uploaded_file($this->_tmpname)){
+        if ($to) {
+            if (is_uploaded_file($this->_tmpname)) {
                 
             } else {
                 $this->_setMoveError($this->getErrorMessage());
@@ -336,7 +336,7 @@ class File
      */
     public function valid()
     {
-        if(self::$_validations['is_image']){
+        if (self::$_validations['is_image']) {
 
         }
         return true;
@@ -359,11 +359,11 @@ class File
      */
     private function _validateUploadPath($to)
     {
-        if(!$to) return false;
+        if (!$to) return false;
         $moveTo = realpath($to);
         $moveTo = $moveTo !== false ? rtrim(str_replace("\\", "/", $moveTo), "/") : rtrim($to, "/");
 
-        if(@is_dir($moveTo)){
+        if (@is_dir($moveTo)) {
             return $moveTo."/";
         }
         return false;

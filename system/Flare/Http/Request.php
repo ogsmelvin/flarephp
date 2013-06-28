@@ -19,7 +19,7 @@ class Request
      */
     public function post($key = null, $default = null)
     {
-        if($key === null){
+        if ($key === null) {
             return !empty($_POST) ? $_POST : $default;
         }
         return isset($_POST[$key]) ? $_POST[$key] : $default;
@@ -33,7 +33,7 @@ class Request
      */
     public function get($key = null, $default = null)
     {
-        if($key === null){
+        if ($key === null) {
             return !empty($_GET) ? $_GET : $default;
         }
         return isset($_GET[$key]) ? $_GET[$key] : $default;
@@ -47,7 +47,7 @@ class Request
      */
     public function server($key = null, $default = null)
     {
-        if($key === null){
+        if ($key === null) {
             return !empty($_SERVER) ? $_SERVER : $default;
         }
         $key = strtoupper($key);
@@ -60,7 +60,7 @@ class Request
      */
     public function isPost()
     {
-        if($this->server('REQUEST_METHOD') !== 'POST'){
+        if ($this->server('REQUEST_METHOD') !== 'POST') {
             return false;
         }
         return true;
@@ -72,7 +72,7 @@ class Request
      */
     public function isGet()
     {
-        if($this->server('REQUEST_METHOD') !== 'GET'){
+        if ($this->server('REQUEST_METHOD') !== 'GET') {
             return false;
         }
         return true;
@@ -84,7 +84,7 @@ class Request
      */
     public function isAjax()
     {
-        if(strtoupper($this->server('HTTP_X_REQUESTED_WITH')) === 'XMLHTTPREQUEST') {
+        if (strtoupper($this->server('HTTP_X_REQUESTED_WITH')) === 'XMLHTTPREQUEST') {
             return true;
         }
         return false;
@@ -98,7 +98,7 @@ class Request
      */
     public function cookie($key = null, $default = null)
     {
-        if($key === null){
+        if ($key === null) {
             return !empty($_COOKIE) ? $_COOKIE : $default;
         }
         return isset($_COOKIE[$key]) ? $_COOKIE[$key] : $default;
@@ -112,7 +112,7 @@ class Request
      */
     public function request($key = null, $default = null)
     {
-        if($key === null){
+        if ($key === null) {
             return !empty($_REQUEST) ? $_REQUEST : $default;
         }
         return isset($_REQUEST[$key]) ? $_REQUEST[$key] : $default;
@@ -126,7 +126,7 @@ class Request
      */
     public function files($key = null, $default = null)
     {
-        if($key === null){
+        if ($key === null) {
             return !empty($_FILES) ? $_FILES : $default;
         }
         return isset($_FILES[$key]) ? $_FILES[$key] : $default;
@@ -140,11 +140,11 @@ class Request
     public function getClientIp($checkProxy = true)
     {
         $ip = null;
-        if($checkProxy && $this->server('HTTP_CLIENT_IP') != null){
+        if ($checkProxy && $this->server('HTTP_CLIENT_IP') != null) {
             $ip = $this->server('HTTP_CLIENT_IP');
-        } else if($checkProxy && $this->server('HTTP_X_FORWARDED_FOR') != null){
+        } elseif ($checkProxy && $this->server('HTTP_X_FORWARDED_FOR') != null) {
             $ip = $this->server('HTTP_X_FORWARDED_FOR');
-        } else if($checkProxy && $this->server('HTTP_X_CLUSTER_CLIENT_IP')){
+        } elseif ($checkProxy && $this->server('HTTP_X_CLUSTER_CLIENT_IP')) {
             $ip = $this->server('HTTP_X_CLUSTER_CLIENT_IP');
         } else {
             $ip = $this->server('REMOTE_ADDR');
@@ -159,11 +159,11 @@ class Request
     public function isFlash()
     {
         $header = '';
-        if($this->server('HTTP_USER_AGENT')){
+        if ($this->server('HTTP_USER_AGENT')) {
             $header = strtolower($this->server('HTTP_USER_AGENT'));
-        } else if(function_exists('apache_request_headers')){
+        } elseif (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
-            if(isset($headers['HTTP_USER_AGENT'])){
+            if (isset($headers['HTTP_USER_AGENT'])) {
                 $header = strtolower($headers['HTTP_USER_AGENT']);
             }
         }

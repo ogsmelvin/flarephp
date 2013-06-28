@@ -89,7 +89,7 @@ class Facebook
      */
     private function _setUser($userId = null)
     {
-        if($userId){
+        if ($userId) {
             $this->_user = $userId;
             F::$session->set('fb_'.$this->_appId.'_user', $userId);
         } else {
@@ -103,7 +103,7 @@ class Facebook
      */
     private function _parseSignedRequest($s_request)
     {
-        if(!$s_request){
+        if (!$s_request) {
             $this->_setUser();
             return;
         }
@@ -113,7 +113,7 @@ class Facebook
         $data = json_decode($this->_base64UrlDecode($payload), true);
         $this->_signedRequest = $data;
 
-        if(!isset($data['user_id'])){
+        if (!isset($data['user_id'])) {
             $this->_setUser();
         } else {
             $this->_setUser($data['user_id']);
@@ -149,7 +149,7 @@ class Facebook
         F::$session->set('fb_'.$this->_appId.'_state', $value);
         F::$session->set('fb_'.$this->_appId.'_uri', $data['redirect_uri']);
         $loginUrl = self::HOST.'dialog/oauth?'.http_build_query($data);
-        if($auto_redirect){
+        if ($auto_redirect) {
             F::$response->redirect($loginUrl);
         }
         return $loginUrl;
@@ -172,7 +172,7 @@ class Facebook
      */
     public function getImage($type = 'small', $fbid = 'me')
     {
-        if($fbid == 'me'){
+        if ($fbid == 'me') {
             $fbid = $this->getUser();
         }
         return 'https://graph.facebook.com/'.$fbid.'/picture?type='.$type;
@@ -197,7 +197,7 @@ class Facebook
      */
     public function connect($redirect_uri, $permission = array(), $auto_redirect = false)
     {
-        if(!$this->_accessToken){
+        if (!$this->_accessToken) {
             return $this->_connect($redirect_uri, $permission, $auto_redirect);
         }
         return null;
@@ -240,7 +240,7 @@ class Facebook
             ->setUrl(self::API_HOST.$id)
             ->getContentAsJson();
 
-        if(isset($data['error'])){
+        if (isset($data['error'])) {
             $this->_error = $data['error'];
             return null;
         }
@@ -255,10 +255,10 @@ class Facebook
      */
     public function getUserDetails($id = 'me', $fields = array())
     {
-        if($id === 'me'){
+        if ($id === 'me') {
             $id = $this->getUser();
         }
-        if(!$fields){
+        if (!$fields) {
             $fields = array('uid', 'first_name', 'last_name', 'profile_url');
         }
         $fql = "SELECT ".implode(',', $fields)." FROM user WHERE uid = ".$id;
@@ -268,7 +268,7 @@ class Facebook
             ->setParam('q', $fql)
             ->getContentAsJson();
 
-        if(isset($data['error'])){
+        if (isset($data['error'])) {
             $this->_error = $data['error'];
             return null;
         }
@@ -300,16 +300,16 @@ class Facebook
      */
     public function getFriends($fields = array(), $limit = 0, $page = 0, $order = null)
     {
-        if(!$fields){
+        if (!$fields) {
             $fields = array('uid', 'first_name', 'last_name', 'profile_url');
         }
         $fql = "SELECT ".implode(',', $fields)." FROM user "
             ."WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = ".$this->getUser().")";
-        if($limit){
+        if ($limit) {
             $page = (int) ($page <= 1 || !$page ? 0 : ($page - 1));
             $fql .= " LIMIT ".($page * $limit).",".(int) $limit;
         }
-        if($order){
+        if ($order) {
             $fql .= " ORDER BY ".(string) $order;
         }
         $data = $this->_curl
@@ -318,7 +318,7 @@ class Facebook
             ->setParam('q', $fql)
             ->getContentAsJson();
 
-        if(isset($data['error'])){
+        if (isset($data['error'])) {
             $this->_error = $data['error'];
             return null;
         }
@@ -353,14 +353,14 @@ class Facebook
     {
         $code = F::$request->get('code');
         $state = F::$request->get('state');
-        if($token){
+        if ($token) {
             $this->_accessToken = (string) $token;
             F::$session->set('fb_'.$this->_appId.'_token', $this->_accessToken);
-        } else if(F::$session->has('fb_'.$this->_appId.'_token')){
+        } elseif (F::$session->has('fb_'.$this->_appId.'_token')) {
             $this->_accessToken = F::$session->get('fb_'.$this->_appId.'_token');
-        } else if(($code && $state) 
-            && strcmp($state, F::$session->get('fb_'.$this->_appId.'_state')) === 0){
-
+        } elseif (($code && $state) 
+            && strcmp($state, F::$session->get('fb_'.$this->_appId.'_state')) === 0) 
+        {
             $result = $this->_curl
                         ->setParam('code', $code)
                         ->setParam('client_id', $this->_appId)
@@ -369,7 +369,7 @@ class Facebook
                         ->setUrl(self::API_HOST.'oauth/access_token')
                         ->getContent();
             
-            if($this->_curl->hasError()){
+            if ($this->_curl->hasError()) {
                 show_error($this->_curl->getError());
             }
             
@@ -379,7 +379,7 @@ class Facebook
         }
 
         $s_request = F::$request->request('signed_request');
-        if(!$s_request){
+        if (!$s_request) {
             $s_request = F::$session->get('fb_'.$this->_appId.'_signed_request');
         } else {
             F::$session->set('fb_'.$this->_appId.'_signed_request', $s_request);
@@ -445,7 +445,7 @@ class Facebook
      */
     public function getAccessToken()
     {
-        if(!$this->_accessToken){
+        if (!$this->_accessToken) {
             return F::$session->get('fb_'.$this->_appId.'_token');
         }
         return $this->_accessToken;

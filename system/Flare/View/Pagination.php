@@ -199,19 +199,19 @@ class Pagination
      */
     public function createLinks()
     {
-        if(!$this->_total || !$this->_limit){
+        if (!$this->_total || !$this->_limit) {
             return $this->_wrap();
         }
 
         $num_pages = ceil($this->_total / $this->_limit);
-        if(!$num_pages || (int) $num_pages === 1){
+        if (!$num_pages || (int) $num_pages === 1) {
             return $this->_wrap();
         }
         $start = (($this->_page - 4) > 0) ? $this->_page - 4 : 1;
         $end = (($this->_page + 4) < $num_pages) ? $this->_page + 4 : $num_pages;
         $url = parse_url($this->_url);
 
-        if(isset($url['query'])){
+        if (isset($url['query'])) {
             parse_str($url['query'], $vars);
             unset($vars['page']);
             $vars['page'] = '';
@@ -222,18 +222,18 @@ class Pagination
         $url = http_build_url($url);
 
         $list = '<ul>';
-        if($this->_page > 1){
+        if ($this->_page > 1) {
             $list .= "<li><a data-page=\"1\" href=\"{$url}1\">First</a></li>";
             $list .= "<li><a data-page=\"".($this->_page - 1)."\" href=\"{$url}".($this->_page - 1)."\">Prev</a></li>";
         }
-        foreach(range($start, $end) as $page){
-            if($this->_page == $page){
+        foreach (range($start, $end) as $page) {
+            if ($this->_page == $page) {
                 $list .= "<li class=\"active\"><a data-page=\"{$page}\" href=\"{$url}{$page}\">".$page."</a></li>";
             } else {
                 $list .= "<li><a data-page=\"{$page}\" href=\"{$url}{$page}\">".$page."</a></li>";
             }
         }
-        if($this->_page < $num_pages){
+        if ($this->_page < $num_pages) {
             $list .= "<li><a data-page=\"".($this->_page + 1)."\" href=\"{$url}".($this->_page + 1)."\">Next</a></li>";
             $list .= "<li><a data-page=\"{$num_pages}\" href=\"{$url}{$num_pages}\">Last</a></li>";
         }

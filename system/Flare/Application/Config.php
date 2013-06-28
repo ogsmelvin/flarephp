@@ -37,21 +37,21 @@ class Config
      */
     public static function load($config_file)
     {
-        if(!self::$_instance){
+        if (!self::$_instance) {
             $content = null;
-            if(is_string($config_file)){
+            if (is_string($config_file)) {
                 $config_file = rtrim($config_file, '.php').'.php';
                 $content = require $config_file;
-                if(!is_array($content)){
+                if (!is_array($content)) {
                     show_error("{$config_file} return must be an array");
                 }
-            } else if(is_array($config_file)){
+            } elseif (is_array($config_file)) {
                 $content = $config_file;
                 unset($config_file);
             } else {
                 show_error("Invalid Config file type");
             }
-            if(!isset($content['allow_override'])){
+            if (!isset($content['allow_override'])) {
                 $content['allow_override'] = false;
             }
             self::$_instance = new self($content);
@@ -66,7 +66,7 @@ class Config
      */
     public function __get($key)
     {
-        if(!isset($this->_config[$key])){
+        if (!isset($this->_config[$key])) {
             return null;
         }
         return $this->_config[$key];
@@ -80,7 +80,7 @@ class Config
      */
     public function __set($key, $value)
     {
-        if(!$this->_config['allow_override']){
+        if (!$this->_config['allow_override']) {
             return;
         }
         $this->_config[$key] = $value;
@@ -94,14 +94,14 @@ class Config
      */
     public function set($key, $value)
     {
-        if(!$this->_config['allow_override']){
+        if (!$this->_config['allow_override']) {
             return;
         }
         $key = explode('.', $key);
         $tmpConf = $this->_config;
         $conf = & $tmpConf;
-        foreach($key as $k){
-            if(isset($conf[$k])) $conf = & $conf[$k];
+        foreach ($key as $k) {
+            if (isset($conf[$k])) $conf = & $conf[$k];
             else show_response(500, "'{$key}' doesn't exists in config");
         }
         $conf = $value;
@@ -119,8 +119,8 @@ class Config
     {
         $key = explode('.', $key);
         $conf = $this->_config;
-        foreach($key as $k){
-            if(isset($conf[$k])) $conf = $conf[$k];
+        foreach ($key as $k) {
+            if (isset($conf[$k])) $conf = $conf[$k];
             else show_response(500, "'{$key}' doesn't exists in config");
         }
         return $conf;

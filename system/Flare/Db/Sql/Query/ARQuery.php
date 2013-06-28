@@ -149,20 +149,20 @@ class ARQuery
     public function select()
     {
         $args = func_get_args();
-        if(func_num_args() > 1){
-            foreach(func_get_args() as $field){
+        if (func_num_args() > 1) {
+            foreach (func_get_args() as $field) {
                 $fields[] = $field;
             }
             $this->_select = implode(',', $fields);
-        } else if(is_array($args[0])){
-            foreach($args[0] as $alias => &$name){
-                if(is_int($alias)){
+        } elseif (is_array($args[0])) {
+            foreach ($args[0] as $alias => &$name) {
+                if (is_int($alias)) {
                     $alias = $name;
                 }
                 $name = $this->_conn->quoteAs($name, $alias);
             }
             $this->_select = implode(',', $args[0]);
-        } else if(is_string($args[0])){
+        } elseif (is_string($args[0])) {
             $this->_select = $args[0];
         }
         return $this;
@@ -198,12 +198,12 @@ class ARQuery
      */
     public function from($tables)
     {
-        if(is_array($tables)){
-            foreach($tables as $alias => &$name){
+        if (is_array($tables)) {
+            foreach ($tables as $alias => &$name) {
                 $name = $this->_conn->quoteAs($name, $alias);
             }
             $this->_from = implode(',', $tables);
-        } else if(is_string($tables)){
+        } elseif (is_string($tables)) {
             $this->_from = $tables;
         }
         return $this;
@@ -220,16 +220,16 @@ class ARQuery
     protected function _where($field, $value, $comparison, $condition)
     {
         $type = PDO::PARAM_STR;
-        if(is_float($value) || is_int($value)){
+        if (is_float($value) || is_int($value)) {
             $type = PDO::PARAM_INT;
         }
-        if($value instanceof Json || $value instanceof Xml){
+        if ($value instanceof Json || $value instanceof Xml) {
             $value = (array) $value;
         }
-        if(is_array($value)){
-            foreach($value as &$val){
+        if (is_array($value)) {
+            foreach ($value as &$val) {
                 $type = PDO::PARAM_STR;
-                if(is_float($value) || is_int($val)){
+                if (is_float($value) || is_int($val)) {
                     $type = PDO::PARAM_INT;
                 }
                 $val = $this->_conn->quote($val, $type);
@@ -363,43 +363,43 @@ class ARQuery
         $hasWhere = false;
         $hasAndOr = false;
         $quote = $this->_conn->getQuote();
-        if($this->_select){
+        if ($this->_select) {
             $sql .= 'SELECT ';
-            if($this->_distinct){
+            if ($this->_distinct) {
                 $sql .= 'DISTINCT ';
             }
             $sql .= $this->_select;
-        } else if($this->_delete){
+        } elseif ($this->_delete) {
             $sql .= 'DELETE';
-        } else if($this->_update){
+        } elseif ($this->_update) {
             $sql .= $this->_update.' ';
-            if($this->_set){
+            if ($this->_set) {
                 $sql .= 'SET ';
-                foreach($this->_set as $k => $v){
+                foreach ($this->_set as $k => $v) {
                     $sql .= "{$quote}{$k}{$quote} = {$v}, ";
                 }
                 $sql = trim($sql, ', ').' ';
             }
-        } else if($this->_insert){
+        } elseif ($this->_insert) {
             $sql .= $this->_insert;
-            if($this->_set){
+            if ($this->_set) {
                 $fields = array_keys($this->_set);
                 $sql .= "({$quote}".implode("{$quote},{$quote}", $fields)."{$quote}) VALUES(";
                 $sql .= implode(',', $this->_set).')';
                 unset($fields);
             }
         }
-        if($this->_from){
+        if ($this->_from) {
             $sql .= ' FROM '.$this->_from;
         }
-        if($this->_joins){
+        if ($this->_joins) {
             $sql .= ' '.implode(' ', $this->_joins);
         }
-        if($this->_where){
+        if ($this->_where) {
             $sql .= ' WHERE ';
             $hasWhere = true;
-            foreach($this->_where as $condition => $conds){
-                if(!$hasAndOr){
+            foreach ($this->_where as $condition => $conds) {
+                if (!$hasAndOr) {
                     $hasAndOr = true;
                 } else {
                     $sql .= $condition.' ';
@@ -407,13 +407,13 @@ class ARQuery
                 $sql .= implode(" {$condition} ", $conds).' ';
             }
         }
-        if($this->_like){
-            if(!$hasWhere){
+        if ($this->_like) {
+            if (!$hasWhere) {
                 $sql .= ' WHERE ';
                 $hasWhere = true;
             }
-            foreach($this->_like as $condition => $conds){
-                if(!$hasAndOr){
+            foreach ($this->_like as $condition => $conds) {
+                if (!$hasAndOr) {
                     $hasAndOr = true;
                 } else {
                     $sql .= $condition.' ';
@@ -421,19 +421,19 @@ class ARQuery
                 $sql .= implode(" {$condition} ", $conds).' ';
             }
         }
-        if($this->_groups){
+        if ($this->_groups) {
             $sql .= ' GROUP BY '.implode(', ', $this->_groups);
         }
-        if($this->_having){
+        if ($this->_having) {
 
         }
-        if($this->_orders){
+        if ($this->_orders) {
             $sql .= ' ORDER BY '.implode(', ', $this->_orders);
         }
-        if($this->_limit){
+        if ($this->_limit) {
             $sql .= ' LIMIT '.$this->_limit;
         }
-        if($this->_offset){
+        if ($this->_offset) {
             $sql .= ' OFFSET '.$this->_offset;
         }
         return trim($sql);
@@ -450,10 +450,10 @@ class ARQuery
      */
     protected function _like($field, $value, $comparison, $condition, $place = null)
     {
-        if($place){
-            if($place === 'BEFORE'){
+        if ($place) {
+            if ($place === 'BEFORE') {
                 $value = '%'.$value;
-            } else if($place === 'AFTER'){
+            } elseif ($place === 'AFTER') {
                 $value = $value.'%';
             }
         } else {
@@ -604,7 +604,7 @@ class ARQuery
      */
     public function limit($limit)
     {
-        if($limit){
+        if ($limit) {
             $this->_limit = (int) $limit;
         }
         return $this;
@@ -639,7 +639,7 @@ class ARQuery
         $result = null;
         try {
             $pagination = null;
-            if($this->_page){
+            if ($this->_page) {
                 $pagination = $this->_paginate();
             }
             $stmt = $this->_conn->prepare($this->_compile());
@@ -647,10 +647,10 @@ class ARQuery
             $this->_conn->printError($stmt);
             $result = new Collection($this->_conn, $stmt->rowCount());
             $newRow = new Row($this);
-            if($pagination){
+            if ($pagination) {
                 $result->setPagination($pagination);
             }
-            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $result[] = clone $newRow->setData($row);
             }
             unset($newRow);
@@ -674,12 +674,12 @@ class ARQuery
             ->limit(null)
             ->offset(0);
         $count = $this->getOneAsArray();
-        if(isset($count['total'])){
+        if (isset($count['total'])) {
             $count = (int) $count['total'];
         }
         $this->select($select)
             ->limit($limit);
-        if($offset){
+        if ($offset) {
             $this->offset($offset);
         } else {
             $this->offset(($this->_page - 1) * (int) $this->_limit);
@@ -705,7 +705,7 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $result = new Row($this);
                 $result->setData($row);
             }
@@ -793,7 +793,7 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $result = $row;
             }
             $stmt = null;
@@ -841,11 +841,11 @@ class ARQuery
     {
         $this->_update = 'UPDATE '.$this->_conn->quoteIdentifier($table);
         $this->_table = $table;
-        if($check_columns){
+        if ($check_columns) {
             $this->_checkTable = true;
         }
-        if($set){
-            foreach($set as $key => $value){
+        if ($set) {
+            foreach ($set as $key => $value) {
                 $this->set($key, $value);
             }
         }
@@ -861,7 +861,7 @@ class ARQuery
     public function set($key, $value)
     {
         $type = PDO::PARAM_STR;
-        if(is_float($value) || is_int($value)){
+        if (is_float($value) || is_int($value)) {
             $type = PDO::PARAM_INT;
         }
         $this->_set[$key] = $this->_conn->quote($value, $type);
@@ -879,11 +879,11 @@ class ARQuery
     {
         $this->_insert = 'INSERT INTO '.$this->_conn->quoteIdentifier($table);
         $this->_table = $table;
-        if($check_columns){
+        if ($check_columns) {
             $this->_checkTable = true;
         }
-        if($set){
-            foreach($set as $key => $value){
+        if ($set) {
+            foreach ($set as $key => $value) {
                 $this->set($key, $value);
             }
         }
@@ -911,10 +911,10 @@ class ARQuery
     {
         $return = null;
         try {
-            if(($this->_insert || $this->_update) && $this->_checkTable){
+            if (($this->_insert || $this->_update) && $this->_checkTable) {
                 $columns = $this->_conn->getColumns($this->_table, true);
-                foreach($this->_set as $k => $v){
-                    if(!in_array($k, $columns)){
+                foreach ($this->_set as $k => $v) {
+                    if (!in_array($k, $columns)) {
                         unset($this->_set[$k]);
                     }
                 }
@@ -922,17 +922,17 @@ class ARQuery
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
             $this->_conn->printError($stmt);
-            if($this->_insert){
+            if ($this->_insert) {
                 $return = $this->lastInsertId();
-                if($return === '0'){
+                if ($return === '0') {
                     $pkField = $this->_conn->getPrimaryKey($this->_table);
-                    if(isset($this->_set[$pkField])){
+                    if (isset($this->_set[$pkField])) {
                         $return = $this->_set[$pkField];
-                    } else if($stmt->rowCount()){
+                    } elseif ($stmt->rowCount()) {
                         $return = true;
                     }
                 }
-            } else if($this->_update || $this->_delete){
+            } elseif ($this->_update || $this->_delete) {
                 $return = $stmt->rowCount();
             }
             $stmt = null;
@@ -958,7 +958,7 @@ class ARQuery
     public function pull()
     {
         $object = null;
-        if($this->_insert && $id = $this->execute()){
+        if ($this->_insert && $id = $this->execute()) {
             $table = trim(str_replace('INSERT INTO ', '', $this->_insert), $this->_conn->getQuote());
             $object = new Row($this, $table, $this->_conn->getPrimaryKey($table), $id);
             $object->setData($this->_set);
@@ -996,9 +996,9 @@ class ARQuery
     protected function _join($table, $condition, $type)
     {
         $joinStr = '';
-        if(is_string($table)){
+        if (is_string($table)) {
             $joinStr = $type.' '.$table;
-        } else if(is_array($table)){
+        } elseif (is_array($table)) {
             $quote = $this->_conn->getQuote();
             $joinStr = $type.' '.$quote.implode("{$quote} AS {$quote}", $table).$quote;
         }
@@ -1091,13 +1091,13 @@ class ARQuery
      */
     public function page($page, $limit = null)
     {
-        if($page){
+        if ($page) {
             $this->_page = (int) $page;
-            if(!$this->_page){
+            if (!$this->_page) {
                 $this->_page = 1;
             }
         }
-        if($limit){
+        if ($limit) {
             $this->limit($limit);
         }
         // $this->offset(($this->_page - 1) * (int) $this->_limit);
