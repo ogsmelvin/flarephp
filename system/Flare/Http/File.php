@@ -20,9 +20,15 @@ class File
 
     /**
      * 
+     * 
+     */
+    private static $_removeMultipleExtension = false;
+
+    /**
+     * 
      * @var array
      */
-    private static $_validations = array(
+    private static $_rules = array(
         'is_image' => null,
         'max_size' => null,
         'min_size' => null,
@@ -137,10 +143,20 @@ class File
      */
     public static function validation($key, $value)
     {
-        if (!isset(self::$_validations[$key])) {
+        if (!isset(self::$_rules[$key])) {
             show_error("File validation '{$key}' : unknown validation");
         }
-        self::$_validations[$key] = $value;
+        self::$_rules[$key] = $value;
+    }
+
+    /**
+     * 
+     * @param boolean $switch
+     * @return void
+     */
+    public static function removeMultipleExtension($switch)
+    {
+        self::$_removeMultipleExtension = (boolean) $switch;
     }
 
     /**
@@ -197,31 +213,75 @@ class File
     {
         $this->_name = $name;
         $this->_tmpname = $_FILES[$name]['tmp_name'];
-        $this->_type = $_FILES[$name]['type'];
         $this->_error = (int) $_FILES[$name]['error'];
         $this->_size = (int) $_FILES[$name]['size'];
-        $this->_filename = FileSec::sanitizeFilename($_FILES[$name]['name'], false);
+        $this->_filename = FileSec::sanitizeFilename($_FILES[$name]['name']);
         $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
-        $this->_detectMimeType();
+        $this->_setMimeType();
     }
 
     /**
      * 
      * @return void
      */
-    private function _detectMimeType()
+    private function _setMimeType()
     {
-        $regexp = '/^([a-z\-]+\/[a-z0-9\-\.\+]+)(;\s.+)?$/';
+        $type = null;
         if (function_exists('finfo_file')) {
             $finfo = finfo_open(FILEINFO_MIME);
             if ($finfo) {
                 $mime = finfo_file($finfo, $this->_tmpname);
-                if ($mime) {
-                    
+                if ($mime && preg_match('/^([a-z\-]+\/[a-z0-9\-\.\+]+)(;\s.+)?$/', $mime, $match)) {
+                    $type = $match[1];
                 }
                 finfo_close($finfo);
             }
+        } elseif (DIRECTORY_SEPARATOR == '/') {
+            if (function_exists('exec')) {
+                $type = exec('file --brief --mime-type '.escapeshellarg($this->_tmpname));
+            }
         }
+
+        if (!$type && function_exists('mime_content_type')) {
+            $type = mime_content_type($this->_tmpname);
+        }
+
+        $this->_type = !$type ? $_FILES[$this->_name]['type'] : $type;
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @return string
+     */
+    private function _removeMultipleExt($filename)
+    {
+        $exts = explode('.', $filename);
+        $ext = array_pop($exts);
+        $filename = array_shift($exts);
+
+        foreach ($exts as $e) {
+            
+        }
+
+        return $filename.'.'.$ext;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function valid()
+    {
+        $valid = false;
+        if (is_boolean(self::$_rules['is_image'])) {
+            if (self::$_rules['is_image'] === $this->isImage()) {
+                $valid = true;
+            }
+        } elseif (is_array(self::$_rules['types']) && !empty(self::$_rules['types'])) {
+
+        }
+        return $valid;
     }
 
     /**
@@ -317,6 +377,13 @@ class File
     public function move($destination, $filename = null)
     {
         $result = false;
+        if ($filename) {
+            $filename = FileSec::sanitizeFilename($filename);
+            $filename = $this->_secureFilename($filename);
+        } else {
+            $filename = $this->_filename;
+        }
+
         $to = $this->_validateUploadPath($to);
         if ($to) {
             if (is_uploaded_file($this->_tmpname)) {
@@ -328,18 +395,6 @@ class File
             $this->_setMoveError("Upload path doesn't exists or not writable");
         }
         return $result;
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    public function valid()
-    {
-        if (self::$_validations['is_image']) {
-
-        }
-        return true;
     }
 
     /**
