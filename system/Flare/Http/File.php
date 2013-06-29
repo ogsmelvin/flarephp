@@ -112,7 +112,7 @@ class File
      * 
      * @var boolean
      */
-    private $_isImage = null;
+    private $_isImage = false;
 
     /**
      * 
@@ -300,15 +300,20 @@ class File
             {
                 $valid = false;
             }
-        } elseif (is_array(self::$_rules['types']) && !empty(self::$_rules['types'])
-            && !in_array($this->_extension, self::$_rules['types']))
-        {
-            $valid = false;
-        } elseif (self::$_rules['min_size'] && $this->_size < (int) self::$_rules['min_size']) {
-            $valid = false;
-        } elseif (self::$_rules['max_size'] && $this->_size > (int) self::$_rules['max_size']) {
-            $valid = false;
         }
+
+        if ($valid) {
+            if (is_array(self::$_rules['types']) && !empty(self::$_rules['types'])
+                && !in_array($this->_extension, self::$_rules['types']))
+            {
+                $valid = false;
+            } elseif (self::$_rules['min_size'] && $this->_size < (int) self::$_rules['min_size']) {
+                $valid = false;
+            } elseif (self::$_rules['max_size'] && $this->_size > (int) self::$_rules['max_size']) {
+                $valid = false;
+            }
+        }
+        
         return $valid;
     }
 
@@ -317,22 +322,19 @@ class File
      * @return void
      */
     private function _setAsImage()
-    {    
-        $is_image = false;
+    {
         if (function_exists('getimagesize')) {
             list($width, $height, $type) = getimagesize($this->_tmpname);
             if ($width && $height && in_array($type, get_image_types()) {
-                $is_image = true;
+                $this->_isImage = true;
                 $this->_width = $width;
                 $this->_height = $height;
             }
         }
 
-        if (!$is_image && in_array($this->_type, get_image_mime_types())) {
-            $is_image = true;
+        if (!$this->_isImage && in_array($this->_type, get_image_mime_types())) {
+            $this->_isImage = true;
         }
-        
-        $this->_isImage = $is_image;
     }
 
     /**
