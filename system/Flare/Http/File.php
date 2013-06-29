@@ -4,6 +4,7 @@ namespace Flare\Http;
 
 use Flare\Security\File as FileSec;
 use Flare\Security\Hash;
+use Flare\Objects\Image;
 
 /**
  * 
@@ -32,8 +33,8 @@ class File
         'is_image' => null,
         'max_size' => null,
         'min_size' => null,
-        'image_height' => null,
-        'image_width' => null,
+        'max_height' => null,
+        'max_width' => null,
         'types' => null
     );
 
@@ -103,9 +104,33 @@ class File
 
     /**
      * 
+     * @var boolean
+     */
+    private $_moved = false;
+
+    /**
+     * 
+     * @var boolean
+     */
+    private $_isImage = null;
+
+    /**
+     * 
      * @var string
      */
     private $_moveError = null;
+
+    /**
+     * 
+     * @var int
+     */
+    private $_width = 0;
+
+    /**
+     * 
+     * @var int
+     */
+    private $_height = 0;
 
     /**
      * 
@@ -147,16 +172,6 @@ class File
             show_error("File validation '{$key}' : unknown validation");
         }
         self::$_rules[$key] = $value;
-    }
-
-    /**
-     * 
-     * @param boolean $switch
-     * @return void
-     */
-    public static function removeMultipleExtension($switch)
-    {
-        self::$_removeMultipleExtension = (boolean) $switch;
     }
 
     /**
@@ -218,6 +233,7 @@ class File
         $this->_filename = FileSec::sanitizeFilename($_FILES[$name]['name']);
         $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
         $this->_setMimeType();
+        $this->_setAsImage();
     }
 
     /**
@@ -273,15 +289,50 @@ class File
      */
     public function valid()
     {
-        $valid = false;
-        if (is_boolean(self::$_rules['is_image'])) {
-            if (self::$_rules['is_image'] === $this->isImage()) {
-                $valid = true;
+        $valid = true;
+        if (!file_exists($this->_tmpname)) {
+            $valid = false;
+        } elseif (is_boolean(self::$_rules['is_image'])) {
+            if (self::$_rules['is_image'] !== $this->isImage()) {
+                $valid = false;
+            } elseif ((self::$_rules['max_width'] && $this->_width > (int) self::$_rules['max_width'])
+                || (self::$_rules['max_height'] && $this->_height > (int) self::$_rules['max_height']))
+            {
+                $valid = false;
             }
-        } elseif (is_array(self::$_rules['types']) && !empty(self::$_rules['types'])) {
-
+        } elseif (is_array(self::$_rules['types']) && !empty(self::$_rules['types'])
+            && !in_array($this->_extension, self::$_rules['types']))
+        {
+            $valid = false;
+        } elseif (self::$_rules['min_size'] && $this->_size < (int) self::$_rules['min_size']) {
+            $valid = false;
+        } elseif (self::$_rules['max_size'] && $this->_size > (int) self::$_rules['max_size']) {
+            $valid = false;
         }
         return $valid;
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    private function _setAsImage()
+    {    
+        $is_image = false;
+        if (function_exists('getimagesize')) {
+            list($width, $height, $type) = getimagesize($this->_tmpname);
+            if ($width && $height && in_array($type, get_image_types()) {
+                $is_image = true;
+                $this->_width = $width;
+                $this->_height = $height;
+            }
+        }
+
+        if (!$is_image && in_array($this->_type, get_image_mime_types())) {
+            $is_image = true;
+        }
+        
+        $this->_isImage = $is_image;
     }
 
     /**
@@ -290,7 +341,7 @@ class File
      */
     public function isImage()
     {
-        return true;
+        return $this->_isImage;
     }
 
     /**
@@ -379,7 +430,7 @@ class File
         $result = false;
         if ($filename) {
             $filename = FileSec::sanitizeFilename($filename);
-            $filename = $this->_secureFilename($filename);
+            // $filename = $this->_secureFilename($filename);
         } else {
             $filename = $this->_filename;
         }
@@ -394,6 +445,8 @@ class File
         } else {
             $this->_setMoveError("Upload path doesn't exists or not writable");
         }
+
+        $this->_moved = $result;
         return $result;
     }
 

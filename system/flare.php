@@ -178,6 +178,51 @@ if (!function_exists('http_build_url')) {
     }
 }
 
+if (!function_exists('get_image_types')) {
+
+    /**
+     * 
+     * @author anthony
+     * @return array
+     */
+    function get_image_types()
+    {
+        return array(
+            IMAGETYPE_GIF,
+            IMAGETYPE_JPEG,
+            IMAGETYPE_PNG,
+            IMAGETYPE_SWF,
+            IMAGETYPE_PSD,
+            IMAGETYPE_BMP,
+            IMAGETYPE_TIFF_II,
+            IMAGETYPE_TIFF_MM,
+            IMAGETYPE_JPC,
+            IMAGETYPE_JP2,
+            IMAGETYPE_JPX,
+            IMAGETYPE_JB2,
+            IMAGETYPE_SWC,
+            IMAGETYPE_IFF,
+            IMAGETYPE_WBMP,
+            IMAGETYPE_XBM,
+            IMAGETYPE_ICO
+        );
+    }
+}
+
+if (!function_exists('get_image_mime_types')) {
+
+    /**
+     * 
+     * @author anthony
+     * @return array
+     */
+    function get_image_mime_types()
+    {
+        return array_map('image_type_to_mime_type', get_image_types());
+    }
+}
+     
+
 
 if (!function_exists('show_response')) {
 

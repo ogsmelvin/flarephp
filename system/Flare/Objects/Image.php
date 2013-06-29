@@ -21,30 +21,6 @@ class Image
 
     /**
      * 
-     * @var array
-     */
-    private static $_types = array(
-        IMAGETYPE_GIF,
-        IMAGETYPE_JPEG,
-        IMAGETYPE_PNG,
-        IMAGETYPE_SWF,
-        IMAGETYPE_PSD,
-        IMAGETYPE_BMP,
-        IMAGETYPE_TIFF_II,
-        IMAGETYPE_TIFF_MM,
-        IMAGETYPE_JPC,
-        IMAGETYPE_JP2,
-        IMAGETYPE_JPX,
-        IMAGETYPE_JB2,
-        IMAGETYPE_SWC,
-        IMAGETYPE_IFF,
-        IMAGETYPE_WBMP,
-        IMAGETYPE_XBM,
-        IMAGETYPE_ICO
-    );
-
-    /**
-     * 
      * @var string
      */
     private $_imageType;
@@ -65,7 +41,7 @@ class Image
         $realpath = $realpath !== false ? rtrim(str_replace("\\", "/", $realpath), "/") : rtrim($path, "/");
         $this->_fileinfo = pathinfo($path);
         $image = getimagesize($path);
-        if (isset($image[2]) && in_array($image[2], self::$_types)) {
+        if (isset($image[2]) && in_array($image[2], get_image_types()) {
             $this->_imageType = $image[2];
             if ($this->_imageType == IMAGETYPE_JPEG) {
                 $this->_image = imagecreatefromjpeg($filename);
@@ -79,15 +55,6 @@ class Image
         } else {
             show_error("Not a valid image type");
         }
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public static function getSupportedTypes()
-    {
-        return self::$_types;
     }
 
     /**
@@ -181,7 +148,7 @@ class Image
     public function copy($location)
     {
         $this->saveAs($location);
-        return new Image($location);
+        return new __CLASS__($location);
     }
 
     /**
@@ -192,7 +159,7 @@ class Image
      */
     public function save($compression = 75, $permissions = null)
     {
-        return $this->_save()
+        return $this->_save();
     }
 
     /**
@@ -203,7 +170,7 @@ class Image
      */
     public function saveAs($filename, $compression = 75)
     {
-        return $this->_save($);
+        return $this->_save();
     }
 
     /**
