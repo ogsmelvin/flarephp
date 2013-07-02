@@ -427,7 +427,7 @@ class File
      * @param string $filename
      * @return boolean
      */
-    public function move($destination, $filename = null)
+    public function upload($destination, $filename = null)
     {
         $result = false;
         if ($filename) {
@@ -442,10 +442,10 @@ class File
             if (is_uploaded_file($this->_tmpname)) {
                 
             } else {
-                $this->_setMoveError($this->getErrorMessage());
+                $this->_setUploadError($this->getErrorMessage());
             }
         } else {
-            $this->_setMoveError("Upload path doesn't exists or not writable");
+            $this->_setUploadError("Upload path doesn't exists or not writable");
         }
 
         $this->_moved = $result;
@@ -457,7 +457,7 @@ class File
      * @param string $error
      * @return void
      */
-    private function _setMoveError($error)
+    private function _setUploadError($error)
     {
         $this->_moveError = $error;
     }

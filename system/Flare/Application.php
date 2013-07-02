@@ -2,6 +2,7 @@
 
 namespace Flare;
 
+use Flare\Application\View\ModelManager;
 use Flare\Application\Data;
 use Flare\View\Javascript;
 use Flare\Http\Response;
@@ -289,6 +290,15 @@ class Application
 
     /**
      * 
+     * @return \Flare\Application\View\ModelManager
+     */
+    public function getViewModelManager()
+    {
+        return ModelManager::getInstance();
+    }
+
+    /**
+     * 
      * @param string $class
      * @return void
      */
@@ -333,10 +343,10 @@ class Application
         $this->_controller->preDispatch();
         $view = null;
         if (!F::$router->getRoute()->getActionParams()) {
-            $view = $this->_controller->{$this->_controller->getAppRequest()->getActionMethodName()}();
+            $view = $this->_controller->{$this->_controller->getRequest()->getActionMethodName()}();
         } else {
             $view = call_user_func_array(
-                array($this->_controller, $this->_controller->getAppRequest()->getActionMethodName()), 
+                array($this->_controller, $this->_controller->getRequest()->getActionMethodName()), 
                 F::$router->getRoute()->getActionParams()
             );
         }
@@ -369,7 +379,7 @@ class Application
      */
     public function view($path, $data = null, $layout = null)
     {
-        $module = $this->_controller->getAppRequest()->getModule();
+        $module = $this->_controller->getRequest()->getModule();
         if ($layout === null 
             && isset(F::$config->layout[$module]) 
             && F::$config->layout[$module]['auto'])
@@ -391,7 +401,7 @@ class Application
         }
         $html = new Html($path);
         $html->set('uri', F::$uri)
-            ->set('request', $this->_controller->getAppRequest())
+            ->set('request', $this->_controller->getRequest())
             ->set('session', F::$session)
             ->set('js', new Javascript())
             ->set('config', F::$config);

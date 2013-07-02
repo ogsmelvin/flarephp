@@ -8,7 +8,6 @@ use Flare\Http\Response;
 use Flare\Http\Request;
 use Flare\Http\Session;
 use Flare\Application;
-use \ReflectionClass;
 use Flare\Http\Uri;
 
 /**
@@ -194,7 +193,7 @@ class Flare
      */
     public static function createApp()
     {
-        if (self::$_application && self::$_application instanceof Application) {
+        if (self::$_application) {
             show_error("Flare Application is already created");
         }
         self::$_application = new Application();
@@ -226,8 +225,8 @@ class Flare
                 $config = self::$config->services[$service];
             }
 
-            $ref = new ReflectionClass("\\Flare\\Services\\".$service);
-            self::$_services[$service] = $ref->newInstanceArgs($config);
+            $class = "\\Flare\\Services\\".$service;
+            self::$_services[$service] = new $class($config);
         }
         return self::$_services[$service];
     }

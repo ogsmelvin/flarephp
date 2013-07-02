@@ -87,6 +87,19 @@ if (!function_exists('render')) {
     }
 }
 
+if (!function_exists('view')) {
+
+    /**
+     * 
+     * @param string $viewModel
+     * @return \Flare\Application\View\Model
+     */
+    function view($viewModel)
+    {
+        return \Flare\Flare::getApp()->getViewModelManager();
+    }
+}
+
 $flare_sections = array();
 
 if (!function_exists('section_open')) {

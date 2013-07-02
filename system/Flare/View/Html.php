@@ -2,8 +2,6 @@
 
 namespace Flare\View;
 
-use Flare\Flare as F;
-
 /**
  * 
  * @author anthony

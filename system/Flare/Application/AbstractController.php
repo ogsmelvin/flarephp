@@ -52,9 +52,9 @@ abstract class AbstractController
 
     /**
      * 
-     * @var array
+     * @var PDO
      */
-    private $_services = array();
+    protected $db = null;
 
     /**
      * 
@@ -71,22 +71,18 @@ abstract class AbstractController
         $this->response = & $response;
 
         if ($this->config->autoload['database']) {
-            $this->setDb($this->config->autoload['database']);
+            $this->database($this->config->autoload['database']);
         }
 
         if (!empty($this->config->autoload['helpers'])) {
             foreach ($this->config->autoload['helpers'] as $helper) {
-                $this->setHelper($helper);
+                $this->helper($helper);
             }
         }
 
         if (!empty($this->config->autoload['services'])) {
             foreach ($this->config->autoload['services'] as $service) {
-                if (!is_array($service)) {
-                    $this->setService($service);
-                } elseif (isset($service[0], $service[1])) {
-                    $this->setService($service[0], $service[1]);
-                }
+                $this->service($service);
             }
         }
     }
@@ -94,35 +90,12 @@ abstract class AbstractController
     /**
      * 
      * @param string $service
-     * @param string $shortKey
-     * @return \Flare\Application\AbstractController
+     * @param array $config
+     * @return \Flare\Service
      */
-    public function setService($service, $shortKey = null)
+    public function service($service, $config = array())
     {
-        if (!$shortKey) {
-            $shortKey = $service;
-        }
-        if (!isset($this->_services[$shortKey])) {
-            if (F::service($service)) {
-                $this->_services[$shortKey] = $service;
-            } else {
-                show_error("Error initializing service '{$service}'");
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string $service
-     * @return mixed
-     */
-    public function getService($service)
-    {
-        if (!isset($this->_services[$service])) {
-            show_error("'{$service}' was not set");
-        }
-        return F::service($this->_services[$service]);
+        return F::service($service, $config);
     }
 
     /**
@@ -131,7 +104,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function getPost($key = null, $xss = null)
+    public function post($key = null, $xss = null)
     {
         $value = $this->request->post($key);
         if ($xss === null) {
@@ -150,7 +123,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function getRequest($key = null, $xss = null)
+    public function param($key = null, $xss = null)
     {
         $value = $this->request->request($key);
         if ($xss === null) {
@@ -169,7 +142,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function getQuery($key = null, $xss = null)
+    public function get($key = null, $xss = null)
     {
         $value = $this->request->get($key);
         if ($xss === null) {
@@ -188,7 +161,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function getServer($key = null, $xss = null)
+    public function server($key = null, $xss = null)
     {
         $value = $this->request->server($key);
         if ($xss === null) {
@@ -206,7 +179,7 @@ abstract class AbstractController
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
-    public function setDb($key = 'default')
+    public function database($key = 'default')
     {
         $this->db = & F::db($key);
         return $this;
@@ -214,10 +187,19 @@ abstract class AbstractController
 
     /**
      * 
+     * @return PDO
+     */
+    public function & getDatabase()
+    {
+        return $this->db;
+    }
+
+    /**
+     * 
      * @param string $helper
      * @return \Flare\Application\AbstractController
      */
-    public function setHelper($helper)
+    public function helper($helper)
     {
         F::getApp()->helper($helper);
         return $this;
@@ -228,7 +210,7 @@ abstract class AbstractController
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
-    public function setNosql($key)
+    public function noSql($key)
     {
         $tmpKey = strtolower($key);
         if (!isset($this->{$tmpKey})) {
@@ -246,7 +228,7 @@ abstract class AbstractController
      * @param boolean $switch
      * @return \Flare\Application\AbstractController
      */
-    public function setAutoLayout($switch)
+    public function enableAutoLayout($switch)
     {
         $this->config->set('layout.'.$this->request->getModule().'.auto', $switch);
         return $this;
@@ -257,7 +239,7 @@ abstract class AbstractController
      * @param boolean $switch
      * @return \Flare\Application\AbstractController
      */
-    public function setAutoXssFilter($switch)
+    public function enableAutoXssFilter($switch)
     {
         $this->config->set('auto_xss_filter', $switch);
         return $this;
@@ -299,9 +281,45 @@ abstract class AbstractController
      * 
      * @return \Flare\Application\Http\Request
      */
-    public function getAppRequest()
+    public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * 
+     * @return \Flare\Application\Router
+     */
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    /**
+     * 
+     * @return \Flare\Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * 
+     * @return \Flare\Application\Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * 
+     * @return \Flare\Http\Uri
+     */
+    public function getURI()
+    {
+        return $this->uri;
     }
 
     /**

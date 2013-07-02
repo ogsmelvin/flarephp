@@ -2,16 +2,16 @@
 
 namespace Flare\Services;
 
-use Flare\Http\Client\Curl;
 use Flare\Objects\Json;
 use Flare\Flare as F;
+use Flare\Service;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Facebook
+class Facebook extends Service
 {
     /**
      * 
@@ -57,28 +57,21 @@ class Facebook
 
     /**
      * 
-     * @var \Flare\Http\Client\Curl
-     */
-    private $_curl;
-
-    /**
-     * 
      * @var string
      */
     private $_user = null;
 
     /**
      * 
-     * @param string $appId
-     * @param string $appSecret
-     * @param boolean $fileUpload
+     * @access protected
+     * @param array $params
+     * @return void
      */
-    public function __construct($appId, $appSecret, $fileUpload = false)
+    protected function init(array $params)
     {
-        $this->_curl = new Curl();
-        $this->setAppId($appId);
-        $this->setAppSecret($appSecret);
-        $this->setFileUpload($fileUpload);
+        $this->setAppId($params['appId']);
+        $this->setAppSecret($params['appSecret']);
+        $this->setFileUpload($params['fileUpload']);
         $this->setAccessToken();
     }
 
@@ -235,7 +228,7 @@ class Facebook
      */
     public function getProfile($id = 'me')
     {
-        $data = $this->_curl
+        $data = $this->curl
             ->setParam('access_token', $this->getAccessToken())
             ->setUrl(self::API_HOST.$id)
             ->getContentAsJson();
@@ -262,7 +255,7 @@ class Facebook
             $fields = array('uid', 'first_name', 'last_name', 'profile_url');
         }
         $fql = "SELECT ".implode(',', $fields)." FROM user WHERE uid = ".$id;
-        $data = $this->_curl
+        $data = $this->curl
             ->setUrl(self::API_HOST.'fql')
             ->setParam('access_token', $this->getAccessToken())
             ->setParam('q', $fql)
@@ -283,7 +276,7 @@ class Facebook
      */
     public function fql($fql)
     {
-        return $this->_curl
+        return $this->curl
             ->setUrl(self::API_HOST.'fql')
             ->setParam('access_token', $this->getAccessToken())
             ->setParam('q', $fql)
@@ -312,7 +305,7 @@ class Facebook
         if ($order) {
             $fql .= " ORDER BY ".(string) $order;
         }
-        $data = $this->_curl
+        $data = $this->curl
             ->setUrl(self::API_HOST.'fql')
             ->setParam('access_token', $this->getAccessToken())
             ->setParam('q', $fql)
@@ -361,7 +354,7 @@ class Facebook
         } elseif (($code && $state) 
             && strcmp($state, F::$session->get('fb_'.$this->_appId.'_state')) === 0) 
         {
-            $result = $this->_curl
+            $result = $this->curl
                         ->setParam('code', $code)
                         ->setParam('client_id', $this->_appId)
                         ->setParam('client_secret', $this->_appSecret)
@@ -369,8 +362,8 @@ class Facebook
                         ->setUrl(self::API_HOST.'oauth/access_token')
                         ->getContent();
             
-            if ($this->_curl->hasError()) {
-                show_error($this->_curl->getError());
+            if ($this->curl->hasError()) {
+                show_error($this->curl->getError());
             }
             
             parse_str($result, $params);

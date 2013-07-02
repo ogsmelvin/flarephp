@@ -2,14 +2,14 @@
 
 namespace Flare\Services;
 
-use Flare\Http\Client\Curl;
+use Flare\Service;
 
 /**
  * 
  * @author
  * 
  */
-class Bitly
+class Bitly extends Service
 {
     /**
      * 
@@ -25,26 +25,23 @@ class Bitly
 
     /**
      * 
-     * @var \Flare\Http\Client\Curl
-     */
-    private $_curl;
-
-    /**
-     * 
      * @var string
      */
     const API_HOST = 'http://api.bit.ly/v3/';
 
     /**
      * 
-     * @param string $username
-     * @param string $password
+     * @access protected
+     * @param array $params
+     * @return void
      */
-    public function __construct($username, $password)
+    protected function init(array $params)
     {
-        $this->_username = $username;
-        $this->_password = $password;
-        $this->_curl = new Curl();
+        if (!isset($params['username'], $params['password'])) {
+            show_error('Username and password must be set for Bitly Service');
+        }
+        $this->_username = $params['username'];
+        $this->_password = $params['password'];
     }
 
     /**
@@ -63,7 +60,7 @@ class Bitly
      */
     public function shorten($link, $format = 'txt')
     {
-        $result = (string) $this->_curl
+        $result = (string) $this->curl
             ->setUrl(self::API_HOST.'shorten')
             ->setParam('login', $this->_username)
             ->setParam('apiKey', $this->_password)
