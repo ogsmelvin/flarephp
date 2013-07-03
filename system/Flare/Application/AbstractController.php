@@ -18,43 +18,43 @@ abstract class AbstractController
      * 
      * @var \Flare\Http\Session
      */
-    protected $session;
+    public $session;
 
     /**
      * 
      * @var \Flare\Application\Config
      */
-    protected $config;
+    public $config;
 
     /**
      * 
      * @var \Flare\Application\Http\Request
      */
-    protected $request;
+    public $request;
 
     /**
      * 
      * @var \Flare\Http\Response
      */
-    protected $response;
+    public $response;
 
     /**
      * 
      * @var \Flare\Application\Router
      */
-    protected $router;
+    public $router;
 
     /**
      * 
      * @var \Flare\Http\Uri
      */
-    protected $uri;
+    public $uri;
 
     /**
      * 
      * @var PDO
      */
-    protected $db = null;
+    public $db = null;
 
     /**
      * 
@@ -187,15 +187,6 @@ abstract class AbstractController
 
     /**
      * 
-     * @return PDO
-     */
-    public function & getDatabase()
-    {
-        return $this->db;
-    }
-
-    /**
-     * 
      * @param string $helper
      * @return \Flare\Application\AbstractController
      */
@@ -275,51 +266,6 @@ abstract class AbstractController
     public function redirect($url, $code = 302)
     {
         $this->response->redirect($url, $code);
-    }
-
-    /**
-     * 
-     * @return \Flare\Application\Http\Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * 
-     * @return \Flare\Application\Router
-     */
-    public function getRouter()
-    {
-        return $this->router;
-    }
-
-    /**
-     * 
-     * @return \Flare\Response
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * 
-     * @return \Flare\Application\Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * 
-     * @return \Flare\Http\Uri
-     */
-    public function getURI()
-    {
-        return $this->uri;
     }
 
     /**

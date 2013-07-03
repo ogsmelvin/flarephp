@@ -342,30 +342,30 @@ class Application
         $this->_controller->init();
         $this->_controller->preDispatch();
         $view = null;
-        if (!F::$router->getRoute()->getActionParams()) {
-            $view = $this->_controller->{$this->_controller->getRequest()->getActionMethodName()}();
+        if (!$this->_controller->router->getRoute()->getActionParams()) {
+            $view = $this->_controller->{$this->_controller->request->getActionMethodName()}();
         } else {
             $view = call_user_func_array(
-                array($this->_controller, $this->_controller->getRequest()->getActionMethodName()), 
-                F::$router->getRoute()->getActionParams()
+                array($this->_controller, $this->_controller->request->getActionMethodName()), 
+                $this->_controller->router->getRoute()->getActionParams()
             );
         }
 
-        if (!F::$response->hasContentType()) {
+        if (!$this->_controller->response->hasContentType()) {
             if ($view instanceof Html) {
-                F::$response->setContentType('text/html');
+                $this->_controller->response->setContentType('text/html');
             } elseif ($view instanceof \Flare\Objects\Xml) {
                 $view = $view->asXml();
-                F::$response->setContentType('text/xml');
+                $this->_controller->response->setContentType('text/xml');
             } elseif ($view instanceof \Flare\Objects\Json) {
-                F::$response->setContentType('application/json');
+                $this->_controller->response->setContentType('application/json');
             } elseif ($view instanceof \Flare\Objects\Image) {
                 //TODO
             }
         }
         
         $this->_controller->postDispatch();
-        F::$response->setBody($view)->send();
+        $this->_controller->response->setBody($view)->send();
         $this->_controller->complete();
         $this->_dispatched = true;
     }
@@ -379,7 +379,7 @@ class Application
      */
     public function view($path, $data = null, $layout = null)
     {
-        $module = $this->_controller->getRequest()->getModule();
+        $module = $this->_controller->request->getModule();
         if ($layout === null 
             && isset(F::$config->layout[$module]) 
             && F::$config->layout[$module]['auto'])
@@ -401,7 +401,7 @@ class Application
         }
         $html = new Html($path);
         $html->set('uri', F::$uri)
-            ->set('request', $this->_controller->getRequest())
+            ->set('request', $this->_controller->request)
             ->set('session', F::$session)
             ->set('js', new Javascript())
             ->set('config', F::$config);
