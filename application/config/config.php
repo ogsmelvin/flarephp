@@ -48,7 +48,7 @@ $config['auto_compress'] = true;
  * 
  * @var boolean
  */
-$config['require_https'] = true;
+$config['require_https'] = false;
 
 /**
  *
