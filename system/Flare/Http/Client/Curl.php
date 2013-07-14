@@ -158,6 +158,16 @@ class Curl
 
     /**
      * 
+     * @param array $headers
+     * @return \Flare\Http\Client\Curl
+     */
+    public function setHeaders(array $headers)
+    {
+        return $this->setOption(CURLOPT_HTTPHEADER, $headers);
+    }
+
+    /**
+     * 
      * @param array $params
      * @return \Flare\Http\Client\Curl
      */
@@ -199,6 +209,9 @@ class Curl
      */
     public function setOption($key, $value)
     {
+        if (strpos($key, 'CURLOPT_') !== 0) {
+            $key = constant('CURLOPT_'.$key);
+        }
         if ($key === CURLOPT_URL) {
             $this->_url = $value;
         } elseif ($key === CURLOPT_HTTPHEADER) {

@@ -56,6 +56,7 @@ class Bitly extends Service
     /**
      * 
      * @param string $link
+     * @param string $format
      * @return string
      */
     public function shorten($link, $format = 'txt')
