@@ -6,6 +6,7 @@ use Flare\Application\Http\Request;
 use Flare\Http\Response;
 use Flare\Security\Xss;
 use Flare\Flare as F;
+use Flare\Http\File;
 
 /**
  * 
@@ -71,18 +72,20 @@ abstract class AbstractController
         $this->response = & $response;
 
         if ($this->config->autoload['database']) {
-            $this->database($this->config->autoload['database']);
+            $this->setDatabase($this->config->autoload['database']);
         }
 
         if (!empty($this->config->autoload['helpers'])) {
             foreach ($this->config->autoload['helpers'] as $helper) {
-                $this->helper($helper);
+                $this->setHelper($helper);
             }
         }
 
         if (!empty($this->config->autoload['services'])) {
             foreach ($this->config->autoload['services'] as $service) {
-                $this->service($service);
+                if (!$this->getService($service)) {
+                    show_error("Error initializing service '{$service}'");
+                }
             }
         }
     }
@@ -93,7 +96,7 @@ abstract class AbstractController
      * @param array $config
      * @return \Flare\Service
      */
-    public function service($service, $config = array())
+    public function getService($service, $config = array())
     {
         return F::service($service, $config);
     }
@@ -104,7 +107,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function post($key = null, $xss = null)
+    public function getPost($key = null, $xss = null)
     {
         $value = $this->request->post($key);
         if ($xss === null) {
@@ -123,7 +126,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function param($key = null, $xss = null)
+    public function getParam($key = null, $xss = null)
     {
         $value = $this->request->request($key);
         if ($xss === null) {
@@ -142,7 +145,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function get($key = null, $xss = null)
+    public function getQuery($key = null, $xss = null)
     {
         $value = $this->request->get($key);
         if ($xss === null) {
@@ -161,7 +164,7 @@ abstract class AbstractController
      * @param boolean|null $xss
      * @return mixed
      */
-    public function server($key = null, $xss = null)
+    public function getServer($key = null, $xss = null)
     {
         $value = $this->request->server($key);
         if ($xss === null) {
@@ -176,10 +179,20 @@ abstract class AbstractController
 
     /**
      * 
+     * @param string $name
+     * @return \Flare\Http\File
+     */
+    public function getFile($name)
+    {
+        return File::get($name);
+    }
+
+    /**
+     * 
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
-    public function database($key = 'default')
+    public function setDatabase($key = 'default')
     {
         $this->db = & F::db($key);
         return $this;
@@ -187,10 +200,23 @@ abstract class AbstractController
 
     /**
      * 
+     * @param string $key
+     * @return \Flare\Application\AbstractController
+     */
+    public function getDatabase($key = null)
+    {
+        if ($key) {
+            return F::db($key);
+        }
+        return $this->db ? $this->db : null;
+    }
+
+    /**
+     * 
      * @param string $helper
      * @return \Flare\Application\AbstractController
      */
-    public function helper($helper)
+    public function setHelper($helper)
     {
         F::getApp()->helper($helper);
         return $this;
@@ -201,7 +227,7 @@ abstract class AbstractController
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
-    public function noSql($key)
+    public function setNoSql($key)
     {
         $tmpKey = strtolower($key);
         if (!isset($this->{$tmpKey})) {
