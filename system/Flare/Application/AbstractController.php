@@ -55,7 +55,7 @@ abstract class AbstractController
      * 
      * @var PDO
      */
-    public $db = null;
+    protected $db = null;
 
     /**
      * 
@@ -203,7 +203,7 @@ abstract class AbstractController
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
-    public function getDatabase($key = null)
+    public function & getDatabase($key = null)
     {
         if ($key) {
             return F::db($key);
@@ -310,11 +310,11 @@ abstract class AbstractController
      * 
      * @return void
      */
-    public function preDispatch() {}
+    public function predispatch() {}
 
     /**
      * 
      * @return void
      */
-    public function postDispatch() {}
+    public function postdispatch() {}
 }
