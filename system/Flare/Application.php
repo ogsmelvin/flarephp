@@ -316,7 +316,7 @@ class Application
      * 
      * @return \Flare\Application
      */
-    public function preDispatch()
+    public function predispatch()
     {
         $route = F::$router->getRoute();
         if (!$route) {
@@ -341,7 +341,7 @@ class Application
         }
 
         $this->_controller->init();
-        $this->_controller->preDispatch();
+        $this->_controller->predispatch();
         $view = null;
         if (!$this->_controller->router->getRoute()->getActionParams()) {
             $view = $this->_controller->{$this->_controller->request->getActionMethodName()}();
@@ -360,7 +360,7 @@ class Application
             }
         }
         
-        $this->_controller->postDispatch();
+        $this->_controller->postdispatch();
         $this->_controller->response->setBody($view)->send();
         $this->_controller->complete();
         $this->_dispatched = true;
@@ -482,7 +482,7 @@ class Application
             ->setControllersDirectory('controllers')
             ->setModelsDirectory('models')
             ->setViewsDirectory('views')
-            ->preDispatch()
+            ->predispatch()
             ->dispatch();
     }
 }
