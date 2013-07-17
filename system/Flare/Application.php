@@ -3,10 +3,11 @@
 namespace Flare;
 
 use Flare\Application\View\ModelManager;
+use Flare\View\Response as ViewResponse;
+use Flare\View\Response\Html;
 use Flare\Application\Data;
 use Flare\View\Javascript;
 use Flare\Http\Response;
-use Flare\View\Html;
 use Flare\Flare as F;
 
 /**
@@ -352,15 +353,10 @@ class Application
         }
 
         if (!$this->_controller->response->hasContentType()) {
-            if ($view instanceof Html) {
-                $this->_controller->response->setContentType('text/html');
-            } elseif ($view instanceof \Flare\Objects\Xml) {
-                $view = $view->asXml();
-                $this->_controller->response->setContentType('text/xml');
-            } elseif ($view instanceof \Flare\Objects\Json) {
-                $this->_controller->response->setContentType('application/json');
-            } elseif ($view instanceof \Flare\Objects\Image) {
-                //TODO
+            if ($view instanceof ViewResponse) {
+                $this->_controller->response->setContentType($view->getContentType());
+            } else {
+                show_error('Action return must be instance of View');
             }
         }
         

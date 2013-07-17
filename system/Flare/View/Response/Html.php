@@ -1,14 +1,22 @@
 <?php
 
-namespace Flare\View;
+namespace Flare\View\Response;
+
+use Flare\View\Response;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Html
+class Html extends Response
 {
+    /**
+     * 
+     * @var string
+     */
+    protected $contentType = 'text/html';
+    
     /**
      * 
      * @var array
@@ -40,15 +48,6 @@ class Html
     public function __construct($path)
     {
         $this->_contentPath = $path;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->render();
     }
 
     /**
