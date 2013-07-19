@@ -44,10 +44,6 @@ Object.prototype.clone = function () {
 var Flare = new function () {
 
     var self = this;
-
-    Application = function () {
-
-    }
     
     this.addEvent = function(element, event, handler) {
         if (typeof element == "string") {
@@ -76,14 +72,6 @@ var Flare = new function () {
 
     }
 }
-
-Controller = function () {
-}
-
-var app = Flare.createApplication(Controller);
-app.events.bind("btn", "click", function () {
-    app.events.fire("click");
-});
 
 HTMLElement.prototype.addEvent = function (event, handler) {
     Flare.addEvent(this, event, handler);

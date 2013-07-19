@@ -91,6 +91,7 @@ if (!function_exists('view')) {
 
     /**
      * 
+     * @author anthony
      * @param string $viewModel
      * @return \Flare\Application\View\Model
      */
@@ -234,8 +235,6 @@ if (!function_exists('get_image_mime_types')) {
         return array_map('image_type_to_mime_type', get_image_types());
     }
 }
-     
-
 
 if (!function_exists('show_response')) {
 
@@ -288,6 +287,7 @@ if (!function_exists('flare')) {
 
     /**
      * 
+     * @author anthony
      * @param mixed $object
      * @return mixed
      */

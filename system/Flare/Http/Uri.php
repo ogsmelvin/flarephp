@@ -152,16 +152,6 @@ class Uri
     }
 
     /**
-     * 
-     * @return boolean
-     */
-    public function valid()
-    {
-        //TODO
-        return true;
-    }
-
-    /**
      *
      * @return array
      */
