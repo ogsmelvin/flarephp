@@ -3,6 +3,7 @@
 namespace Flare\View\Response;
 
 use Flare\View\Response;
+use Flare\View;
 
 /**
  * 
@@ -72,24 +73,24 @@ class Html extends Response
         $request = null;
         $data = null;
         $session = null;
-        $js = null;
+        $config = null;
+        $view = View::create();
 
         foreach ($this->_data as $key => $value) {
             ${$key} = $value;
         }
 
-
         ob_start();
         include $this->_contentPath;
-        $content = (string) ob_get_clean();
+        $view->setContent((string) ob_get_clean());
 
         if (isset($this->_layoutPath)) {
             ob_start();
             include $this->_layoutPath;
-            $content = (string) ob_get_clean();
+            $view->setContent((string) ob_get_clean());
         }
 
-        return $content;
+        return $view->getContent();
     }
 
     /**

@@ -399,7 +399,6 @@ class Application
         $html->set('uri', F::$uri)
             ->set('request', $this->_controller->request)
             ->set('session', F::$session)
-            ->set('js', new Javascript())
             ->set('config', F::$config);
         if ($data === null) {
             $data = new Data();
