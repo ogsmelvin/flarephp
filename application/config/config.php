@@ -60,7 +60,7 @@ $config['layout'] = array(
      * View Layout settings for main module
      */
     'main' => array(
-        'auto'      => false,
+        'auto'      => true,
         'layout'    => 'main'
     )
 );
@@ -123,7 +123,7 @@ $config['database'] = array(
         'host'      => 'localhost',
         'username'  => 'technoc9_dev',
         'password'  => 't3chn0c9_d3v',
-        'dbname'    => 'technoc9_jarvis',
+        'dbname'    => 'technoc9_sample',
         'driver'    => 'mysql',
         'options'   => array(
             PDO::ATTR_PERSISTENT => true
