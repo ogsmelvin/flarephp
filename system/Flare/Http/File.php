@@ -189,7 +189,7 @@ class File
      * @param string $path
      * @return \Flare\Http\File|boolean
      */
-    public static function fromString($base64String, $path)
+    public static function uploadFromString($base64String, $path)
     {
         $result = false;
         $source = explode(',', $base64String, 2);

@@ -2,14 +2,14 @@
 
 namespace Flare\Services;
 
-use Flare\Http\Client\Curl;
+use Flare\Service;
 
 /**
  * 
  * @author anthony
  * 
  */
-class OneWaySMS
+class OneWaySMS extends Service
 {
     /**
      * 
@@ -22,12 +22,6 @@ class OneWaySMS
      * @var string
      */
     private $_password;
-
-    /**
-     * 
-     * @var \Flare\Http\Client\Curl
-     */
-    private $_curl;
 
     /**
      * 
@@ -67,18 +61,20 @@ class OneWaySMS
 
     /**
      * 
-     * @param string $username
-     * @param string $password
-     * @param string $host
+     * @param array $config
+     * @return void
      */
-    public function __construct($username, $password, $host = null)
+    protected function init(array $config)
     {
-        $this->_username = $username;
-        $this->_password = $password;
-        if ($host) {
-            $this->_host = rtrim($host, '/').'/';
+        if (isset($config['username'], $config['password'])) {
+            $this->_username = $config['username'];
+            $this->_password = $config['password'];
+            if (isset($config['host'])) {
+                $this->_host = rtrim($host, '/').'/';
+            }
+        } else {
+            show_error('Username and password is required for OneWaySMS service');
         }
-        $this->_curl = new Curl();
     }
 
     /**
@@ -92,7 +88,7 @@ class OneWaySMS
     public function send($from, $to, $message, $languagetype = 1)
     {
         $this->_error = array();
-        $result = $this->_curl
+        $result = $this->curl
             ->setParam('senderid', $from)
             ->setParam('mobileno', $to)
             ->setParam('message', $message)
@@ -102,10 +98,10 @@ class OneWaySMS
             ->setUrl($this->_host.'api.aspx')
             ->getContent();
 
-        if ($this->_curl->hasError()) {
+        if ($this->curl->hasError()) {
             $this->_error = array(
-                'code' => $this->_curl->getErrorCode(),
-                'message' => $this->_curl->getError()
+                'code' => $this->curl->getErrorCode(),
+                'message' => $this->curl->getError()
             );
             $result = null;
         } elseif ($result < 0) {
@@ -123,15 +119,15 @@ class OneWaySMS
     public function getTransactionStatus($mtid)
     {
         $this->_error = array();
-        $result = $this->_curl
+        $result = $this->curl
             ->setParam('mtid', $mtid)
             ->setUrl($this->_host.'bulktrx.aspx')
             ->getContent();
 
-        if ($this->_curl->hasError()) {
+        if ($this->curl->hasError()) {
             $this->_error = array(
-                'code' => $this->_curl->getErrorCode(),
-                'message' => $this->_curl->getError()
+                'code' => $this->curl->getErrorCode(),
+                'message' => $this->curl->getError()
             );
             return false;
         } elseif ($result != 0) {
@@ -148,16 +144,16 @@ class OneWaySMS
     public function getCreditBalance()
     {
         $this->_error = array();
-        $result = $this->_curl
+        $result = $this->curl
             ->setParam('apiusername', $this->_username)
             ->setParam('apipassword', $this->_password)
             ->setUrl($this->_host.'bulkcredit.aspx')
             ->getContent();
 
-        if ($this->_curl->hasError()) {
+        if ($this->curl->hasError()) {
             $this->_error = array(
-                'code' => $this->_curl->getErrorCode(),
-                'message' => $this->_curl->getError()
+                'code' => $this->curl->getErrorCode(),
+                'message' => $this->curl->getError()
             );
             return null;
         } elseif ($result < 0) {
