@@ -15,6 +15,5 @@
     </div>
     <script type="text/javascript" src="<?= $uri->getBaseUrl() ?>js/jquery-1.9.0.min.js"></script>
     <script type="text/javascript" src="<?= $uri->getBaseUrl() ?>js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="<?= $uri->getBaseUrl() ?>js/flare.js"></script>
 </body>
 </html>
