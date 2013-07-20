@@ -353,10 +353,14 @@ class Application
         }
 
         if (!$this->_controller->response->hasContentType()) {
-            if ($view instanceof ViewResponse) {
-                $this->_controller->response->setContentType($view->getContentType());
+            if (!($view instanceof ViewResponse)) {
+                if (!empty($view)) {
+                    show_error("Action must return a 'View\Response' instance");
+                } elseif (F::$config->default_content_type) {
+                    $this->_controller->response->setContentType(F::$config->default_content_type);
+                }
             } else {
-                show_error('Action return must be instance of View');
+                $this->_controller->response->setContentType($view->getContentType());
             }
         }
         

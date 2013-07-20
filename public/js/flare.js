@@ -41,6 +41,18 @@ Object.prototype.clone = function () {
     return clone(this);
 }
 
+var Flare = {};
+
+Flare.Application = {
+    create : function () {
+        return;
+    }
+}
+
+Flare.require = function () {
+
+}
+
 var Flare = new function () {
 
     var self = this;

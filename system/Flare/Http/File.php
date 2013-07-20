@@ -5,6 +5,7 @@ namespace Flare\Http;
 use Flare\Security\File as FileSec;
 use Flare\Security\Hash;
 use Flare\Objects\Image;
+use Flare\Http\Files;
 
 /**
  * 
@@ -29,13 +30,14 @@ class File
      * 
      * @var array
      */
-    private static $_rules = array(
+    private static $_defaultOptions = array(
         'is_image' => null,
         'max_size' => null,
         'min_size' => null,
         'max_height' => null,
         'max_width' => null,
-        'types' => null
+        'types' => null,
+        'filename' => null
     );
 
     /**
@@ -106,7 +108,7 @@ class File
      * 
      * @var boolean
      */
-    private $_moved = false;
+    private $_uploaded = false;
 
     /**
      * 
@@ -118,7 +120,7 @@ class File
      * 
      * @var string
      */
-    private $_moveError = null;
+    private $_uploadError = null;
 
     /**
      * 
@@ -137,11 +139,13 @@ class File
      * @param string $name
      * @return \Flare\Http\File|null
      */
-    public static function & get($name)
+    public static function get($name)
     {
         if (!isset(self::$_instances[$name])) {
-            if (!isset($_FILES[$name])) {
+            if (empty($_FILES[$name]['name'])) {
                 return null;
+            } elseif (is_array($_FILES[$name]['name'])) {
+                show_error("File uploaded is multiple. Please use getMultiple()");
             }
             self::$_instances[$name] = new self($name);
         }
@@ -150,28 +154,24 @@ class File
 
     /**
      * 
-     * @param array $validations
-     * @return void
+     * @param string $name
+     * @return \Flare\Http\Files
      */
-    public static function validations(array $validations)
+    public static function getMultiple($name)
     {
-        foreach ($validations as $key => $value) {
-            self::validation($key, $value);
+        if (!isset(self::$_instances[$name])) {
+            if (empty($_FILES[$name]['name'])) {
+                return null;
+            } elseif (!is_array($_FILES[$name]['name'])) {
+                show_error("File uploaded is single. Please use get()");
+            }
+            $i = 0;
+            $files = array();
+            $count = count($_FILES[$name]['name']);
+            while ($i < $count) $files[] = new self($name, $i++);
+            self::$_instances[$name] = new Files($files);
         }
-    }
-
-    /**
-     * 
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public static function validation($key, $value)
-    {
-        if (!isset(self::$_rules[$key])) {
-            show_error("File validation '{$key}' : unknown validation");
-        }
-        self::$_rules[$key] = $value;
+        return self::$_instances[$name];
     }
 
     /**
@@ -223,24 +223,38 @@ class File
     /**
      * 
      * @param string $name
+     * @param int $index
      */
-    private function __construct($name)
+    private function __construct($name, $index = null)
     {
+        $file = array();
+        if ($index !== null) {
+            $file = array(
+                'tmp_name' => $_FILES[$name]['tmp_name'][$index],
+                'name' => $_FILES[$name]['name'][$index],
+                'error' => $_FILES[$name]['error'][$index],
+                'size' => $_FILES[$name]['size'][$index]
+            );
+        } else {
+            $file = $_FILES[$name];
+        }
+
         $this->_name = $name;
-        $this->_tmpname = $_FILES[$name]['tmp_name'];
-        $this->_error = (int) $_FILES[$name]['error'];
-        $this->_size = (int) $_FILES[$name]['size'];
-        $this->_filename = FileSec::sanitizeFilename($_FILES[$name]['name']);
+        $this->_tmpname = $file['tmp_name'];
+        $this->_error = (int) $file['error'];
+        $this->_size = (int) $file['size'];
+        $this->_filename = FileSec::sanitizeFilename($file['name']);
         $this->_extension = pathinfo($this->_filename, PATHINFO_EXTENSION);
-        $this->_setMimeType();
+        $this->_setMimeType($index);
         $this->_setAsImage();
     }
 
     /**
      * 
+     * @param int $index
      * @return void
      */
-    private function _setMimeType()
+    private function _setMimeType($index = null)
     {
         $type = null;
         if (function_exists('finfo_file')) {
@@ -262,7 +276,11 @@ class File
             $type = mime_content_type($this->_tmpname);
         }
 
-        $this->_type = !$type ? $_FILES[$this->_name]['type'] : $type;
+        if ($index === null) {
+            $this->_type = !$type ? $_FILES[$this->_name]['type'] : $type;
+        } else {
+            $this->_type = !$type ? $_FILES[$this->_name]['type'][$index] : $type;
+        }
     }
 
     /**
@@ -285,32 +303,38 @@ class File
 
     /**
      * 
+     * @param array $rules
      * @return boolean
      */
-    public function valid()
+    public function validate(array $rules)
     {
         $valid = true;
-        if (!file_exists($this->_tmpname)) {
+        if (!is_uploaded_file($this->_tmpname)) {
             $valid = false;
-        } elseif (is_boolean(self::$_rules['is_image'])) {
-            if (self::$_rules['is_image'] !== $this->isImage()) {
+        } elseif (is_bool($rules['is_image'])) {
+            if ($rules['is_image'] !== $this->isImage()) {
                 $valid = false;
-            } elseif ((self::$_rules['max_width'] && $this->_width > (int) self::$_rules['max_width'])
-                || (self::$_rules['max_height'] && $this->_height > (int) self::$_rules['max_height']))
+                $this->_setValidationError('Not an image');
+            } elseif (($rules['max_width'] && $this->_width > (int) $rules['max_width'])
+                || ($rules['max_height'] && $this->_height > (int) $rules['max_height']))
             {
                 $valid = false;
+                $this->_setValidationError('Not within required width');
             }
         }
 
         if ($valid) {
-            if (is_array(self::$_rules['types']) && !empty(self::$_rules['types'])
-                && !in_array($this->_extension, self::$_rules['types']))
+            if (is_array($rules['types']) && !empty($rules['types'])
+                && !in_array($this->_extension, $rules['types']))
             {
+                $this->_setValidationError('Invalid type');
                 $valid = false;
-            } elseif (self::$_rules['min_size'] && $this->_size < (int) self::$_rules['min_size']) {
+            } elseif ($rules['min_size'] && $this->_size < (int) $rules['min_size']) {
                 $valid = false;
-            } elseif (self::$_rules['max_size'] && $this->_size > (int) self::$_rules['max_size']) {
+                $this->_setValidationError('Must be greater that minimum size');
+            } elseif ($rules['max_size'] && $this->_size > (int) $rules['max_size']) {
                 $valid = false;
+                $this->_setValidationError('Exceeds max size');
             }
         }
         
@@ -323,17 +347,17 @@ class File
      */
     private function _setAsImage()
     {
-        if (function_exists('getimagesize')) {
-            list($width, $height, $type) = getimagesize($this->_tmpname);
-            if ($width && $height && in_array($type, get_image_types()) {
+        list($width, $height, $type) = getimagesize($this->_tmpname);
+        if ($type) {
+            $type = image_type_to_mime_type($type);
+            if ($type) {
                 $this->_isImage = true;
+                $this->_type = $type;
+            }
+            if ($width && $height) {
                 $this->_width = $width;
                 $this->_height = $height;
             }
-        }
-
-        if (!$this->_isImage && in_array($this->_type, get_image_mime_types())) {
-            $this->_isImage = true;
         }
     }
 
@@ -424,32 +448,42 @@ class File
     /**
      * 
      * @param string $destination
-     * @param string $filename
+     * @param array $options
+     * @param boolean $autoCreateFolder
      * @return boolean
      */
-    public function upload($destination, $filename = null)
+    public function upload($destination, array $options = array(), $autoCreateFolder = false)
     {
-        $result = false;
-        if ($filename) {
-            $filename = FileSec::sanitizeFilename($filename);
-            // $filename = $this->_secureFilename($filename);
+        $success = false;
+        if ($options) {
+            $options = array_merge(self::$_defaultOptions, $options);
         } else {
-            $filename = $this->_filename;
+            $options = self::$_defaultOptions;
+        }
+        
+        if (!empty($options['filename'])) {
+            if (!pathinfo($options['filename'], PATHINFO_EXTENSION)) {
+                $options['filename'] = $options['filename'].'.'.$this->_extension;
+            }
+            $options['filename'] = FileSec::sanitizeFilename($options['filename']);
+        } else {
+            $options['filename'] = $this->_filename;
         }
 
-        $to = $this->_validateUploadPath($to);
-        if ($to) {
-            if (is_uploaded_file($this->_tmpname)) {
-                
-            } else {
-                $this->_setUploadError($this->getErrorMessage());
+        $destination = $this->_validateUploadPath($destination, $autoCreateFolder);
+        if ($destination) {
+            if ($this->validate($options)) {
+                if (@move_uploaded_file($this->_tmpname, $destination.$options['filename'])) {
+                    $success = true;
+                    $this->_uploaded = true;
+                } else {
+                    $this->_setValidationError('Failed to upload');
+                }
             }
         } else {
-            $this->_setUploadError("Upload path doesn't exists or not writable");
+            $this->_setValidationError("Upload path doesn't exists");
         }
-
-        $this->_moved = $result;
-        return $result;
+        return $success;
     }
 
     /**
@@ -457,25 +491,46 @@ class File
      * @param string $error
      * @return void
      */
-    private function _setUploadError($error)
+    private function _setValidationError($error)
     {
-        $this->_moveError = $error;
+        $this->_uploadError = $error;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getValidationError()
+    {
+        return $this->_uploadError;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isUploaded()
+    {
+        return $this->_uploaded;
     }
 
     /**
      * 
      * @param string $to
+     * @param boolean $autoCreate
      * @return string|boolean
      */
-    private function _validateUploadPath($to)
+    private function _validateUploadPath($folder, $autoCreate)
     {
-        if (!$to) return false;
-        $moveTo = realpath($to);
-        $moveTo = $moveTo !== false ? rtrim(str_replace("\\", "/", $moveTo), "/") : rtrim($to, "/");
+        if (!$folder) return false;
+        $moveTo = realpath($folder);
+        $moveTo = $moveTo !== false ? rtrim(str_replace("\\", '/', $moveTo), '/').'/' : rtrim($folder, '/').'/';
 
-        if (@is_dir($moveTo)) {
-            return $moveTo."/";
+        if (!@is_dir($moveTo)) {
+            if (!$autoCreate || ($autoCreate && !mkdir($moveTo, 0777))) {
+                return false;
+            }
         }
-        return false;
+        return $moveTo;
     }
 }

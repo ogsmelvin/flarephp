@@ -74,7 +74,7 @@ class Html extends Response
         $data = null;
         $session = null;
         $config = null;
-        $view = View::create();
+        $view = new View();
 
         foreach ($this->_data as $key => $value) {
             ${$key} = $value;

@@ -15,18 +15,13 @@ class View
      */
     private $content;
 
-    private function __construct() {}
-
     /**
      * 
      * @param string $content
-     * @return \Flare\View
      */
-    public static function create($content = '')
+    public function __construct($content = '')
     {
-        $view = new self();
-        $view->setContent($content);
-        return $view;
+        $this->setContent($content);
     }
 
     /**

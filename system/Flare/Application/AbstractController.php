@@ -189,6 +189,16 @@ abstract class AbstractController
 
     /**
      * 
+     * @param string $name
+     * @return \Flare\Http\Files
+     */
+    public function getFiles($name)
+    {
+        return File::getMultiple($name);
+    }
+
+    /**
+     * 
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
@@ -292,6 +302,18 @@ abstract class AbstractController
     public function redirect($url, $code = 302)
     {
         $this->response->redirect($url, $code);
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    public function back()
+    {
+        $url = $this->getServer('HTTP_REFERER');
+        if ($url) {
+            $this->redirect($url);
+        }
     }
 
     /**
