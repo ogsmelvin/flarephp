@@ -58,35 +58,6 @@ $config['default_content_type'] = 'text/html';
 
 /**
  *
- * @var array
- */
-$config['layout'] = array(
-
-    /**
-     * View Layout settings for main module
-     */
-    'main' => array(
-        'auto'      => true,
-        'layout'    => 'main'
-    ),
-
-    'demo' => array(
-        'auto'      => true,
-        'layout'    => 'demo'
-    )
-);
-
-/**
- *
- * @var array
- */
-$config['session'] = array(
-    'auto_start'        => true,
-    'namespace'         => 'flare.dev.demo'
-);
-
-/**
- *
  * @var boolean
  */
 $config['allow_override'] = true;
@@ -95,10 +66,25 @@ $config['allow_override'] = true;
  *
  * @var array
  */
+$config['session'] = array(
+    'auto_start' => true,
+    'namespace' => 'flare.dev.demo'
+);
+
+/**
+ * View layout configuration
+ * @var array
+ */
+$config['layout'] = require 'layout.php';
+
+/**
+ * Routing configuration
+ * @var array
+ */
 $config['router'] = require 'routes.php';
 
 /**
- *
+ * Autoload configuration
  * @var array
  */
 $config['autoload'] = require 'autoload.php';
@@ -110,19 +96,19 @@ $config['autoload'] = require 'autoload.php';
 $config['database'] = require 'database.php';
 
 /**
- * 
+ * NoSql databases configuration
  * @var array
  */
 $config['nosql'] = require 'nosql.php';
 
 /**
- *
+ * Web Services / API Configuration
  * @var array
  */
 $config['services'] = require 'services.php';
 
 /**
- * 
+ * Cache engines configuration
  * @var array
  */
 $config['cache'] = require 'cache.php';
