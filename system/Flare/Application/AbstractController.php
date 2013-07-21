@@ -99,6 +99,26 @@ abstract class AbstractController
 
     /**
      * 
+     * @param string $key
+     * @return \Flare\Http\File|null
+     */
+    public function getFile($key)
+    {
+        return File::get($key);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return \Flare\Http\Files|null
+     */
+    public function getFiles($key)
+    {
+        return File::getMultiple($key);
+    }
+
+    /**
+     * 
      * @param string $service
      * @param array $config
      * @return \Flare\Service
@@ -106,70 +126,6 @@ abstract class AbstractController
     public function getService($service, $config = array())
     {
         return F::service($service, $config);
-    }
-
-    /**
-     * 
-     * @param string $key
-     * @param boolean|null $xss
-     * @return mixed
-     */
-    public function getPost($key = null, $xss = null)
-    {
-        return $this->request->post($key, $xss);
-    }
-
-    /**
-     * 
-     * @param string $key
-     * @param boolean|null $xss
-     * @return mixed
-     */
-    public function getParam($key = null, $xss = null)
-    {
-        return $this->request->request($key, $xss);
-    }
-
-    /**
-     * 
-     * @param string $key
-     * @param boolean|null $xss
-     * @return mixed
-     */
-    public function getQuery($key = null, $xss = null)
-    {
-        return $this->request->get($key, $xss);
-    }
-
-    /**
-     * 
-     * @param string $key
-     * @param boolean|null $xss
-     * @return mixed
-     */
-    public function getServer($key = null, $xss = null)
-    {
-        return $this->request->server($key, $xss);
-    }
-
-    /**
-     * 
-     * @param string $name
-     * @return \Flare\Http\File
-     */
-    public function getFile($name)
-    {
-        return File::get($name);
-    }
-
-    /**
-     * 
-     * @param string $name
-     * @return \Flare\Http\Files
-     */
-    public function getFiles($name)
-    {
-        return File::getMultiple($name);
     }
 
     /**
