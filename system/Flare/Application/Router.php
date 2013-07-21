@@ -167,7 +167,7 @@ class Router
         if ($params) {
             $route->setActionParams($params);
         }
-
+        
         return $route;
     }
 

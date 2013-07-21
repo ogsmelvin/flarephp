@@ -323,6 +323,7 @@ class Application
             show_response(404);
         }
         $this->_controller = $route->getController();
+        F::$uri->setModuleUrl();
         return $this;
     }
 

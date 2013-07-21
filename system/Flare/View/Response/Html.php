@@ -34,7 +34,7 @@ class Html extends Response
      * 
      * @var string
      */
-    private $_layoutPath;
+    private $_layoutPath = null;
 
     /**
      * 
@@ -84,7 +84,7 @@ class Html extends Response
         include $this->_contentPath;
         $view->setContent((string) ob_get_clean());
 
-        if (isset($this->_layoutPath)) {
+        if ($this->_layoutPath) {
             ob_start();
             include $this->_layoutPath;
             $view->setContent((string) ob_get_clean());

@@ -4,7 +4,7 @@
     Invalid
 </div>
 <?php endif ?>
-<form method="POST" action="<?= $uri->getModuleUrl() ?>process/register" enctype="multipart/form-data" class="form-horizontal">
+<form method="POST" action="<?= $uri->moduleUrl ?>process/register" enctype="multipart/form-data" class="form-horizontal">
     <div class="control-group">
         <label class="control-label" for="inputEmail">Email</label>
         <div class="controls">

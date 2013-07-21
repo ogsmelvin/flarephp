@@ -22,13 +22,13 @@ class Uri
      *
      * @var string
      */
-    private $_baseUrl;
+    private $baseUrl;
 
     /**
      *
      * @var string
      */
-    private $_indexPage;
+    private $indexPage;
 
     /**
      *
@@ -40,43 +40,43 @@ class Uri
      * 
      * @var string
      */
-    private $_protocol;
+    private $protocol;
 
     /**
      * 
      * @var string
      */
-    private $_host;
+    private $host;
 
     /**
      * 
      * @var string
      */
-    private $_port;
+    private $port;
 
     /**
      * 
      * @var string
      */
-    private $_currentUrl;
+    private $currentUrl;
 
     /**
      * 
      * @var string
      */
-    private $_fullUrl;
+    private $fullUrl;
 
     /**
      * 
      * @var string
      */
-    private $_moduleUrl = null;
+    private $moduleUrl;
 
     /**
      * 
      * @var string
      */
-    private $_suffix;
+    private $suffix;
 
     /**
      * 
@@ -99,56 +99,47 @@ class Uri
             || !isset($_SERVER['SCRIPT_FILENAME'])) {
             show_error("REQUEST_URI / SCRIPT_NAME was not set");
         }
-        $this->_indexPage = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_BASENAME);
-        $this->_baseUrl = str_replace($this->_indexPage, '', $_SERVER['SCRIPT_NAME']);
-        $this->_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : self::DEFAULT_PORT;
-        if (strpos($_SERVER['REQUEST_URI'], $this->_baseUrl) !== 0) {
-            $this->_baseUrl = '/';
+        $this->indexPage = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_BASENAME);
+        $this->baseUrl = str_replace($this->indexPage, '', $_SERVER['SCRIPT_NAME']);
+        $this->port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : self::DEFAULT_PORT;
+        if (strpos($_SERVER['REQUEST_URI'], $this->baseUrl) !== 0) {
+            $this->baseUrl = '/';
         }
         $search = array('?'.$_SERVER['QUERY_STRING']);
-        if ($this->_baseUrl !== '/') {
-            $search[] = $this->_baseUrl;
+        if ($this->baseUrl !== '/') {
+            $search[] = $this->baseUrl;
         }
-        if ($this->_indexPage) {
-            $search[] = $this->_indexPage;
+        if ($this->indexPage) {
+            $search[] = $this->indexPage;
         }
         $this->_uri = '/'.ltrim(str_replace($search, '', $_SERVER['REQUEST_URI']), '/');
         $valid = UriSec::validate($this->_uri, $this->_segments);
         if (!$valid) {
             show_response(400);
         }
-        $this->_suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
+        $this->suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
         
-        $this->_protocol = 'http://';
+        $this->protocol = 'http://';
         if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
-            $this->_protocol = 'https://';
+            $this->protocol = 'https://';
         }
 
-        $this->_host = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
-        if ($this->_port == self::DEFAULT_PORT || $this->_protocol == 'https://') {
-            $this->_baseUrl = $this->_protocol.$this->_host.$this->_baseUrl;
+        $this->host = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
+        if ($this->port == self::DEFAULT_PORT || $this->protocol == 'https://') {
+            $this->baseUrl = $this->protocol.$this->host.$this->baseUrl;
         } else {
-            $this->_baseUrl = $this->_protocol.$this->_host.':'.$this->_port.$this->_baseUrl;
+            $this->baseUrl = $this->protocol.$this->host.':'.$this->port.$this->baseUrl;
         }
 
-        $this->_currentUrl = $this->_baseUrl.ltrim($this->_uri, '/');
+        $this->currentUrl = $this->baseUrl.ltrim($this->_uri, '/');
         if (!empty($_SERVER['QUERY_STRING'])) {
-            $this->_fullUrl = $this->_currentUrl.'?'.$_SERVER['QUERY_STRING'];
+            $this->fullUrl = $this->currentUrl.'?'.$_SERVER['QUERY_STRING'];
         } else {
-            $this->_fullUrl = $this->_currentUrl;
+            $this->fullUrl = $this->currentUrl;
         }
 
         unset($uri, $search);
         return $this;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getPort()
-    {
-        return $this->_port;
     }
 
     /**
@@ -164,24 +155,6 @@ class Uri
     }
 
     /**
-     * 
-     * @return string
-     */
-    public function getSuffix()
-    {
-        return $this->_suffix;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getHost()
-    {
-        return $this->_host;
-    }
-
-    /**
      *
      * @param int $index
      * @return string
@@ -192,33 +165,6 @@ class Uri
             return $this->_segments[$index];
         }
         return null;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getBaseUrl()
-    {
-        return $this->_baseUrl;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getCurrentUrl()
-    {
-        return $this->_currentUrl;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getLandingPage()
-    {
-        return $this->_indexPage;
     }
 
     /**
@@ -245,45 +191,25 @@ class Uri
 
     /**
      * 
-     * @return string
-     */
-    public function getProtocol()
-    {
-        return $this->_protocol;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->_fullUrl;
-    }
-
-    /**
-     * 
      * @return boolean
      */
     public function isHttps()
     {
-        return ($this->_protocol === 'https://');
+        return ($this->protocol === 'https://');
     }
 
     /**
      * 
-     * @return string
+     * @return \Flare\Http\Uri
      */
-    public function getModuleUrl()
+    public function setModuleUrl()
     {
-        if (!$this->_moduleUrl) {
-            $this->_moduleUrl = F::getApp()->getController()->request->getModule();
-            if ($this->_moduleUrl !== F::$config->router['default_module']) {
-                $this->_moduleUrl .= '/';
-            }
-            $this->_moduleUrl = $this->_baseUrl.$this->_moduleUrl;
+        $this->moduleUrl = F::getApp()->getController()->request->getModule();
+        if ($this->moduleUrl !== F::$config->router['default_module']) {
+            $this->moduleUrl .= '/';
         }
-        return $this->_moduleUrl;
+        $this->moduleUrl = $this->baseUrl.$this->moduleUrl;
+        return $this;
     }
 
     /**
@@ -293,5 +219,18 @@ class Uri
     public function __toString()
     {
         return $this->getURIString();
+    }
+
+    /**
+     * 
+     * @param string
+     * @return string
+     */
+    public function __get($key)
+    {
+        if (strpos($key, '_') !== false) {
+            show_error('URI Class. Unable to access property.');
+        }
+        return isset($this->{$key}) ? $this->{$key} : show_error('URI Class. Unknown property.');
     }
 }
