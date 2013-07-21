@@ -4,6 +4,7 @@ namespace Flare\Application\Http;
 
 use Flare\Http\Request as ParentRequest;
 use Flare\Security\Xss;
+use Flare\Flare as F;
 
 /**
  * 
@@ -111,5 +112,82 @@ class Request extends ParentRequest
     public function getActionMethodName()
     {
         return $this->_action.'_action';
+    }
+
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function post($key = null, $xss = null)
+    {
+        $value = parent::post($key);
+        if ($xss === null) {
+            if (F::$config->get('auto_xss_filter') && $value) {
+                return Xss::filter($value);
+            }
+        } elseif ($value) {
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function request($key = null, $xss = null)
+    {
+        $value = parent::request($key);
+        if ($xss === null) {
+            if (F::$config->get('auto_xss_filter') && $value) {
+                return Xss::filter($value);
+            }
+        } elseif ($value) {
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function get($key = null, $xss = null)
+    {
+        $value = parent::get($key);
+        if ($xss === null) {
+            if (F::$config->get('auto_xss_filter') && $value) {
+                return Xss::filter($value);
+            }
+        } elseif ($value) {
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function server($key = null, $xss = null)
+    {
+        $value = parent::server($key);
+        if ($xss === null) {
+            if (F::$config->get('auto_xss_filter') && $value) {
+                return Xss::filter($value);
+            }
+        } elseif ($value) {
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
     }
 }

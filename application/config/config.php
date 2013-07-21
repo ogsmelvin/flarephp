@@ -6,7 +6,7 @@
 require 'constants.php';
 
 /**
- *
+ * Define modules
  * @var array
  */
 $config['modules'] = array('main', 'demo');

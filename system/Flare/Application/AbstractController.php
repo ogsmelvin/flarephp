@@ -4,7 +4,6 @@ namespace Flare\Application;
 
 use Flare\Application\Http\Request;
 use Flare\Http\Response;
-use Flare\Security\Xss;
 use Flare\Flare as F;
 use Flare\Http\File;
 
@@ -117,15 +116,7 @@ abstract class AbstractController
      */
     public function getPost($key = null, $xss = null)
     {
-        $value = $this->request->post($key);
-        if ($xss === null) {
-            if ($this->config->get('auto_xss_filter') && $value) {
-                return Xss::filter($value);
-            }
-        } elseif ($value) {
-            return $xss === true ? Xss::filter($value) : $value;
-        }
-        return $value;
+        return $this->request->post($key, $xss);
     }
 
     /**
@@ -136,15 +127,7 @@ abstract class AbstractController
      */
     public function getParam($key = null, $xss = null)
     {
-        $value = $this->request->request($key);
-        if ($xss === null) {
-            if ($this->config->get('auto_xss_filter') && $value) {
-                return Xss::filter($value);
-            }
-        } elseif ($value) {
-            return $xss === true ? Xss::filter($value) : $value;
-        }
-        return $value;
+        return $this->request->request($key, $xss);
     }
 
     /**
@@ -155,15 +138,7 @@ abstract class AbstractController
      */
     public function getQuery($key = null, $xss = null)
     {
-        $value = $this->request->get($key);
-        if ($xss === null) {
-            if ($this->config->get('auto_xss_filter') && $value) {
-                return Xss::filter($value);
-            }
-        } elseif ($value) {
-            return $xss === true ? Xss::filter($value) : $value;
-        }
-        return $value;
+        return $this->request->get($key, $xss);
     }
 
     /**
@@ -174,15 +149,7 @@ abstract class AbstractController
      */
     public function getServer($key = null, $xss = null)
     {
-        $value = $this->request->server($key);
-        if ($xss === null) {
-            if ($this->config->get('auto_xss_filter') && $value) {
-                return Xss::filter($value);
-            }
-        } elseif ($value) {
-            return $xss === true ? Xss::filter($value) : $value;
-        }
-        return $value;
+        return $this->request->server($key, $xss);
     }
 
     /**
