@@ -9,7 +9,7 @@ require 'constants.php';
  *
  * @var array
  */
-$config['modules'] = array('main');
+$config['modules'] = array('main', 'demo');
 
 /**
  * To return it to its default value
@@ -68,6 +68,11 @@ $config['layout'] = array(
     'main' => array(
         'auto'      => true,
         'layout'    => 'main'
+    ),
+
+    'demo' => array(
+        'auto'      => true,
+        'layout'    => 'demo'
     )
 );
 
@@ -77,7 +82,7 @@ $config['layout'] = array(
  */
 $config['session'] = array(
     'auto_start'        => true,
-    'namespace'         => 'demo.dev'
+    'namespace'         => 'flare.dev.demo'
 );
 
 /**
@@ -148,33 +153,10 @@ $config['nosql'] = array(
 );
 
 /**
- * Api Mashups Configuration
- * Keys are the same with the class names
- * These keys are case sensitive
- * Keys are also arrange in the order defined in their constructor
- * Don't change the order
+ *
  * @var array
  */
-$config['services'] = array(
-
-    /**
-     * FPHP\Services\Facebook settings
-     */
-    'Facebook'  => array(
-        'app_id'        => '',
-        'app_secret'    => '',
-        'file_upload'   => true
-    ),
-
-    /**
-     * FPHP\Services\OneWaySMS settings
-     */
-    'OneWaySMS' => array(
-        'username' => '',
-        'password' => '',
-        'host' => ''
-    )
-);
+$config['services'] = require 'services.php';
 
 /**
  *

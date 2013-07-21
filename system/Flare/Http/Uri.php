@@ -277,7 +277,7 @@ class Uri
     public function getModuleUrl()
     {
         if (!$this->_moduleUrl) {
-            $this->_moduleUrl = F::getApp()->getController()->getAppRequest()->getModule();
+            $this->_moduleUrl = F::getApp()->getController()->request->getModule();
             if ($this->_moduleUrl !== F::$config->router['default_module']) {
                 $this->_moduleUrl .= '/';
             }
