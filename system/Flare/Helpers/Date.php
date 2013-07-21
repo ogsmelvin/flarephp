@@ -52,15 +52,23 @@ if (!function_exists('time_elapsed')) {
 
     /**
      * Param must be in timestamp
-     * @param string $time
+     * @param string|int $time
+     * @param string|int $current_time
      * @return string
      */
-    function time_elapsed($ptime, $auto_strtotime = true)
+    function time_elapsed($ptime, $current_time = null)
     {
-        if ($auto_strtotime) {
+        if (is_string($ptime)) {
             $ptime = strtotime($ptime);
         }
-        $etime = time() - $ptime;
+
+        if (!$current_time) {
+            $current_time = time();
+        } elseif (is_string($current_time)) {
+            $current_time = strtotime($current_time);
+        }
+
+        $etime = $current_time - $ptime;
         
         if ($etime < 1) {
             return '0 seconds';
