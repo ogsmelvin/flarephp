@@ -10,10 +10,12 @@
 <body>
     <div class="container well">
         <div class="row">
+            <div class="span12">
             <?= $view->getContent() ?>
+            </div>
         </div>
     </div>
-    <script type="text/javascript" src="<?= $uri->getBaseUrl() ?>js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="<?= $uri->getBaseUrl() ?>js/jquery.min.js"></script>
     <script type="text/javascript" src="<?= $uri->getBaseUrl() ?>js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -88,6 +88,14 @@ abstract class AbstractController
                 }
             }
         }
+
+        if (!empty($this->config->autoload['cache'])) {
+            foreach ($this->config->autoload['cache'] as $cache) {
+                if (!$this->getCache($cache)) {
+                    show_error("Error initializing cache '{$cache}'");
+                }
+            }
+        }
     }
 
     /**
@@ -213,7 +221,7 @@ abstract class AbstractController
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
-    public function & getDatabase($key = null)
+    public function getDatabase($key = null)
     {
         if ($key) {
             return F::db($key);
@@ -306,14 +314,35 @@ abstract class AbstractController
 
     /**
      * 
+     * @param array $params
      * @return void
      */
-    public function back()
+    public function back(array $params = array())
     {
         $url = $this->getServer('HTTP_REFERER');
         if ($url) {
+            if ($params) {
+                $parts = parse_url($url);
+                if (!isset($parts['query'])) {
+                    $parts['query'] = '';
+                }
+                parse_str($parts['query'], $query);
+                $parts['query'] = http_build_query(array_merge($query, $params));
+                $url = http_build_url($parts);
+            }
             $this->redirect($url);
         }
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param array $config
+     * @return \Flare\Cache
+     */
+    public function getCache($name, $config = array())
+    {
+        return F::cache($name, $config);
     }
 
     /**

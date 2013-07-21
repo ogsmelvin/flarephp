@@ -79,6 +79,12 @@ class Flare
 
     /**
      * 
+     * @var array
+     */
+    private static $_cacheEngines = array();
+
+    /**
+     * 
      * @var boolean
      */
     private static $_init = false;
@@ -213,7 +219,7 @@ class Flare
      *
      * @param string $service
      * @param array $config
-     * @return mixed
+     * @return \Flare\Service
      */
     public static function service($service, $config = null)
     {
@@ -229,5 +235,27 @@ class Flare
             self::$_services[$service] = new $class($config);
         }
         return self::$_services[$service];
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param array $config
+     * @return \Flare\Cache
+     */
+    public static function cache($name, $config = null)
+    {
+        if (!isset(self::$_cacheEngines[$name])) {
+            if (!$config) {
+                if (!isset(self::$config->cache[$name])) {
+                    show_error("Config for service '{$name}' is not defined");
+                }
+                $config = self::$config->cache[$name];
+            }
+
+            $class = "\\Flare\\cache\\".$name;
+            self::$_cacheEngines[$name] = new $class($config);
+        }
+        return self::$_cacheEngines[$name];
     }
 }

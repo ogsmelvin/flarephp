@@ -28,7 +28,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </a>
-                        <a class="brand" href="/index.html">Documentation</a>
+                        <a class="brand" href="/"><?= APP_TITLE ?></a>
                         <div class="nav-collapse collapse">
                             <ul class="nav pull-right">
                                 <li><a href="/">Home</a></li>
@@ -45,7 +45,7 @@
             <div class="row-fluid">
                 <div class="span3">
                     <ul class="nav nav-tabs nav-stacked">
-                        <li><a href="/content.html"><i class="icon-chevron-right pull-right"></i> Get Started</a></li>
+                        <li><a href="/"><i class="icon-chevron-right pull-right"></i> Get Started</a></li>
                         <li><a href="/#"><i class="icon-chevron-right pull-right"></i> App Components</a></li>
                         <li><a href="/#"><i class="icon-chevron-right pull-right"></i> User Interfaces</a></li>
                         <li><a href="/#"><i class="icon-chevron-right pull-right"></i> Form Elements</a></li>

@@ -1,9 +1,21 @@
 <h1 class="heading"><?= APP_TITLE ?></h1>
-<p>Lorem ipsum dolor sit amet, vivamus commodo, tortor morbi faucibus eleifend, gravida et vitae lobortis, sociis sed consectetuer. Et suspendisse commodo sapien, mauris habitasse venenatis tincidunt, non ante cupiditate enim fusce magni lacinia. Erat et feugiat felis iaculis sed justo, mauris pretium dapibus lacinia adipiscing. Leo neque id, nec posuere in, pede a interdum vitae quam nec rhoncus, sit id cras curabitur libero ante, nibh accumsan et in augue purus habitasse. Nunc amet ultrices ac suscipit elementum. Donec commodo est erat mauris quam vestibulum, vel lectus vehicula sed, massa wisi vel purus sed, fames mauris ante id tortor quam.</p>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
 
-<h2>Overview</h2>
-<blockquote><p>Aliquam dui rhoncus ut ipsum suspendisse, vitae quam eget felis class nulla, pede risus dolor auctor nibh, vivamus pellentesque nam et pulvinar architecto lorem, risus eu volutpat felis molestie. Egestas amet augue justo semper interdum dui, eros nec dictumst molestie lacinia magna, libero eget, sed a, elit tortor vitae morbi. Mi nec cumque arcu, nam sed, congue arcu facilis wisi nec iaculis, neque adipiscing nisl ullamcorper mattis. Sit varius erat, at proin volutpat, enim rutrum ut, nullam vestibulum suspendisse lorem maecenas.</p></blockquote>
+<h2>Get Started</h2>
+<blockquote>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+</blockquote>
 
 <h2>Class</h2>
 <blockquote><p>In faucibus enim mauris faucibus pharetra fames, enim ullamcorper lacus tempor sed, nec adipiscing suspendisse wisi habitasse quis et. Varius amet facilisis auctor nullam diam accumsan, phasellus ac interdum lacus, lorem proin fringilla ac, ut velit et vel lorem nec, id proin et vestibulum metus rhoncus eget. Dictum odio natoque amet, id eu proin in. Mi dignissim non molestie fusce, pellentesque massa, accumsan cras eu maecenas fusce vitae. Nunc in orci mattis aenean duis. Fermentum odio, quis praesent donec orci id vel ante, arcu amet, a natus turpis fringilla, vitae suspendisse sit ut sagittis dapibus non. Fusce ut dignissim id integer quam, leo imperdiet mauris wisi.</p></blockquote>

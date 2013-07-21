@@ -1,4 +1,10 @@
-<form method="POST" action="<?= $uri->getModuleUrl() ?>index/receive" enctype="multipart/form-data" class="form-horizontal">
+<?php if ($request->get('invalid')): ?>
+<div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    Invalid
+</div>
+<?php endif ?>
+<form method="POST" action="<?= $uri->getModuleUrl() ?>process/register" enctype="multipart/form-data" class="form-horizontal">
     <div class="control-group">
         <label class="control-label" for="inputEmail">Email</label>
         <div class="controls">
@@ -14,7 +20,7 @@
     <div class="control-group">
         <label class="control-label" for="inputPassword">File</label>
         <div class="controls">
-            <input type="file" name="file"><br>
+            <input type="file" name="photo"><br>
         </div>
     </div>
     <div class="control-group">

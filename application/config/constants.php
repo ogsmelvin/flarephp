@@ -4,4 +4,4 @@
  * APP_TITLE
  * @var string
  */
-define('APP_TITLE', 'Flare PHP Documentation');
+define('APP_TITLE', 'Flare Framework');
