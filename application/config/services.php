@@ -14,9 +14,9 @@ $services = array(
      * FPHP\Services\Facebook settings
      */
     'Facebook'  => array(
-        'app_id'        => '',
-        'app_secret'    => '',
-        'file_upload'   => true
+        'app_id' => '',
+        'app_secret' => '',
+        'file_upload' => true
     ),
 
     /**
