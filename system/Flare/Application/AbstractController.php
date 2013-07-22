@@ -142,7 +142,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @return \Flare\Application\AbstractController
+     * @return \PDO
      */
     public function getDatabase($key = null)
     {
