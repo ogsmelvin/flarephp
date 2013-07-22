@@ -2,23 +2,32 @@
 
 namespace Flare\Services;
 
+use Flare\Service;
+
 /**
  * 
  * @author anthony
  * 
  */
-class Twitter
+class Twitter extends Service
 {
     /**
      * 
      * @param array $config
+     * @return void
      */
-    public function __construct(array $config)
+    protected function init(array $config)
     {
         
     }
 
-    public function search($name)
+    /**
+     * 
+     * @param string|array $query
+     * @param string|array $options
+     * @return \Flare\Services\Twitter\SearchResult
+     */
+    public function search($query, $options = array())
     {
 
     }

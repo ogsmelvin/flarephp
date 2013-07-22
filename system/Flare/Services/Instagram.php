@@ -2,18 +2,21 @@
 
 namespace Flare\Services;
 
+use Flare\Service;
+
 /**
  * 
  * @author anthony
  * 
  */
-class Instagram
+class Instagram extends Service
 {
     /**
      * 
      * @param array $config
+     * @return void
      */
-    public function __construct(array $config)
+    protected function init(array $config)
     {
         
     }
