@@ -7,6 +7,12 @@
 $routes = array(
 
     /**
+     * 
+     * Force HTTPS
+     */
+    'require_https' => false,
+
+    /**
      * Custom url using the following format
      * :url => module.controller.action
      *
@@ -34,9 +40,9 @@ $routes = array(
      * Default module, controller and action
      * to be loaded
      */
-    'default_module'        => 'main',
-    'default_controller'    => 'index',
-    'default_action'        => 'index',
+    'default_module' => 'main',
+    'default_controller' => 'index',
+    'default_action' => 'index',
 
     /**
      * Leave blank for default

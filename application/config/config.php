@@ -46,12 +46,6 @@ $config['auto_compress'] = true;
 
 /**
  * 
- * @var boolean
- */
-$config['require_https'] = false;
-
-/**
- * 
  * @var string
  */
 $config['default_content_type'] = 'text/html';

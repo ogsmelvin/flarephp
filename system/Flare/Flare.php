@@ -128,7 +128,7 @@ class Flare
         } else {
             show_error("Config[session][namespace] must be set");
         }
-        if (self::$config->require_https) {
+        if (self::$config->router['require_https']) {
             self::$router->secure();
         }
         if (self::$config->auto_compress && !@ini_get('zlib.output_compression')
@@ -253,7 +253,7 @@ class Flare
                 $config = self::$config->cache[$name];
             }
 
-            $class = "\\Flare\\cache\\".$name;
+            $class = "\\Flare\\Cache\\".$name;
             self::$_cacheEngines[$name] = new $class($config);
         }
         return self::$_cacheEngines[$name];
