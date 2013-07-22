@@ -225,14 +225,17 @@ abstract class AbstractController
     }
 
     /**
-     * 
+     *
      * @param string $url
      * @param int $code
      * @return void
      */
     public function redirect($url, $code = 302)
     {
-        $this->response->redirect($url, $code);
+        if (parse_url($url, PHP_URL_SCHEME) === null) {
+            $url = F::$uri->baseUrl.ltrim($url, '/');
+        }
+        $this->response->setRedirect($url, $code)->send(false);
     }
 
     /**
@@ -242,7 +245,7 @@ abstract class AbstractController
      */
     public function back(array $params = array())
     {
-        $url = $this->getServer('HTTP_REFERER');
+        $url = $this->request->server('HTTP_REFERER', false);
         if ($url) {
             if ($params) {
                 $parts = parse_url($url);

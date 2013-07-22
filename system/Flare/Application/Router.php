@@ -307,12 +307,12 @@ class Router
     public function secure($redirectCode = 301)
     {
         if (!F::$uri->isHttps()) {
-            $url = 'https://'.F::$uri->getHost();
+            $url = 'https://'.F::$uri->host;
             $url .= F::$uri;
             if (!empty($_SERVER['QUERY_STRING'])) {
                 $url .= '?'.$_SERVER['QUERY_STRING'];
             }
-            F::$response->redirect($url, $redirectCode);
+            F::$response->setRedirect($url, $redirectCode)->send(false);
         }
     }
 }

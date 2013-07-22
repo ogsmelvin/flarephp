@@ -178,20 +178,6 @@ class Response
     }
 
     /**
-     *
-     * @param string $url
-     * @param int $code
-     * @return void
-     */
-    public function redirect($url, $code = 302)
-    {
-        if (parse_url($url, PHP_URL_SCHEME) === null) {
-            $url = F::$uri->baseUrl.ltrim($url, '/');
-        }
-        $this->setRedirect($url, $code)->send(false);
-    }
-
-    /**
      * 
      * @param int $seconds
      * @param string $url
@@ -228,17 +214,6 @@ class Response
      * @return void
      */
     public function download($path, $filename = null)
-    {
-        //TODO
-    }
-
-    /**
-     * 
-     * @param string $code
-     * @param string $view
-     * @return void
-     */
-    public function error($code, $view = null)
     {
         //TODO
     }
