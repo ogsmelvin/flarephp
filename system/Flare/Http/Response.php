@@ -229,6 +229,7 @@ class Response
 
     /**
      * This must be the last method executed in \Flare\Application\Mvc::dispatch()
+     * @param boolean $output_body
      * @return void
      */
     public function send($output_body = true)

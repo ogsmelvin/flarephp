@@ -6,16 +6,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Flare PHP Documentation">
         <meta name="author" content="Anthony De Leon">
-        <link href="/css/bootstrap.css" rel="stylesheet">
-        <link href="/css/bootstrap-responsive.css" rel="stylesheet">
-        <link href="/css/bootstrap-doc.css" rel="stylesheet">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
-        <link rel="shortcut icon" href="/ico/favicon.png">
+        <link href="<?= $uri->baseUrl ?>css/bootstrap.css" rel="stylesheet">
+        <link href="<?= $uri->baseUrl ?>css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="<?= $uri->baseUrl ?>css/bootstrap-doc.css" rel="stylesheet">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<?= $uri->baseUrl ?>ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?= $uri->baseUrl ?>ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?= $uri->baseUrl ?>ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="<?= $uri->baseUrl ?>ico/apple-touch-icon-57-precomposed.png">
+        <link rel="shortcut icon" href="<?= $uri->baseUrl ?>ico/favicon.png">
         <!--[if lt IE 9]>
-          <script src="/js/html5shiv.js"></script>
+          <script src="<?= $uri->baseUrl ?>js/html5shiv.js"></script>
         <![endif]-->
     </head>
     <body>
@@ -28,12 +28,12 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </a>
-                        <a class="brand" href="/"><?= APP_TITLE ?></a>
+                        <a class="brand" href="<?= $uri->baseUrl ?>"><?= APP_TITLE ?></a>
                         <div class="nav-collapse collapse">
                             <ul class="nav pull-right">
-                                <li><a href="/">Home</a></li>
-                                <li><a href="/">Tree</a></li>
-                                <li><a href="/">Help</a></li>
+                                <li><a href="<?= $uri->baseUrl ?>">Home</a></li>
+                                <li><a href="<?= $uri->baseUrl ?>">Tree</a></li>
+                                <li><a href="<?= $uri->baseUrl ?>">Help</a></li>
                             </ul>
                         </div>
                     </div>
@@ -45,14 +45,14 @@
             <div class="row-fluid">
                 <div class="span3">
                     <ul class="nav nav-tabs nav-stacked">
-                        <li><a href="/"><i class="icon-chevron-right pull-right"></i> Get Started</a></li>
-                        <li><a href="/#"><i class="icon-chevron-right pull-right"></i> App Components</a></li>
-                        <li><a href="/#"><i class="icon-chevron-right pull-right"></i> User Interfaces</a></li>
-                        <li><a href="/#"><i class="icon-chevron-right pull-right"></i> Form Elements</a></li>
-                        <li><a href="/#"><i class="icon-chevron-right pull-right"></i> Animation</a></li>
-                        <li><a href="/#"><i class="icon-chevron-right pull-right"></i> Graphic</a></li>
-                        <li><a href="/#"><i class="icon-chevron-right pull-right"></i> Example</a></li>
-                        <li><a href="/#"><i class="icon-chevron-right pull-right"></i> Something else</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>"><i class="icon-chevron-right pull-right"></i> Get Started</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>#"><i class="icon-chevron-right pull-right"></i> App Components</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>#"><i class="icon-chevron-right pull-right"></i> User Interfaces</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>#"><i class="icon-chevron-right pull-right"></i> Form Elements</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>#"><i class="icon-chevron-right pull-right"></i> Animation</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>#"><i class="icon-chevron-right pull-right"></i> Graphic</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>#"><i class="icon-chevron-right pull-right"></i> Example</a></li>
+                        <li><a href="<?= $uri->baseUrl ?>#"><i class="icon-chevron-right pull-right"></i> Something else</a></li>
                     </ul>
                 </div>
                 <div class="span9">
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </footer>
-        <script src="/js/jquery.min.js"></script>
-        <script src="/js/bootstrap.min.js"></script>
+        <script src="<?= $uri->baseUrl ?>js/jquery.min.js"></script>
+        <script src="<?= $uri->baseUrl ?>js/bootstrap.min.js"></script>
     </body>
 </html>
