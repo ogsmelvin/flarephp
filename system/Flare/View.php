@@ -115,20 +115,30 @@ class View
      */
     public function sectionOpen($name)
     {
+        end($this->sections);
+        $lastSection = key($this->sections);
+        if ($lastSection && $this->sections[$lastSection] === true) {
+            show_error("'{$lastSection}' section is currently open");
+        } elseif (isset($this->sections[$name])) {
+            show_error("'{$name}' section is already open");
+        }
         $this->sections[$name] = true;
+        reset($this->sections);
         ob_start();
     }
 
     /**
      * 
-     * @param string $name
      * @return void
      */
-    public function sectionClose($name)
+    public function sectionClose()
     {
+        end($this->sections);
+        $name = key($this->sections);
         if (!isset($this->sections[$name])) {
-            show_error("{$name} is not yet open");
+            show_error("'{$name}' is not yet open");
         }
+        reset($this->sections);
         $this->sections[$name] = (string) ob_get_clean();
     }
 

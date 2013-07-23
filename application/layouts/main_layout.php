@@ -71,5 +71,6 @@
         </footer>
         <script src="<?= $uri->baseUrl ?>js/jquery.min.js"></script>
         <script src="<?= $uri->baseUrl ?>js/bootstrap.min.js"></script>
+        <?= $view->getSection('bottom') ?>
     </body>
 </html>

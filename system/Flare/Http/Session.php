@@ -4,7 +4,7 @@ namespace Flare\Http;
 
 /**
  * 
- * @author
+ * @author anthony
  * 
  */
 class Session
