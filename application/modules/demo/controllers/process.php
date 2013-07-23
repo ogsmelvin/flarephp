@@ -20,6 +20,6 @@ class Process_Controller extends Controller
                 ));
             }
         }
-        $this->back();
+        $this->back(array('invalid' => null));
     }
 }

@@ -261,6 +261,9 @@ abstract class AbstractController
                 }
                 parse_str($parts['query'], $query);
                 $parts['query'] = http_build_query(array_merge($query, $params));
+                if (empty($parts['query'])) {
+                    unset($parts['query']);
+                }
                 $url = http_build_url($parts);
             }
             $this->redirect($url);
