@@ -6,24 +6,20 @@ if (!extension_loaded('gd') || !function_exists('gd_info')) {
     show_error("GD Library is not supported");
 }
 
+use Flare\Object;
+
 /**
  * 
  * @author anthony
  * 
  */
-class Image
+class Image extends Object
 {
-    /**
-     * 
-     * @var resource
-     */
-    private $_image;
-
     /**
      * 
      * @var string
      */
-    private $_imageType;
+    private $_type;
 
     /**
      * 
@@ -42,13 +38,13 @@ class Image
         $this->_fileinfo = pathinfo($path);
         $image = getimagesize($path);
         if (isset($image[2]) && in_array($image[2], get_image_types()) {
-            $this->_imageType = $image[2];
-            if ($this->_imageType == IMAGETYPE_JPEG) {
-                $this->_image = imagecreatefromjpeg($filename);
-            } elseif ($this->_imageType == IMAGETYPE_GIF) {
-                $this->_image = imagecreatefromgif ($filename);
-            } elseif ($this->_imageType == IMAGETYPE_PNG) {
-                $this->_image = imagecreatefrompng($filename);
+            $this->_type = $image[2];
+            if ($this->_type == IMAGETYPE_JPEG) {
+                $this->_data = imagecreatefromjpeg($filename);
+            } elseif ($this->_type == IMAGETYPE_GIF) {
+                $this->_data = imagecreatefromgif ($filename);
+            } elseif ($this->_type == IMAGETYPE_PNG) {
+                $this->_data = imagecreatefrompng($filename);
             } else {
                 show_error("Can't load image, not supported image type");
             }
@@ -63,7 +59,7 @@ class Image
      */
     public function getType()
     {
-        return $this->_imageType;
+        return $this->_type;
     }
 
     /**
@@ -81,7 +77,7 @@ class Image
      */
     public function getWidth()
     {
-        return imagesx($this->_image);
+        return imagesx($this->_data);
     }
 
     /**
@@ -90,7 +86,7 @@ class Image
      */
     public function getHeight()
     {
-        return imagesy($this->_image);
+        return imagesy($this->_data);
     }
 
     /**
@@ -124,8 +120,8 @@ class Image
     private function _resize($width = null, $height = null)
     {
         $new_image = imagecreatetruecolor($width, $height);
-        imagecopyresampled($new_image, $this->_image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
-        $this->_image = $new_image;
+        imagecopyresampled($new_image, $this->_data, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
+        $this->_data = $new_image;
         return $this;
     }
 
@@ -184,14 +180,14 @@ class Image
     private function _save($filename = null, $image_type = IMAGETYPE_JPEG, $compression = 75, $permissions = null)
     {
         if ($image_type) {
-            $image_type = $this->_imageType;
+            $image_type = $this->_type;
         }
         if ($image_type == IMAGETYPE_JPEG) {
-            imagejpeg($this->_image, $filename, $compression);
+            imagejpeg($this->_data, $filename, $compression);
         } elseif ($image_type == IMAGETYPE_GIF) {
-            imagegif ($this->_image, $filename);         
+            imagegif ($this->_data, $filename);         
         } elseif ($image_type == IMAGETYPE_PNG) {
-            imagepng($this->_image, $filename);
+            imagepng($this->_data, $filename);
         }
 
         if ($permissions != null) {

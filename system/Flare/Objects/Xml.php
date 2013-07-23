@@ -2,21 +2,14 @@
 
 namespace Flare\Objects;
 
-use \SimpleXMLElement;
+use Flare\Object;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Xml extends SimpleXMLElement
+class Xml extends Object
 {
-    /**
-     * 
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->asXml();
-    }
+    
 }

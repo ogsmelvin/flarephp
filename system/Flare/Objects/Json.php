@@ -2,14 +2,16 @@
 
 namespace Flare\Objects;
 
-use \ArrayObject;
+use Flare\Object;
+use \ArrayAccess;
+use \Iterator;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Json extends ArrayObject
+class Json extends Object implements ArrayAccess, Iterator
 {
     /**
      * 
@@ -30,7 +32,101 @@ class Json extends ArrayObject
                 show_error("Invalid JSON Format");
             }
         }
-        parent::__construct($data);
+
+        $this->_data = $data;
+    }
+
+    /**
+     * 
+     * @return mixed
+     */
+    public function rewind()
+    {
+        return reset($this->_data);
+    }
+
+    /**
+     * 
+     * @return mixed
+     */
+    public function current()
+    {
+        return current($this->_data);
+    }
+
+    /**
+     * 
+     * @return mixed
+     */
+    public function key()
+    {
+        return key($this->_data);
+    }
+
+    /**
+     * 
+     * @return mixed
+     */
+    public function next()
+    {
+        return next($this->_data);
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function valid()
+    {
+        return key($this->_data) !== null;
+    }
+
+    /**
+     * 
+     * @param mixed $offset
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->_data[$offset]);
+    }
+
+    /**
+     * 
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        if (!isset($this->_data[$offset])) {
+            show_error("Undefined '{$offset}' key in JSON Object");
+        }
+        return $this->_data[$offset];
+    }
+
+    /**
+     * 
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        if ($offset === null) {
+            $this->_data[] = $value;
+        } else {
+            $this->_data[$offset] = $value;
+        }
+    }
+
+    /**
+     * 
+     * @param mixed $offset
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->_data[$offset]);
     }
 
     /**
@@ -39,6 +135,6 @@ class Json extends ArrayObject
      */
     public function __toString()
     {
-        return json_encode($this);
+        return json_encode($this->_data);
     }
 }

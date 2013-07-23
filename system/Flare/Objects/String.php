@@ -2,12 +2,14 @@
 
 namespace Flare\Objects;
 
+use Flare\Object;
+
 /**
  * 
  * @author anthony
  * 
  */
-class String
+class String extends Object
 {
     /**
      * 
