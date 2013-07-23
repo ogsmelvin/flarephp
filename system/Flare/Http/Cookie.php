@@ -11,136 +11,19 @@ class Cookie
 {
     /**
      * 
-     * @var string
+     * @var \Flare\Http\Cookie
      */
-    private $_name;
+    private static $_instance;
 
     /**
      * 
-     * @var string
-     */
-    private $_value = '';
-
-    /**
-     * 
-     * @var int
-     */
-    private $_expire = 0;
-
-    /**
-     * 
-     * @var string
-     */
-    private $_domain = '';
-
-    /**
-     * 
-     * @var boolean
-     */
-    private $_httpOnly = false;
-
-    /**
-     * 
-     * @var boolean
-     */
-    private $_secure = false;
-
-    /**
-     * 
-     * @var string
-     */
-    private $_path = '';
-
-    /**
-     * 
-     * @param string $name
-     */
-    public function __construct($name)
-    {
-        $this->_name = (string) $name;
-    }
-
-    /**
-     * 
-     * @param string $value
      * @return \Flare\Http\Cookie
      */
-    public function setValue($value)
+    public static function getInstance()
     {
-        $this->_value = (string) $value;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param int $expire
-     * @return \Flare\Http\Cookie
-     */
-    public function setExpiration($expire)
-    {
-        $this->_expire = (int) $expire;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string $path
-     * @return \Flare\Http\Cookie
-     */
-    public function setPath($path)
-    {
-        $this->_path = $path;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string $domain
-     * @return \Flare\Http\Cookie
-     */
-    public function setDomain($domain)
-    {
-        $this->_domain = $domain;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param boolean $secure
-     * @return \Flare\Http\Cookie
-     */
-    public function setSecure($secure)
-    {
-        $this->_secure = (boolean) $secure;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param boolean $httponly
-     * @return \Flare\Http\Cookie
-     */
-    public function setHttpOnly($httponly)
-    {
-        $this->_httpOnly = (boolean) $httponly;
-        return $this;
-    }
-
-    /**
-     * 
-     * @return \Flare\Http\Cookies
-     */
-    public function save()
-    {
-        setcookie(
-            $this->_name, 
-            $this->_value, 
-            $this->_expire, 
-            $this->_path, 
-            $this->_domain, 
-            $this->_secure, 
-            $this->_httpOnly
-        );
-        return $this;
+        if (!isset(self::$_instance)) {
+            self::$_instance = new self();
+        }
+        return self::$_instance; 
     }
 }

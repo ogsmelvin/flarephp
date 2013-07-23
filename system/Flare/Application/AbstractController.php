@@ -52,6 +52,12 @@ abstract class AbstractController
 
     /**
      * 
+     * @var \Flare\Http\Cookie
+     */
+    public $cookie;
+
+    /**
+     * 
      * @var PDO
      */
     protected $db = null;
@@ -64,6 +70,7 @@ abstract class AbstractController
     public function __construct(Request &$request, Response &$response)
     {
         $this->session = & F::$session;
+        $this->cookie = & F::$cookie;
         $this->config = & F::$config;
         $this->uri = & F::$uri;
         $this->router = & F::$router;

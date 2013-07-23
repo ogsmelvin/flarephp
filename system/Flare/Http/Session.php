@@ -168,6 +168,19 @@ class Session
     /**
      * 
      * @param string $key
+     * @return int
+     */
+    public function getExpiration($key)
+    {
+        if (!isset($_SESSION[$this->_name][self::SETTINGS_KEY][$key]['expiration'])) {
+            return null;
+        }
+        return (int) $_SESSION[$this->_name][self::SETTINGS_KEY][$key]['expiration'];
+    }
+
+    /**
+     * 
+     * @param string $key
      * @return mixed
      */
     public function get($key = null)

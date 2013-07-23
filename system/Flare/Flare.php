@@ -7,6 +7,7 @@ use Flare\Application\Router;
 use Flare\Http\Response;
 use Flare\Http\Request;
 use Flare\Http\Session;
+use Flare\Http\Cookie;
 use Flare\Application;
 use Flare\Http\Uri;
 
@@ -40,6 +41,12 @@ class Flare
      * @var \Flare\Http\Session
      */
     public static $session = null;
+
+    /**
+     *
+     * @var \Flare\Http\Cookie
+     */
+    public static $cookie = null;
 
     /**
      *
@@ -128,6 +135,11 @@ class Flare
         } else {
             show_error("Config[session][namespace] must be set");
         }
+
+        if (self::$config->cookie) {
+            self::$cookie = Cookie::getInstance();
+        }
+
         if (self::$config->router['require_https']) {
             self::$router->secure();
         }

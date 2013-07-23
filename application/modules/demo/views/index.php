@@ -25,7 +25,7 @@
     </div>
     <div class="control-group">
         <div class="controls">
-            <button type="submit" class="btn">Submit</button>
+            <button type="submit" value="submit" name="submit" class="btn">Submit</button>
         </div>
     </div>
 </form>

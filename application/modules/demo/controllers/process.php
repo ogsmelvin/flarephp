@@ -10,7 +10,7 @@ class Process_Controller extends Controller
     public function register_action()
     {
         $photo = $this->getFile('photo');
-        if ($photo) {
+        if ($this->request->post('submit') && $photo) {
             $validation = array(
                 'is_image' => true
             );

@@ -140,9 +140,9 @@ class Request extends ParentRequest
      * @param boolean|null $xss
      * @return mixed
      */
-    public function request($key = null, $xss = null)
+    public function param($key = null, $xss = null)
     {
-        $value = parent::request($key);
+        $value = parent::param($key);
         if ($xss === null) {
             if (F::$config->get('auto_xss_filter') && $value) {
                 return Xss::filter($value);
@@ -181,6 +181,25 @@ class Request extends ParentRequest
     public function server($key = null, $xss = null)
     {
         $value = parent::server($key);
+        if ($xss === null) {
+            if (F::$config->get('auto_xss_filter') && $value) {
+                return Xss::filter($value);
+            }
+        } elseif ($value) {
+            return $xss === true ? Xss::filter($value) : $value;
+        }
+        return $value;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function cookie($key = null, $xss = null)
+    {
+        $value = parent::cookie($key);
         if ($xss === null) {
             if (F::$config->get('auto_xss_filter') && $value) {
                 return Xss::filter($value);

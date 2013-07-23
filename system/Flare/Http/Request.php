@@ -110,7 +110,7 @@ class Request
      * @param mixed $default
      * @return string
      */
-    public function request($key = null, $default = null)
+    public function param($key = null, $default = null)
     {
         if ($key === null) {
             return !empty($_REQUEST) ? $_REQUEST : $default;
@@ -124,7 +124,7 @@ class Request
      * @param mixed $default
      * @return array
      */
-    public function files($key = null, $default = null)
+    public function file($key = null, $default = null)
     {
         if ($key === null) {
             return !empty($_FILES) ? $_FILES : $default;
