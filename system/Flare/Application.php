@@ -2,13 +2,13 @@
 
 namespace Flare;
 
-use Flare\Application\View\ModelManager;
 use Flare\View\Response as ViewResponse;
 use Flare\View\Response\Html;
 use Flare\Application\Data;
 use Flare\View\Javascript;
 use Flare\Http\Response;
 use Flare\Flare as F;
+use Flare\View;
 
 /**
  * 
@@ -141,6 +141,27 @@ class Application
     public function getViewsDirectory()
     {
         return $this->_viewsDirectory;
+    }
+
+    /**
+     * 
+     * @param string $module
+     * @return string
+     */
+    public function getModuleViewsDirectory($module = null)
+    {
+        if (!$module) {
+            if (!F::$router->getRoute()) {
+                show_error('No route found. Predispatch must be executed first.');
+            }
+            $module = F::$router->getRoute()->getModule();
+        }
+
+        $path = $this->_modulesDirectory
+            .$module
+            .'/'
+            .$this->_viewsDirectory;
+        return $path;
     }
 
     /**
@@ -291,15 +312,6 @@ class Application
 
     /**
      * 
-     * @return \Flare\Application\View\ModelManager
-     */
-    public function getViewModelManager()
-    {
-        return ModelManager::getInstance();
-    }
-
-    /**
-     * 
      * @param string $class
      * @return void
      */
@@ -322,7 +334,9 @@ class Application
         if (!$route) {
             show_response(404);
         }
+        
         $this->_controller = $route->getController();
+        View::create()->setIncludePath($this->getModuleViewsDirectory());
         F::$uri->setModuleUrl();
         return $this;
     }
@@ -334,11 +348,11 @@ class Application
     public function dispatch()
     {
         if ($this->_dispatched) {
-            show_error("Already dispatched");
+            show_error('Already dispatched');
         }
 
         if (!$this->_controller) {
-            return;
+            show_error('Controller is not initilized');
         }
 
         $this->_controller->init();
@@ -391,12 +405,7 @@ class Application
             $layout = $this->_layoutsDirectory.$layout.'_layout.php';
         }
 
-        $path = $this->_modulesDirectory
-            .$module
-            .'/'
-            .$this->_viewsDirectory
-            .$path
-            .'.php';
+        $path = $this->getModuleViewsDirectory().$path.'.php';
         if (!file_exists($path)) {
             show_error("{$path} not found");
         }

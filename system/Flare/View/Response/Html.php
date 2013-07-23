@@ -17,12 +17,6 @@ class Html extends Response
      * @var string
      */
     protected $contentType = 'text/html';
-    
-    /**
-     * 
-     * @var array
-     */
-    private $_data;
 
     /**
      * 
@@ -38,9 +32,9 @@ class Html extends Response
 
     /**
      * 
-     * @var \Flare\UI\Javascript
+     * @var \Flare\View
      */
-    public $js;
+    private $_view;
 
     /**
      * 
@@ -48,6 +42,7 @@ class Html extends Response
      */
     public function __construct($path)
     {
+        $this->_view = View::create();
         $this->_contentPath = $path;
     }
 
@@ -59,7 +54,7 @@ class Html extends Response
      */
     public function set($key, $value)
     {
-        $this->_data[$key] = $value;
+        $this->_view->setVar($key, $value);
         return $this;
     }
 
@@ -69,16 +64,8 @@ class Html extends Response
      */
     public function render()
     {
-        $uri = null;
-        $request = null;
-        $data = null;
-        $session = null;
-        $config = null;
-        $view = new View();
-
-        foreach ($this->_data as $key => $value) {
-            ${$key} = $value;
-        }
+        $view = & $this->_view;
+        extract($view->getVars());
 
         ob_start();
         include $this->_contentPath;

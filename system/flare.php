@@ -58,117 +58,6 @@ if (!function_exists('debug')) {
     }
 }
 
-if (!function_exists('html')) {
-    
-    /**
-     * 
-     * @author anthony
-     * @param string $string
-     * @return string
-     */
-    function escape($string)
-    {
-        return \Flare\Security\Xss::filter($string);
-    }
-}
-
-if (!function_exists('render')) {
-
-    /**
-     * 
-     * @author anthony
-     * @param string $path
-     * @param array $data
-     * @return string
-     */
-    function render($path, $data = array())
-    {
-        return \Flare\Flare::getApp()->view($path, $data, false);
-    }
-}
-
-if (!function_exists('view')) {
-
-    /**
-     * 
-     * @author anthony
-     * @param string $viewModel
-     * @return \Flare\Application\View\Model
-     */
-    function view($viewModel)
-    {
-        return \Flare\Flare::getApp()->getViewModelManager();
-    }
-}
-
-$flare_sections = array();
-
-if (!function_exists('section_open')) {
-
-    /**
-     * 
-     * @author anthony
-     * @param string $name
-     * @return void
-     */
-    function section_open($name)
-    {
-        global $flare_sections;
-        $flare_sections[$name] = true;
-        ob_start();
-    }
-}
-
-if (!function_exists('section_close')) {
-
-    /**
-     * 
-     * @author anthony
-     * @param string $name
-     * @return void
-     */
-    function section_close($name)
-    {
-        global $flare_sections;
-        if (!isset($flare_sections[$name])) {
-            show_error("{$name} is not yet open");
-        }
-        $flare_sections[$name] = (string) ob_get_clean();
-    }
-}
-
-if (!function_exists('get_section')) {
-
-    /**
-     * 
-     * @author anthony
-     * @param string $name
-     * @return string
-     */
-    function get_section($name)
-    {
-        global $flare_sections;
-        if (!isset($flare_sections[$name])) {
-            return null;
-        }
-        return $flare_sections[$name];
-    }
-}
-
-if (!function_exists('get_sections')) {
-
-    /**
-     * 
-     * @author anthony
-     * @return array
-     */
-    function get_sections()
-    {
-        global $flare_sections;
-        return $flare_sections;
-    }
-}
-
 if (!function_exists('http_build_url')) {
 
     /**
@@ -283,7 +172,7 @@ if (!function_exists('_flare_show_error')) {
     }
 }
 
-if (!function_exists('flare')) {
+if (!function_exists('with')) {
 
     /**
      * 
@@ -291,7 +180,7 @@ if (!function_exists('flare')) {
      * @param mixed $object
      * @return mixed
      */
-    function flare($object)
+    function with($object)
     {
         return $object;
     }
