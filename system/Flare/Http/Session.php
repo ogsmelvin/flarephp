@@ -19,7 +19,7 @@ class Session
      * 
      * @var string
      */
-    private static $_keySettings = '__Flare_session';
+    const SETTINGS_KEY = '__Flare_session';
 
     /**
      * 
@@ -35,6 +35,7 @@ class Session
 
     /**
      * 
+     * @param string $namespace
      * @param boolean $start
      */
     private function __construct($namespace, $start = false)
@@ -54,7 +55,7 @@ class Session
         session_start();
         if (!isset($_SESSION[$this->_name])) {
             $_SESSION[$this->_name] = array(
-                self::$_keySettings => array()
+                self::SETTINGS_KEY => array()
             );
         }
         $this->_started = true;
@@ -63,6 +64,8 @@ class Session
 
     /**
      * 
+     * @param string $namespace
+     * @param boolean $start
      * @return \Flare\Http\Session
      */
     public static function & getInstance($namespace, $start = false)
@@ -101,13 +104,13 @@ class Session
         if (!$this->_started) {
             show_error("Session must be started first");
         }
-        if (!isset($_SESSION[$this->_name][$key]) || $key === self::$_keySettings) {
+        if (!isset($_SESSION[$this->_name][$key]) || $key === self::SETTINGS_KEY) {
             return null;
-        } elseif (isset($_SESSION[$this->_name][self::$_keySettings][$key])
-            && (time() - $_SESSION[$this->_name][self::$_keySettings][$key]['create_time'] 
-                > $_SESSION[$this->_name][self::$_keySettings][$key]['expiration']))
+        } elseif (isset($_SESSION[$this->_name][self::SETTINGS_KEY][$key])
+            && (time() - $_SESSION[$this->_name][self::SETTINGS_KEY][$key]['create_time'] 
+                > $_SESSION[$this->_name][self::SETTINGS_KEY][$key]['expiration']))
         {
-            unset($_SESSION[$this->_name][$key], $_SESSION[$this->_name][self::$_keySettings][$key]);
+            unset($_SESSION[$this->_name][$key], $_SESSION[$this->_name][self::SETTINGS_KEY][$key]);
             return null;
         }
         return $_SESSION[$this->_name][$key];
@@ -145,15 +148,17 @@ class Session
      * 
      * @param string $key
      * @param int $seconds
-     * @param int $now
+     * @param int|string $now
      * @return \Flare\Http\Session
      */
     public function setExpiration($key, $seconds = 1800, $now = null)
     {
         if (!$now) {
             $now = time();
+        } elseif(is_string($now)) {
+            $now = strtotime($now);
         }
-        $_SESSION[$this->_name][self::$_keySettings][$key] = array(
+        $_SESSION[$this->_name][self::SETTINGS_KEY][$key] = array(
             'expiration' => $seconds,
             'create_time' => $now
         );
@@ -169,7 +174,7 @@ class Session
     {
         if (!$key) {
             $session = $_SESSION[$this->_name];
-            unset($session[self::$_keySettings]);
+            unset($session[self::SETTINGS_KEY]);
             return $session;
         }
         return $this->__get($key);
