@@ -2,9 +2,9 @@
 
 namespace Flare\Db\Sql\Results;
 
+use Flare\Util\Collection as ParentCollection;
 use Flare\View\Pagination;
 use Flare\Objects\Json;
-use \ArrayObject;
 use \PDO;
 
 /**
@@ -12,7 +12,7 @@ use \PDO;
  * @author anthony
  *
  */
-class Collection extends ArrayObject
+class Collection extends ParentCollection
 {
     /**
      *
@@ -73,25 +73,6 @@ class Collection extends ArrayObject
     {
         return $this->_dbRowCount;
     }
-    
-    /**
-     * 
-     * @return mixed
-     */
-    public function last()
-    {
-        return end($this);
-    }
-    
-    /**
-     * 
-     * @return mixed
-     */
-    public function first()
-    {
-        reset($this);
-        return current($this);
-    }
 
     /**
      * 
@@ -148,30 +129,5 @@ class Collection extends ArrayObject
     public function toXMLObject()
     {
         //TODO
-    }
-
-    /**
-     * 
-     * @param callable $callback
-     * @return void
-     */
-    public function each($callback)
-    {
-        if (is_callable($callback)) {
-            foreach ($this as $key => &$row) {
-                $callback($key, $row);
-            }
-        } else {
-            show_response(500, "param must be callable");
-        }
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    public function isEmpty()
-    {
-        return $this->count() ? false : true;
     }
 }

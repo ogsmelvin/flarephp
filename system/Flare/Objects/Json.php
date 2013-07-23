@@ -133,8 +133,17 @@ class Json extends Object implements ArrayAccess, Iterator
      * 
      * @return string
      */
-    public function __toString()
+    public function encode()
     {
         return json_encode($this->_data);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->encode();
     }
 }
