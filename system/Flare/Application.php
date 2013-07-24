@@ -553,7 +553,7 @@ class Application
         }
         F::init(require $this->_appDirectory.'config/config.php');
         $this->setModules(F::$config->modules)
-            ->setConfigDirectory($this->_appDirectory.'config');
+            ->setConfigDirectory($this->_appDirectory.'config')
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
             ->setLayoutsDirectory($this->_appDirectory.'layouts')
