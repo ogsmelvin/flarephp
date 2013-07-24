@@ -117,6 +117,7 @@ class Flare
         if (self::$config->timezone !== null) {
             date_default_timezone_set(self::$config->timezone);
         }
+        
         self::$request = new Request();
         self::$response = new Response();
         self::$uri = new Uri();
@@ -137,7 +138,13 @@ class Flare
         }
 
         if (self::$config->cookie) {
-            self::$cookie = Cookie::getInstance();
+            if (self::$config->cookie['enable_encryption'] && !self::$config->cookie['encryption_key']) {
+                show_error('Config[encryption_key] must be set');
+            }
+            self::$cookie = Cookie::getInstance(
+                self::$config->cookie['enable_encryption'],
+                self::$config->cookie['encryption_key']
+            );
         }
 
         if (self::$config->router['require_https']) {

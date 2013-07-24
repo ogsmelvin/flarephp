@@ -2,6 +2,8 @@
 
 namespace Flare\Http;
 
+use Flare\Security\Crypt;
+
 /**
  * 
  * @author anthony
@@ -15,18 +17,36 @@ class Cookie
      */
     private static $_instance;
 
-    private function __construct() {}
+    /**
+     * 
+     * @var string
+     */
+    private $_encryptionKey = null;
 
     /**
      * 
+     * @param boolean $enableEncryption
+     * @param string $encryptionKey
+     */
+    private function __construct($enableEncryption, $encryptionKey)
+    {
+        if ($enableEncryption) {
+            $this->_encryptionKey = $encryptionKey;
+        }
+    }
+
+    /**
+     * 
+     * @param boolean $enableEncryption
+     * @param string $encryptionKey
      * @return \Flare\Http\Cookie
      */
-    public static function & getInstance()
+    public static function & getInstance($enableEncryption = false, $encryptionKey = null)
     {
         if (!isset(self::$_instance)) {
-            self::$_instance = new self();
+            self::$_instance = new self($enableEncryption, $encryptionKey);
         }
-        return self::$_instance; 
+        return self::$_instance;
     }
 
     /**
@@ -36,8 +56,10 @@ class Cookie
      * @param int $time
      * @return \Flare\Http\Cookie
      */
-    public function set($name, $value, $time = null)
+    public function set($name, $value, $expiry = 0)
     {
+        setcookie($name, $value, $expiry);
+        $_COOKIE[$name] = $value;
         return $this;
     }
 
@@ -50,7 +72,7 @@ class Cookie
     public function __set($name, $value)
     {
         if (is_array($value)) {
-            $this->set($name, $value['value']);
+            $this->set($name, $value['value'], $value['expiry']);
         } else {
             $this->set($name, (string) $value);
         }

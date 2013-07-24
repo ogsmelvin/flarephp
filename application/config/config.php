@@ -57,6 +57,16 @@ $config['session'] = array(
 );
 
 /**
+ * Cookie configuration
+ */
+$config['cookie'] = array(
+    'namespace' => 'flare.dev.demo',
+    'encryption_key' => '',
+    'enable_encryption' => false
+);
+
+
+/**
  * View layout configuration
  */
 $config['layout'] = require 'layout.php';

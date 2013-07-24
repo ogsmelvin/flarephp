@@ -15,7 +15,7 @@ class Collection extends ArrayObject
      * 
      * @param array $content
      */
-    public function __construct(array $content)
+    public function __construct(array $content = array())
     {
         parent::__construct($content);
     }
@@ -23,7 +23,7 @@ class Collection extends ArrayObject
     /**
      * 
      * @param callable $callback
-     * @return void
+     * @return \Flare\Util\Collection
      */
     public function each($callback)
     {
@@ -31,9 +31,14 @@ class Collection extends ArrayObject
             foreach ($this as $key => &$row) {
                 $callback($key, $row);
             }
+        } elseif (is_array($callback) || is_string($callback)) {
+            foreach ($this as $key => &$row) {
+                call_user_func_array($callback, array($key, $row));
+            }
         } else {
             show_error('Each method parameter must be callable');
         }
+        return $this;
     }
 
     /**
@@ -61,5 +66,19 @@ class Collection extends ArrayObject
     public function first()
     {
         return reset($this);
+    }
+
+    /**
+     * 
+     * @param array|ArrayObject $array
+     * @return \Flare\Util\Collection
+     */
+    public function merge($array)
+    {
+        if ($array instanceof ArrayObject) {
+            $array = $array->getArrayCopy();
+        }
+        $this->exchangeArray(array_merge($this->getArrayCopy(), $array));
+        return $this;
     }
 }
