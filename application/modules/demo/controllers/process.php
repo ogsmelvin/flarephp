@@ -2,7 +2,6 @@
 
 namespace Demo\Controllers;
 
-use Demo\Models\Registrants;
 use Demo\Controller;
 
 class Process_Controller extends Controller

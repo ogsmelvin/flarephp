@@ -86,14 +86,6 @@ abstract class AbstractController
                 $this->setHelper($helper);
             }
         }
-
-        // if (!empty($this->config->autoload['services'])) {
-        //     foreach ($this->config->autoload['services'] as $service) {
-        //         if (!$this->getService($service)) {
-        //             show_error("Error initializing service '{$service}'");
-        //         }
-        //     }
-        // }
     }
 
     /**
@@ -253,7 +245,7 @@ abstract class AbstractController
                 }
                 parse_str($parts['query'], $query);
                 $parts['query'] = http_build_query(array_merge($query, $params));
-                if (empty($parts['query'])) {
+                if (!$parts['query']) {
                     unset($parts['query']);
                 }
                 $url = http_build_url($parts);

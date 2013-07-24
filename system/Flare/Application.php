@@ -59,17 +59,17 @@ class Application
      */
     private $_librariesDirectory = null;
 
-    // /**
-    //  * 
-    //  * @var string
-    //  */
-    // private $_servicesDirectory = null;
-
     /**
      * 
      * @var string
      */
     private $_helpersDirectory = null;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_configDirectory = null;
 
     /**
      * 
@@ -201,6 +201,26 @@ class Application
      * @param string $directory
      * @return \Flare\Application
      */
+    public function setConfigDirectory($directory)
+    {
+        $this->_configDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+        return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getConfigDirectory()
+    {
+        return $this->_configDirectory;
+    }
+
+    /**
+     * 
+     * @param string $directory
+     * @return \Flare\Application
+     */
     public function setLayoutsDirectory($directory)
     {
         $this->_layoutsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
@@ -268,26 +288,6 @@ class Application
     {
         return $this->_librariesDirectory;
     }
-
-    // /**
-    //  * 
-    //  * @param string $directory
-    //  * @return \Flare\Application
-    //  */
-    // public function setServicesDirectory($directory)
-    // {
-    //     $this->_servicesDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
-    //     return $this;
-    // }
-
-    // /**
-    //  * 
-    //  * @return string
-    //  */
-    // public function getServicesDirectory()
-    // {
-    //     return $this->_servicesDirectory;
-    // }
 
     /**
      * 
@@ -553,6 +553,7 @@ class Application
         }
         F::init(require $this->_appDirectory.'config/config.php');
         $this->setModules(F::$config->modules)
+            ->setConfigDirectory($this->_appDirectory.'config');
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
             ->setLayoutsDirectory($this->_appDirectory.'layouts')
@@ -561,7 +562,6 @@ class Application
             ->setModelsDirectory('models')
             ->setViewsDirectory('views')
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
-            // ->setServicesDirectory($this->_appDirectory.'services')
             ->predispatch()
             ->dispatch();
     }
