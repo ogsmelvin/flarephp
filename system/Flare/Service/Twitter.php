@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Services;
+namespace Flare\Service;
 
 use Flare\Service;
 
@@ -25,7 +25,7 @@ class Twitter extends Service
      * 
      * @param string|array $query
      * @param string|array $options
-     * @return \Flare\Services\Twitter\SearchResult
+     * @return \Flare\Service\Twitter\SearchResult
      */
     public function search($query, $options = array())
     {

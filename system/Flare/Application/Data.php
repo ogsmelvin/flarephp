@@ -2,7 +2,7 @@
 
 namespace Flare\Application;
 
-use Flare\Objects\Json;
+use Flare\Object\Json;
 
 /**
  * 
@@ -81,7 +81,7 @@ class Data
 
     /**
      * 
-     * @return \Flare\Objects\Json
+     * @return \Flare\Object\Json
      */
     public function toJSONObject()
     {

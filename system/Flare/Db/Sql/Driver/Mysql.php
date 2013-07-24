@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Db\Sql\Drivers;
+namespace Flare\Db\Sql\Driver;
 
 use Flare\Db\Sql\Query\ARQuery;
 use Flare\Db\Sql\Query\Query;

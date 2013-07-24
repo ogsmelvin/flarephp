@@ -1,10 +1,10 @@
 <?php
 
-namespace Flare\Db\Sql\Results;
+namespace Flare\Db\Sql\Result;
 
 use Flare\Util\Collection as ParentCollection;
 use Flare\View\Pagination;
-use Flare\Objects\Json;
+use Flare\Object\Json;
 use \PDO;
 
 /**
@@ -48,7 +48,7 @@ class Collection extends ParentCollection
     /**
      * 
      * @param \Flare\View\Pagination $pagination
-     * @return \Flare\Db\Sql\Results\Collection
+     * @return \Flare\Db\Sql\Result\Collection
      */
     public function setPagination(Pagination $pagination)
     {
@@ -89,7 +89,7 @@ class Collection extends ParentCollection
 
     /**
      * 
-     * @return \Flare\Objects\JSON
+     * @return \Flare\Object\JSON
      */
     public function toJSONObject()
     {
@@ -124,7 +124,7 @@ class Collection extends ParentCollection
 
     /**
      * 
-     * @return \Flare\Objects\Xml
+     * @return \Flare\Object\Xml
      */
     public function toXMLObject()
     {

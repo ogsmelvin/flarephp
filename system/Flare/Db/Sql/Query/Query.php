@@ -2,7 +2,7 @@
 
 namespace Flare\Db\Sql\Query;
 
-use Flare\Objects\Json;
+use Flare\Object\Json;
 use \PDOException;
 use \PDO;
 
@@ -255,7 +255,7 @@ class Query
 
     /**
      * 
-     * @return \Lazarus_Json
+     * @return \Flare\Object\Json
      */
     public function getJSONObject()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Services;
+namespace Flare\Service;
 
 use Flare\Service;
 

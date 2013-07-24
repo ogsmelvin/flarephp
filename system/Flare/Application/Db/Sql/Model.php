@@ -160,7 +160,7 @@ class Model extends ParentModel
      * 
      * @param int $limit
      * @param int $page
-     * @return \Flare\Db\Sql\Results\Collection
+     * @return \Flare\Db\Sql\Result\Collection
      */
     public static function getAll($limit = null, $page = null)
     {

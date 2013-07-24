@@ -1,8 +1,8 @@
 <?php
 
-namespace Flare\Services;
+namespace Flare\Service;
 
-use Flare\Objects\Json;
+use Flare\Object\Json;
 use Flare\Flare as F;
 use Flare\Service;
 
@@ -224,7 +224,7 @@ class Facebook extends Service
     /**
      * 
      * @param string $id
-     * @return \Flare\Objects\Json
+     * @return \Flare\Object\Json
      */
     public function getProfile($id = 'me')
     {
@@ -244,7 +244,7 @@ class Facebook extends Service
      * 
      * @param string $id
      * @param array $fields
-     * @return \Flare\Objects\Json
+     * @return \Flare\Object\Json
      */
     public function getUserDetails($id = 'me', $fields = array())
     {
@@ -272,7 +272,7 @@ class Facebook extends Service
     /**
      * 
      * @param string $fql
-     * @return \Flare\Objects\Json
+     * @return \Flare\Object\Json
      */
     public function fql($fql)
     {
@@ -289,7 +289,7 @@ class Facebook extends Service
      * @param int $limit
      * @param int $page
      * @param string $order
-     * @return \Flare\Objects\Json
+     * @return \Flare\Object\Json
      */
     public function getFriends($fields = array(), $limit = 0, $page = 0, $order = null)
     {
@@ -340,7 +340,7 @@ class Facebook extends Service
     /**
      * 
      * @param string $token
-     * @return \Flare\Services\Facebook
+     * @return \Flare\Service\Facebook
      */
     public function setAccessToken($token = null)
     {
@@ -384,7 +384,7 @@ class Facebook extends Service
     /**
      * 
      * @param boolean $upload
-     * @return \Flare\Services\Facebook
+     * @return \Flare\Service\Facebook
      */
     public function setFileUpload($upload)
     {
@@ -395,7 +395,7 @@ class Facebook extends Service
     /**
      * 
      * @param string $id
-     * @return \Flare\Services\Facebook
+     * @return \Flare\Service\Facebook
      */
     public function setAppId($id)
     {
@@ -406,7 +406,7 @@ class Facebook extends Service
     /**
      * 
      * @param string $secret
-     * @return \Flare\Services\Facebook
+     * @return \Flare\Service\Facebook
      */
     public function setAppSecret($secret)
     {
@@ -456,7 +456,7 @@ class Facebook extends Service
     /**
      * 
      * @param string $userId
-     * @return \Flare\Services\Facebook
+     * @return \Flare\Service\Facebook
      */
     public function setUser($userId)
     {

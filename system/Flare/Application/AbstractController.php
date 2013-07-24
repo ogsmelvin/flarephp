@@ -3,6 +3,7 @@
 namespace Flare\Application;
 
 use Flare\Application\Http\Request;
+use Flare\Application\Db;
 use Flare\Http\Response;
 use Flare\Flare as F;
 use Flare\Http\File;
@@ -110,23 +111,12 @@ abstract class AbstractController
 
     /**
      * 
-     * @param string $service
-     * @param array $config
-     * @return \Flare\Service
-     */
-    public function getService($service, $config = array())
-    {
-        return F::service($service, $config);
-    }
-
-    /**
-     * 
      * @param string $key
      * @return \Flare\Application\AbstractController
      */
     public function setDatabase($key = 'default')
     {
-        $this->db = & F::db($key);
+        $this->db = & Db::getConnection($key);
         return $this;
     }
 
@@ -138,7 +128,7 @@ abstract class AbstractController
     public function getDatabase($key = null)
     {
         if ($key) {
-            return F::db($key);
+            return Db::getConnection($key);
         }
         return $this->db ? $this->db : null;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Db\Sql\Results;
+namespace Flare\Db\Sql\Result;
 
 use Flare\Db\Sql\Query\ARQuery;
 use Flare\Security\Xss;
@@ -59,7 +59,7 @@ class Row
     /**
      * 
      * @param string $table
-     * @return \Flare\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Result\Row
      */
     public function setTable($table)
     {
@@ -70,7 +70,7 @@ class Row
     /**
      * 
      * @param string $key
-     * @return \Flare\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Result\Row
      */
     public function setPrimaryKey($key)
     {
@@ -90,7 +90,7 @@ class Row
     /**
      * 
      * @param string|int $id
-     * @return \Flare\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Result\Row
      */
     public function setId($id)
     {
@@ -101,7 +101,7 @@ class Row
     /**
      * 
      * @param array $data
-     * @return \Flare\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Result\Row
      */
     public function setData(array $data)
     {

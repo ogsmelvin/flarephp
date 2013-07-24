@@ -2,10 +2,10 @@
 
 namespace Flare\Db\Sql\Query;
 
-use Flare\Db\Sql\Results\Collection;
-use Flare\Db\Sql\Results\Row;
+use Flare\Db\Sql\Result\Collection;
+use Flare\Db\Sql\Result\Row;
 use Flare\View\Pagination;
-use Flare\Objects\Json;
+use Flare\Object\Json;
 use \PDOException;
 use \PDOStatement;
 use \Exception;
@@ -632,7 +632,7 @@ class ARQuery
 
     /**
      *
-     * @return \Flare\Db\Sql\Results\Collection
+     * @return \Flare\Db\Sql\Result\Collection
      */
     public function getCollection()
     {
@@ -953,7 +953,7 @@ class ARQuery
 
     /**
      *
-     * @return \Flare\Db\Sql\Results\Row
+     * @return \Flare\Db\Sql\Result\Row
      */
     public function pull()
     {

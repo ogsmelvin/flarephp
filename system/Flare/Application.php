@@ -455,7 +455,7 @@ class Application
      * @param string $path
      * @param array $data
      * @param string|boolean $layout
-     * @return \Flare\Objects\Html
+     * @return \Flare\Object\Html
      */
     public function view($path, $data = null, $layout = null)
     {
@@ -524,8 +524,8 @@ class Application
     public function helper($helper)
     {
         $helper = ucwords(strtolower($helper));
-        if (file_exists(FLARE_DIR.'Flare/Helpers/'.$helper.'.php')) {
-            require_once FLARE_DIR.'Flare/Helpers/'.$helper.'.php';
+        if (file_exists(FLARE_DIR.'Flare/Helper/'.$helper.'.php')) {
+            require_once FLARE_DIR.'Flare/Helper/'.$helper.'.php';
         } elseif (file_exists($this->_helpersDirectory.$helper.'.php')) {
             require_once $this->_helpersDirectory.$helper.'.php';
         }

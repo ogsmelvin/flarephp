@@ -4,7 +4,7 @@ namespace Flare\Http;
 
 use Flare\Security\File as FileSec;
 use Flare\Security\Hash;
-use Flare\Objects\Image;
+use Flare\Object\Image;
 use Flare\Http\Files;
 
 /**

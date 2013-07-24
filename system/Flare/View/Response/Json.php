@@ -2,7 +2,7 @@
 
 namespace Flare\View\Response;
 
-use Flare\Objects\Json as JsonObject;
+use Flare\Object\Json as JsonObject;
 use Flare\View\Response;
 
 /**
@@ -20,13 +20,13 @@ class Json extends Response
 
     /**
      * 
-     * @var \Flare\Objects\Json
+     * @var \Flare\Object\Json
      */
     private $json;
 
     /**
      * 
-     * @param \Flare\Objects\Json|array|string $content
+     * @param \Flare\Object\Json|array|string $content
      * @param boolean $is_url
      */
     public function __construct($content)
