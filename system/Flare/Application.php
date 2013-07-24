@@ -57,6 +57,18 @@ class Application
      * 
      * @var string
      */
+    private $_librariesDirectory = null;
+
+    // /**
+    //  * 
+    //  * @var string
+    //  */
+    // private $_servicesDirectory = null;
+
+    /**
+     * 
+     * @var string
+     */
     private $_helpersDirectory = null;
 
     /**
@@ -223,6 +235,59 @@ class Application
     {
         return $this->_helpersDirectory;
     }
+
+    /**
+     * 
+     * @param string $directory
+     * @return \Flare\Application
+     */
+    public function setLibrariesDirectory($directory)
+    {
+        if (!$this->_librariesDirectory) {
+            spl_autoload_register(array($this, 'autoloadLibrary'));
+        }
+        $this->_librariesDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $class
+     * @return void
+     */
+    public function autoloadLibrary($class)
+    {
+        require $this->_librariesDirectory.str_replace("\\", "/", ltrim($class, "\\")).'.php';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getLibrariesDirectory()
+    {
+        return $this->_librariesDirectory;
+    }
+
+    // /**
+    //  * 
+    //  * @param string $directory
+    //  * @return \Flare\Application
+    //  */
+    // public function setServicesDirectory($directory)
+    // {
+    //     $this->_servicesDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+    //     return $this;
+    // }
+
+    // /**
+    //  * 
+    //  * @return string
+    //  */
+    // public function getServicesDirectory()
+    // {
+    //     return $this->_servicesDirectory;
+    // }
 
     /**
      * 
@@ -495,6 +560,8 @@ class Application
             ->setControllersDirectory('controllers')
             ->setModelsDirectory('models')
             ->setViewsDirectory('views')
+            ->setLibrariesDirectory($this->_appDirectory.'libraries')
+            // ->setServicesDirectory($this->_appDirectory.'services')
             ->predispatch()
             ->dispatch();
     }

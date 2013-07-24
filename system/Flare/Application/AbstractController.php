@@ -87,21 +87,13 @@ abstract class AbstractController
             }
         }
 
-        if (!empty($this->config->autoload['services'])) {
-            foreach ($this->config->autoload['services'] as $service) {
-                if (!$this->getService($service)) {
-                    show_error("Error initializing service '{$service}'");
-                }
-            }
-        }
-
-        if (!empty($this->config->autoload['cache'])) {
-            foreach ($this->config->autoload['cache'] as $cache) {
-                if (!$this->getCache($cache)) {
-                    show_error("Error initializing cache '{$cache}'");
-                }
-            }
-        }
+        // if (!empty($this->config->autoload['services'])) {
+        //     foreach ($this->config->autoload['services'] as $service) {
+        //         if (!$this->getService($service)) {
+        //             show_error("Error initializing service '{$service}'");
+        //         }
+        //     }
+        // }
     }
 
     /**

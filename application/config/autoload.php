@@ -18,21 +18,7 @@ $autoload = array(
      * Keys are the same with the class names
      * These keys are case sensitive
      */
-    'helpers' => array(),
-
-    /**
-     * Api Services Autoload
-     * Keys are the same with the class names
-     * These keys are case sensitive
-     */
-    'services' => array(),
-
-    /**
-     * Cache engines Autoload
-     * Keys are the same with the class names
-     * These keys are case sensitive
-     */
-    'cache' => array()
+    'helpers' => array()
 );
 
 /**
