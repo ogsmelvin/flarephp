@@ -5,13 +5,14 @@ namespace Flare;
 use Flare\Application\Registry;
 use Flare\Http\Client\Curl;
 use Flare\Flare as F;
+use Flare\Singleton;
 
 /**
  * 
  * @author anthony
  * 
  */
-abstract class Service
+abstract class Service implements Singleton
 {
     /**
      * 
