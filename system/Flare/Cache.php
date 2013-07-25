@@ -38,7 +38,7 @@ abstract class Cache
         if (empty(static::$engine)) {
             show_error('Cache engine name must be defined');
         }
-        $registry = Registry::getInstance(Registry::CACHE_ENGINES_NAMESPACE);
+        $registry = Registry::get(Registry::CACHE_ENGINES_NAMESPACE);
         if (!$registry->has(static::$engine)) {
             if (!$params) {
                 $key = basename(static::$engine);
@@ -49,7 +49,7 @@ abstract class Cache
             }
             $registry->add(static::$engine, new static($params));
         }
-        return $registry->get(static::$engine);
+        return $registry->fetch(static::$engine);
     }
 
     /**

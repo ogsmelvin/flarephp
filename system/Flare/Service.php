@@ -39,7 +39,7 @@ abstract class Service
         if (empty(static::$service)) {
             show_error('Service name must be defined');
         }
-        $registry = Registry::getInstance(Registry::SERVICES_NAMESPACE);
+        $registry = Registry::get(Registry::SERVICES_NAMESPACE);
         if (!$registry->has(static::$service)) {
             if (!$params) {
                 $key = basename(static::$service);
@@ -50,7 +50,7 @@ abstract class Service
             }
             $registry->add(static::$service, new static($params));
         }
-        return $registry->get(static::$service);
+        return $registry->fetch(static::$service);
     }
 
     /**

@@ -140,11 +140,11 @@ class Model extends ParentModel
         if (empty(static::$table)) {
             show_error('Table must be set');
         }
-        $registry = Registry::getInstance(Registry::MODELS_NAMESPACE);
+        $registry = Registry::get(Registry::MODELS_NAMESPACE);
         if (!$registry->has(static::$table)) {
             $registry->add(static::$table, new static);
         }
-        return $registry->get(static::$table);
+        return $registry->fetch(static::$table);
     }
 
     /**

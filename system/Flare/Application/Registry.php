@@ -49,9 +49,30 @@ class Registry
      * 
      * @param string $namespace
      */
-    private function __construct($namespace)
+    private function __construct($namespace, array $content = array())
     {
         $this->_namespace = $namespace;
+        if ($content) {
+            foreach ($content as $key => $value) {
+                $this->add($key, $value);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param string $namespace
+     * @param array $content
+     * @return \Flare\Application\Registry
+     */
+    public static function create($namespace, array $content = array())
+    {
+        if (!isset(self::$_registry[$namespace])) {
+            self::$_registry[$namespace] = new self($namespace, $content);
+        } else {
+            show_error('Namespace is already created');
+        }
+        return self::$_registry[$namespace];
     }
 
     /**
@@ -59,7 +80,7 @@ class Registry
      * @param string $namespace
      * @return \Flare\Application\Registry
      */
-    public static function getInstance($namespace)
+    public static function get($namespace)
     {
         if (!isset(self::$_registry[$namespace])) {
             self::$_registry[$namespace] = new self($namespace);
@@ -84,7 +105,7 @@ class Registry
      * @param string $name
      * @return \Flare\Service|null
      */
-    public function get($name)
+    public function fetch($name)
     {
         return isset($this->_storage[$name]) ? $this->_storage[$name] : null;
     }

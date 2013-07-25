@@ -260,7 +260,7 @@ class Facebook extends Service
         if (!$fields) {
             $fields = array('uid', 'first_name', 'last_name', 'profile_url');
         }
-        $fql = "SELECT ".implode(',', $fields)." FROM user WHERE uid = ".$id;
+        $fql = 'SELECT '.implode(',', $fields).' FROM user WHERE uid = '.$id;
         $data = $this->curl
             ->setUrl(self::API_HOST.'fql')
             ->setParam('access_token', $this->getAccessToken())
@@ -302,14 +302,14 @@ class Facebook extends Service
         if (!$fields) {
             $fields = array('uid', 'first_name', 'last_name', 'profile_url');
         }
-        $fql = "SELECT ".implode(',', $fields)." FROM user "
-            ."WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = ".$this->getUser().")";
+        $fql = 'SELECT '.implode(',', $fields).' FROM user '
+            .'WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = '.$this->getUser().')';
         if ($limit) {
             $page = (int) ($page <= 1 || !$page ? 0 : ($page - 1));
-            $fql .= " LIMIT ".($page * $limit).",".(int) $limit;
+            $fql .= ' LIMIT '.($page * $limit).','.(int) $limit;
         }
         if ($order) {
-            $fql .= " ORDER BY ".(string) $order;
+            $fql .= ' ORDER BY '.(string) $order;
         }
         $data = $this->curl
             ->setUrl(self::API_HOST.'fql')

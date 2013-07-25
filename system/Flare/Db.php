@@ -24,7 +24,6 @@ class Db
         $driver = strtolower($driver);
         $dns = $driver.':host='.$host.';dbname='.$dbname;
         $pdo = "\\Flare\\Db\\Sql\\Driver\\".ucwords($driver);
-        $db = new $pdo($dns, $username, $password, $options);
-        return $db;
+        return new $pdo($dns, $username, $password, $options);
     }
 }
