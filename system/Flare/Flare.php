@@ -2,12 +2,12 @@
 
 namespace Flare;
 
+use Flare\Http\Cookie\Jar as CookieJar;
 use Flare\Application\Config;
 use Flare\Application\Router;
 use Flare\Http\Response;
 use Flare\Http\Request;
 use Flare\Http\Session;
-use Flare\Http\Cookie;
 use Flare\Application;
 use Flare\Http\Uri;
 
@@ -90,14 +90,15 @@ class Flare
         }
 
         self::$config = Config::load($config_file);
-        if (self::$config->time_limit !== null) {
-            set_time_limit(self::$config->time_limit);
+        $conf = & self::$config;
+        if ($conf->time_limit !== null) {
+            set_time_limit($conf->time_limit);
         }
-        if (self::$config->memory_limit !== null) {
-            ini_set('memory_limit', self::$config->memory_limit);
+        if ($conf->memory_limit !== null) {
+            ini_set('memory_limit', $conf->memory_limit);
         }
-        if (self::$config->timezone !== null) {
-            date_default_timezone_set(self::$config->timezone);
+        if ($conf->timezone !== null) {
+            date_default_timezone_set($conf->timezone);
         }
         
         self::$request = new Request();
@@ -105,34 +106,36 @@ class Flare
         self::$uri = new Uri();
         
         $routes = array();
-        if (self::$config->router['routes']) {
-            $routes = self::$config->router['routes'];
+        if ($conf->router['routes']) {
+            $routes = $conf->router['routes'];
         }
         self::$router = new Router($routes);
 
-        if (self::$config->session['namespace']) {
+        if ($conf->session['namespace']) {
             self::$session = Session::getInstance(
-                self::$config->session['namespace'],
-                self::$config->session['auto_start']
+                $conf->session['namespace'],
+                $conf->session['auto_start']
             );
         } else {
             show_error("Config[session][namespace] must be set");
         }
 
-        if (self::$config->cookie) {
-            if (self::$config->cookie['enable_encryption'] && !self::$config->cookie['encryption_key']) {
+        if ($conf->cookie['namespace']) {
+            if ($conf->cookie['enable_encryption'] && !$conf->cookie['encryption_key']) {
                 show_error('Config[encryption_key] must be set');
             }
-            self::$cookie = Cookie::getInstance(
-                self::$config->cookie['enable_encryption'],
-                self::$config->cookie['encryption_key']
+            self::$cookie = CookieJar::create(
+                $conf->cookie['namespace'],
+                $conf->cookie['enable_encryption'] ? $conf->cookie['encryption_key'] : false
             );
+        } else {
+            show_error("Config[cookie][namespace] must be set");
         }
 
-        if (self::$config->router['require_https']) {
+        if ($conf->router['require_https']) {
             self::$router->secure();
         }
-        if (self::$config->auto_compress && !@ini_get('zlib.output_compression')
+        if ($conf->auto_compress && !@ini_get('zlib.output_compression')
             && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
             && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
         {
@@ -140,7 +143,7 @@ class Flare
                 show_response(500, 'output compression failed');
             }
         }
-        
+
         self::$_init = true;
     }
     

@@ -2,8 +2,6 @@
 
 namespace Flare\Http;
 
-use Flare\Security\Crypt;
-
 /**
  * 
  * @author anthony
@@ -13,91 +11,58 @@ class Cookie
 {
     /**
      * 
-     * @var \Flare\Http\Cookie
+     * @var string
      */
-    private static $_instance;
+    public $name;
 
     /**
      * 
      * @var string
      */
-    private $_encryptionKey = null;
+    public $path;
 
     /**
      * 
-     * @param boolean $enableEncryption
-     * @param string $encryptionKey
+     * @var string
      */
-    private function __construct($enableEncryption, $encryptionKey)
-    {
-        if ($enableEncryption) {
-            $this->_encryptionKey = $encryptionKey;
-        }
-    }
+    public $value;
 
     /**
      * 
-     * @param boolean $enableEncryption
-     * @param string $encryptionKey
-     * @return \Flare\Http\Cookie
+     * @var boolean
      */
-    public static function & getInstance($enableEncryption = false, $encryptionKey = null)
-    {
-        if (!isset(self::$_instance)) {
-            self::$_instance = new self($enableEncryption, $encryptionKey);
-        }
-        return self::$_instance;
-    }
+    public $secure;
 
     /**
      * 
-     * @param string $name
-     * @param mixed $value
-     * @param int $time
-     * @return \Flare\Http\Cookie
+     * @var string
      */
-    public function set($name, $value, $expiry = 0)
-    {
-        setcookie($name, $value, $expiry);
-        $_COOKIE[$name] = $value;
-        return $this;
-    }
+    public $domain;
+
+    /**
+     * 
+     * @var boolean
+     */
+    public $httpOnly;
 
     /**
      * 
      * @param string $name
-     * @param mixed $value
-     * @return void
+     * @param string $value
+     * @param int $expiration
+     * @param boolean $secure
+     * @param boolean $httponly
+     * @param string $path
+     * @param string $domain
      */
-    public function __set($name, $value)
+    public function __construct($name, $value, $expiration = 0, $secure = false, $httponly = false, $path = '/', $domain = null)
     {
-        if (is_array($value)) {
-            $this->set($name, $value['value'], $value['expiry']);
-        } else {
-            $this->set($name, (string) $value);
-        }
-    }
-
-    /**
-     * 
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        return $this->get($name);
-    }
-
-    /**
-     * 
-     * @param string $name
-     * @return mixed
-     */
-    public function get($name, $xss = null)
-    {
-        if (!isset($_COOKIE[$name])) {
-            return null;
-        }
-        return $_COOKIE[$name];
+        $this->name = $name;
+        $this->value = $value;
+        $this->expiration = $expiration;
+        $this->secure = $secure;
+        $this->httpOnly = $httponly;
+        $this->path = $path;
+        $this->domain = $domain;
     }
 }

@@ -46,25 +46,24 @@ $config['default_content_type'] = 'text/html';
 /**
  * Allow override of config in controller
  */
-$config['allow_override'] = true;
+$config['allow_override'] = false;
 
 /**
  * Session configuration
  */
 $config['session'] = array(
     'auto_start' => true,
-    'namespace' => 'flare.dev.demo'
+    'namespace' => 'flare.dev.demo.session'
 );
 
 /**
  * Cookie configuration
  */
 $config['cookie'] = array(
-    'namespace' => 'flare.dev.demo',
-    'encryption_key' => '',
-    'enable_encryption' => false
+    'namespace' => 'flare.dev.demo.cookie',
+    'enable_encryption' => false,
+    'encryption_key' => ''
 );
-
 
 /**
  * View layout configuration

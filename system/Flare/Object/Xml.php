@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Objects;
+namespace Flare\Object;
 
 use Flare\Object;
 
