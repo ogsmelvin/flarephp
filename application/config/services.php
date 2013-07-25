@@ -9,7 +9,7 @@
 $services = array(
 
     /**
-     * Flare\Services\Facebook settings
+     * Flare\Service\Facebook settings
      */
     'Facebook'  => array(
         'app_id' => '',
@@ -18,12 +18,20 @@ $services = array(
     ),
 
     /**
-     * Flare\Services\OneWaySMS settings
+     * Flare\Service\OneWaySMS settings
      */
     'OneWaySMS' => array(
         'username' => '',
         'password' => '',
         'host' => ''
+    ),
+
+    /**
+     * Flare\Service\Twitter settings
+     */
+    'Twitter' => array(
+        'consumer_key' => '',
+        'consumer_secret' => ''
     )
 );
 

@@ -2,6 +2,8 @@
 
 namespace Demo\Controllers;
 
+use Flare\Service\Twitter;
+use Flare\Service\Facebook;
 use Demo\Models\Users;
 use Demo\Controller;
 

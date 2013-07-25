@@ -3,6 +3,7 @@
 namespace Flare\Application\Db\Sql;
 
 use Flare\Application\Model as ParentModel;
+use Flare\Application\Registry;
 use Flare\Flare as F;
 
 /**
@@ -138,10 +139,12 @@ class Model extends ParentModel
     {
         if (empty(static::$table)) {
             show_error('Table must be set');
-        } elseif (!isset(self::$_instances[static::$table])) {
-            self::$_instances[static::$table] = new static;
         }
-        return self::$_instances[static::$table];
+        $registry = Registry::getInstance(Registry::MODELS_NAMESPACE);
+        if (!$registry->has(static::$table)) {
+            $registry->add(static::$table, new static);
+        }
+        return $registry->get(static::$table);
     }
 
     /**

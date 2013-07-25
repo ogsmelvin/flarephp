@@ -17,6 +17,12 @@ class Facebook extends Service
      * 
      * @var string
      */
+    protected static $service = __CLASS__;
+
+    /**
+     * 
+     * @var string
+     */
     const API_HOST = 'https://graph.facebook.com/';
 
     /**
@@ -69,9 +75,9 @@ class Facebook extends Service
      */
     protected function init(array $params)
     {
-        $this->setAppId($params['appId']);
-        $this->setAppSecret($params['appSecret']);
-        $this->setFileUpload($params['fileUpload']);
+        $this->setAppId($params['app_id']);
+        $this->setAppSecret($params['app_secret']);
+        $this->setFileUpload($params['file_upload']);
         $this->setAccessToken();
     }
 
@@ -371,7 +377,7 @@ class Facebook extends Service
             F::$session->set('fb_'.$this->_appId.'_token', $params['access_token']);
         }
 
-        $s_request = F::$request->request('signed_request');
+        $s_request = F::$request->param('signed_request');
         if (!$s_request) {
             $s_request = F::$session->get('fb_'.$this->_appId.'_signed_request');
         } else {
