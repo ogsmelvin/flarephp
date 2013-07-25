@@ -23,6 +23,12 @@ class Registry
 
     /**
      * 
+     * @var string
+     */
+    const CACHE_ENGINES_NAMESPACE = '__Flare_Cache';
+
+    /**
+     * 
      * @var array
      */
     private static $_registry = array();

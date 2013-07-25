@@ -99,7 +99,7 @@ $config['services'] = require 'services.php';
 /**
  * Cache engines configuration
  */
-$config['cache'] = require 'cache.php';
+$config['cache_engines'] = require 'cache_engines.php';
 
 /**
  *

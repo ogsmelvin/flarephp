@@ -4,7 +4,7 @@
  * 
  * @var array
  */
-$cache = array(
+$cache_engines = array(
 
     /**
      * APC Configuration
@@ -14,7 +14,10 @@ $cache = array(
     /**
      * Memcache Configuration
      */
-    'Memcache' => array(),
+    'Memcache' => array(
+        'host' => 'localhost',
+        'port' => 1121
+    ),
 
     /**
      * Memcached Configuration
@@ -26,4 +29,4 @@ $cache = array(
  * 
  * @return array
  */
-return $cache;
+return $cache_engines;

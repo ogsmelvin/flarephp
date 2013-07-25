@@ -44,7 +44,7 @@ abstract class Service
             if (!$params) {
                 $key = basename(static::$service);
                 if (!isset(F::$config->services[$key])) {
-                    show_error("Service '{$key}' config is defined");
+                    show_error("Service '{$key}' config is not defined");
                 }
                 $params = F::$config->services[$key];
             }
