@@ -47,6 +47,12 @@ class Cookie
 
     /**
      * 
+     * @var int
+     */
+    public $expiration;
+
+    /**
+     * 
      * @param string $name
      * @param string $value
      * @param int $expiration
@@ -64,5 +70,26 @@ class Cookie
         $this->httpOnly = $httponly;
         $this->path = $path;
         $this->domain = $domain;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        show_error("Undefined cookie attribute '{$key}'");
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return void
+     */
+    public function __get($key)
+    {
+        show_error("Undefined cookie attribute '{$key}'");
     }
 }
