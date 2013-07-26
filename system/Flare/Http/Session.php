@@ -68,7 +68,7 @@ class Session
      * @param boolean $start
      * @return \Flare\Http\Session
      */
-    public static function & getInstance($namespace, $start = false)
+    public static function create($namespace, $start = false)
     {
         if (!self::$_instance) {
             self::$_instance = new self($namespace, $start);

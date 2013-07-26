@@ -3,6 +3,7 @@
 namespace Flare\Application;
 
 use Flare\Application\Router\Route\Action;
+use Flare\Application\Http\Response;
 use Flare\Application\Http\Request;
 use Flare\Application\Router\Route;
 use Flare\Flare as F;
@@ -162,7 +163,7 @@ class Router
         $controller = ucwords($request->getModule())."\\Controllers\\".$request->getControllerClassName();
         $route = new Route();
         $route->setModule($request->getModule());
-        $route->setController(new $controller($request, F::$response));
+        $route->setController(new $controller($request, new Response()));
         $route->setAction(new Action($route->getController(), $request->getActionMethodName()));
         if ($params) {
             $route->setActionParams($params);

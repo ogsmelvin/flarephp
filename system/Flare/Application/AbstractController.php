@@ -2,9 +2,9 @@
 
 namespace Flare\Application;
 
+use Flare\Application\Http\Response;
 use Flare\Application\Http\Request;
 use Flare\Application\Db;
-use Flare\Http\Response;
 use Flare\Flare as F;
 use Flare\Http\File;
 
@@ -116,7 +116,7 @@ abstract class AbstractController
      */
     public function setDatabase($key = 'default')
     {
-        $this->db = & Db::getConnection($key);
+        $this->db = Db::getConnection($key);
         return $this;
     }
 
@@ -141,24 +141,6 @@ abstract class AbstractController
     public function setHelper($helper)
     {
         F::getApp()->helper($helper);
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string $key
-     * @return \Flare\Application\AbstractController
-     */
-    public function setNoSql($key)
-    {
-        $tmpKey = strtolower($key);
-        if (!isset($this->{$tmpKey})) {
-            $ns = & F::ns($key);
-            if (!$ns) {
-                show_error("Initialize nosql '{$key}' failed");
-            }
-            $this->{$tmpKey} = & $ns;
-        }
         return $this;
     }
 

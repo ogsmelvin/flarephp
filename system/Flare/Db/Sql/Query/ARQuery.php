@@ -972,7 +972,7 @@ class ARQuery
      *
      * @return \PDO
      */
-    public function & getConnection()
+    public function getConnection()
     {
         return $this->_conn;
     }

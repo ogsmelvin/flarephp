@@ -2,12 +2,12 @@
 
 namespace Flare;
 
-use Flare\Http\Cookie\Jar as CookieJar;
 use Flare\Application\Config;
 use Flare\Application\Router;
 use Flare\Http\Response;
 use Flare\Http\Request;
 use Flare\Http\Session;
+use Flare\Http\Cookie;
 use Flare\Application;
 use Flare\Http\Uri;
 
@@ -112,7 +112,7 @@ class Flare
         self::$router = new Router($routes);
 
         if ($conf->session['namespace']) {
-            self::$session = Session::getInstance(
+            self::$session = Session::create(
                 $conf->session['namespace'],
                 $conf->session['auto_start']
             );
@@ -124,7 +124,7 @@ class Flare
             if ($conf->cookie['enable_encryption'] && !$conf->cookie['encryption_key']) {
                 show_error('Config[encryption_key] must be set');
             }
-            self::$cookie = CookieJar::create(
+            self::$cookie = Cookie::create(
                 $conf->cookie['namespace'],
                 $conf->cookie['enable_encryption'] ? $conf->cookie['encryption_key'] : false
             );

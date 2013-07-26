@@ -4,14 +4,13 @@ namespace Flare;
 
 use Flare\Application\Registry;
 use Flare\Flare as F;
-use Flare\Singleton;
 
 /**
  * 
  * @author anthony
  * 
  */
-abstract class Cache implements Singleton
+abstract class Cache
 {
     /**
      * 

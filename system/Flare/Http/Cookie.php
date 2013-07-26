@@ -2,6 +2,9 @@
 
 namespace Flare\Http;
 
+use Flare\Security\Crypt;
+use Flare\Http\Cookie;
+
 /**
  * 
  * @author anthony
@@ -11,85 +14,96 @@ class Cookie
 {
     /**
      * 
-     * @var string
+     * @var \Flare\Http\Cookie\Jar
      */
-    public $name;
+    private static $_instance;
 
     /**
      * 
      * @var string
      */
-    public $path;
+    private $_encryptionKey = null;
 
     /**
      * 
      * @var string
      */
-    public $value;
+    private $_namespace;
 
     /**
      * 
-     * @var boolean
+     * @var array
      */
-    public $secure;
+    private $_cookies;
 
     /**
      * 
-     * @var string
+     * @var array
      */
-    public $domain;
-
-    /**
-     * 
-     * @var boolean
-     */
-    public $httpOnly;
-
-    /**
-     * 
-     * @var int
-     */
-    public $expiration;
+    private $_info;
 
     /**
      * 
      * @param string $name
-     * @param string $value
-     * @param int $expiration
-     * @param boolean $secure
-     * @param boolean $httponly
-     * @param string $path
-     * @param string $domain
+     * @param string $encryptionKey
      */
-    public function __construct($name, $value, $expiration = 0, $secure = false, $httponly = false, $path = '/', $domain = null)
+    private function __construct($name, $encryptionKey = null)
     {
-        $this->name = $name;
-        $this->value = $value;
-        $this->expiration = $expiration;
-        $this->secure = $secure;
-        $this->httpOnly = $httponly;
-        $this->path = $path;
-        $this->domain = $domain;
+        $this->_namespace = $name;
+        if ($encryptionKey) {
+            $this->_encryptionKey = $encryptionKey;
+        }
+
+        $this->_fetchCookies();
     }
 
     /**
      * 
-     * @param string $key
-     * @param mixed $value
      * @return void
      */
-    public function __set($key, $value)
+    private function _fetchCookies()
     {
-        show_error("Undefined cookie attribute '{$key}'");
+        if (isset($_COOKIE[$this->_namespace])) {
+            if ($this->_encryptionKey) {
+                Crypt::decode($_COOKIE[$this->_namespace], $this->_encryptionKey);
+            } else {
+
+            }
+        } else {
+            $this->_cookies = array();
+        }
     }
 
     /**
      * 
-     * @param string $key
+     * @param string $name
+     * @param string $encryptionKey
+     * @return \Flare\Http\Cookie\Jar
+     */
+    public static function create($name, $encryptionKey = null)
+    {
+        if (!isset(self::$_instance)) {
+            self::$_instance = new self($name, $encryptionKey);
+        }
+        return self::$_instance;
+    }
+
+    /**
+     * 
+     * @param \Flare\Http\Cookie|string $cookie
+     * @return \Flare\Http\Cookie\Jar
+     */
+    public function set($name, $cookie, $time, $domain)
+    {
+        
+    }
+
+    /**
+     * 
      * @return void
      */
-    public function __get($key)
+    public function save()
     {
-        show_error("Undefined cookie attribute '{$key}'");
+
     }
 }

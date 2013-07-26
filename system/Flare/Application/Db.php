@@ -24,7 +24,7 @@ class Db
      * @param array $config
      * @return \PDO
      */
-    public static function & getConnection($name, $config = array())
+    public static function getConnection($name, $config = array())
     {
         if (!isset(self::$_connections[$name])) {
             if (!$config) {
