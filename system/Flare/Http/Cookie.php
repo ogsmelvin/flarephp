@@ -3,7 +3,6 @@
 namespace Flare\Http;
 
 use Flare\Security\Crypt;
-use Flare\Http\Cookie;
 
 /**
  * 
@@ -67,7 +66,7 @@ class Cookie
             if ($this->_encryptionKey) {
                 Crypt::decode($_COOKIE[$this->_namespace], $this->_encryptionKey);
             } else {
-
+                
             }
         } else {
             $this->_cookies = array();
