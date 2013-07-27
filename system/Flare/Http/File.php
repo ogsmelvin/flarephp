@@ -347,7 +347,7 @@ class File
      */
     private function _setAsImage()
     {
-        list($width, $height, $type) = getimagesize($this->_tmpname);
+        list($width, $height, $type) = @getimagesize($this->_tmpname);
         if ($type) {
             $type = image_type_to_mime_type($type);
             if ($type) {
@@ -449,10 +449,9 @@ class File
      * 
      * @param string $destination
      * @param array $options
-     * @param boolean $autoCreateFolder
      * @return boolean
      */
-    public function upload($destination, array $options = array(), $autoCreateFolder = false)
+    public function upload($destination, array $options = array())
     {
         $success = false;
         if ($options) {
@@ -470,7 +469,7 @@ class File
             $options['filename'] = $this->_filename;
         }
 
-        $destination = $this->_validateUploadPath($destination, $autoCreateFolder);
+        $destination = $this->_validateUploadPath($destination);
         if ($destination) {
             if ($this->validate($options)) {
                 if (@move_uploaded_file($this->_tmpname, $destination.$options['filename'])) {
@@ -517,19 +516,16 @@ class File
     /**
      * 
      * @param string $to
-     * @param boolean $autoCreate
      * @return string|boolean
      */
-    private function _validateUploadPath($folder, $autoCreate)
+    private function _validateUploadPath($folder)
     {
         if (!$folder) return false;
         $moveTo = realpath($folder);
         $moveTo = $moveTo !== false ? rtrim(str_replace("\\", '/', $moveTo), '/').'/' : rtrim($folder, '/').'/';
 
         if (!@is_dir($moveTo)) {
-            if (!$autoCreate || ($autoCreate && !mkdir($moveTo, 0777))) {
-                return false;
-            }
+            return false;
         }
         return $moveTo;
     }

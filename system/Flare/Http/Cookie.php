@@ -13,7 +13,7 @@ class Cookie
 {
     /**
      * 
-     * @var \Flare\Http\Cookie\Jar
+     * @var \Flare\Http\Cookie
      */
     private static $_instance;
 
@@ -66,7 +66,7 @@ class Cookie
             if ($this->_encryptionKey) {
                 Crypt::decode($_COOKIE[$this->_namespace], $this->_encryptionKey);
             } else {
-                
+
             }
         } else {
             $this->_cookies = array();
@@ -77,7 +77,7 @@ class Cookie
      * 
      * @param string $name
      * @param string $encryptionKey
-     * @return \Flare\Http\Cookie\Jar
+     * @return \Flare\Http\Cookie
      */
     public static function create($name, $encryptionKey = null)
     {
@@ -90,7 +90,7 @@ class Cookie
     /**
      * 
      * @param \Flare\Http\Cookie|string $cookie
-     * @return \Flare\Http\Cookie\Jar
+     * @return \Flare\Http\Cookie
      */
     public function set($name, $cookie, $time, $domain)
     {
@@ -103,6 +103,6 @@ class Cookie
      */
     public function save()
     {
-
+        
     }
 }

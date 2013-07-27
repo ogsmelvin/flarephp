@@ -13,7 +13,7 @@ class Process_Controller extends Controller
             $validation = array(
                 'is_image' => true
             );
-            if (!$photo->upload('./img/registrants', $validation, true)) {
+            if (!$photo->upload('./img/uploads', $validation)) {
                 $this->back(array(
                     'invalid' => $photo->getValidationError()
                 ));

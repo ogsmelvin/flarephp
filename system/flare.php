@@ -154,7 +154,7 @@ if (!function_exists('show_error')) {
     }
 }
 
-if (!function_exists('_flare_show_error')) {
+// if (!function_exists('_flare_show_error')) {
 
     /**
      * 
@@ -166,9 +166,23 @@ if (!function_exists('_flare_show_error')) {
      * @param array $errcontext
      * @return void
      */
-    function _flare_show_error($errno, $errstr, $errfile, $errline, $errcontext)
+    // function _flare_show_error($errno, $errstr, $errfile, $errline, $errcontext)
+    // {
+    //     show_response(500, 'Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
+    // }
+// }
+
+if (!function_exists('_flare_show_exception')) {
+
+    /**
+     * 
+     * @author anthony
+     * @param \Exception $error
+     * @return void
+     */
+    function _flare_show_exception($error)
     {
-        show_response(500, 'Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
+        show_error($error->getMessage());
     }
 }
 
@@ -186,12 +200,10 @@ if (!function_exists('with')) {
     }
 }
 
-set_error_handler('_flare_show_error');
+// set_error_handler('_flare_show_error');
+set_exception_handler('_flare_show_exception');
 spl_autoload_register('flare_load_class');
 
 if (!class_exists("\\Flare\\Flare")) {
     require FLARE_DIR.'Flare/Flare.php';
 }
-
-
-
