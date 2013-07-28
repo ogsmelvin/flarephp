@@ -136,6 +136,15 @@ class Cookie
 
     /**
      * 
+     * @return boolean
+     */
+    public function exists()
+    {
+        return isset($_COOKIE[$this->_namespace]);
+    }
+
+    /**
+     * 
      * @return int
      */
     public function getExpiration()
@@ -145,12 +154,12 @@ class Cookie
 
     /**
      * 
-     * @param string
+     * @param string $name
      * @return boolean
      */
     public function has($name)
     {
-        return isset($this->_cookies[$name]);
+        return isset($this->_cookies[$name]) || isset($this->_newData[$name]);
     }
 
     /**
@@ -228,11 +237,32 @@ class Cookie
     /**
      * 
      * @param string $key
+     * @return \Flare\Http\Cookie
+     */
+    public function remove($key)
+    {
+        unset($this->_cookies[$key], $this->_newData[$key]);
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key
      * @return mixed
      */
     public function __get($key)
     {
         return $this->get($key);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $this->remove($key);
     }
 
     /**
