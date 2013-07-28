@@ -445,6 +445,10 @@ class Application
         }
         
         $this->_controller->postdispatch();
+        $cookie = $this->_controller->cookie->serialize();
+        if ($cookie === null) {
+            $this->_controller->response->addCookie($this->_controller->cookie->getNamespace(), $cookie);
+        }
         $this->_controller->response->setBody($view)->send();
         $this->_controller->complete();
         $this->_dispatched = true;

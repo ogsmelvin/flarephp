@@ -155,7 +155,7 @@ class Session
     {
         if (!$now) {
             $now = time();
-        } elseif(is_string($now)) {
+        } elseif (is_string($now)) {
             $now = strtotime($now);
         }
         $_SESSION[$this->_name][self::SETTINGS_KEY][$key] = array(

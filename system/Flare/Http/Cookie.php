@@ -3,6 +3,7 @@
 namespace Flare\Http;
 
 use Flare\Security\Crypt;
+use Flare\Flare as F;
 
 /**
  * 
@@ -62,14 +63,23 @@ class Cookie
      */
     private function _fetchCookies()
     {
-        if (isset($_COOKIE[$this->_namespace])) {
-            if ($this->_encryptionKey) {
-                Crypt::decode($_COOKIE[$this->_namespace], $this->_encryptionKey);
-            } else {
+        $this->_cookies = array();
+        $this->_info = array();
 
+        if (isset($_COOKIE[$this->_namespace])) {
+            $tmp = $_COOKIE[$this->_namespace];
+            if ($this->_encryptionKey) {
+                $tmp = Crypt::decode($tmp, $this->_encryptionKey);
             }
-        } else {
-            $this->_cookies = array();
+            $tmp = unserialize($tmp);
+            if (isset($tmp['client_ip'])) {
+                if (isset($tmp['data']) && is_array($tmp['data'])) {
+                    $this->_cookies = $tmp['data'];
+                }
+                $this->_info = array(
+                    'client_ip' => $tmp['client_ip']
+                );
+            }
         }
     }
 
@@ -89,20 +99,82 @@ class Cookie
 
     /**
      * 
-     * @param \Flare\Http\Cookie|string $cookie
+     * @param string $name
+     * @param string $value
+     * @param int $expire
+     * @param string path
+     * @param string $domain
+     * @param boolean $secure
+     * @param boolean $httponly
      * @return \Flare\Http\Cookie
      */
-    public function set($name, $cookie, $time, $domain)
+    public function set($name, $cookie, $expire = 0, $path = '/', $domain = '', $secure = false, $httponly = false)
     {
-        
+        return $this;
     }
 
     /**
      * 
-     * @return void
+     * @return string
      */
-    public function save()
+    public function getNamespace()
     {
-        
+        return $this->_namespace;
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function get($name, $xss = false)
+    {
+        if (!isset($this->_cookies[$name])) {
+            return null;
+        }
+        return $this->_cookies[$name];
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function serialize()
+    {
+        if (empty($this->_info)) {
+            return null;
+        }
+        $data = serialize(array_merge(array('data' => $this->_cookies), $this->_info));
+        if ($this->_encryptionKey) {
+            $data = Crypt::encode($data, $this->_encryptionKey);
+        }
+        return $data;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->_cookies;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getIp()
+    {
+        return isset($this->_info['client_ip']) ? $this->_info['client_ip'] : null;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getInfo()
+    {
+        return $this->_info;
     }
 }

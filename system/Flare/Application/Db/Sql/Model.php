@@ -54,10 +54,10 @@ class Model extends ParentModel
      */
     protected function _setup()
     {
-        if (self::getController()->getDatabase()) {
-            $this->_adapter = self::getController()->getDatabase();
+        if (self::controller()->getDatabase()) {
+            $this->_adapter = self::controller()->getDatabase();
         } else {
-            show_error("No database connection");
+            show_error('No database connection');
         }
         if (empty(static::$primaryKey)) {
             static::$primaryKey = $this->_adapter->getPrimaryKey(static::$table);
@@ -151,7 +151,7 @@ class Model extends ParentModel
      * 
      * @return string
      */
-    public static function getPrimaryKey()
+    public static function primaryKey()
     {
         if (isset(static::$primaryKey)) {
             return static::$primaryKey;
@@ -165,7 +165,7 @@ class Model extends ParentModel
      * @param int $page
      * @return \Flare\Db\Sql\Result\Collection
      */
-    public static function getAll($limit = null, $page = null)
+    public static function all($limit = null, $page = null)
     {
         $sql = self::query()->select()
             ->from(static::$table);
@@ -188,7 +188,7 @@ class Model extends ParentModel
     {
         $sql = self::query()->select()
             ->from(static::$table);
-        $pk = self::getPrimaryKey();
+        $pk = self::primaryKey();
         if (!$column) {
             $column = $pk;
         }
@@ -218,25 +218,19 @@ class Model extends ParentModel
      * @param string $field
      * @return string
      */
-    public static function alias($field)
+    public static function alias($field = null)
     {
-        return (isset(static::$alias) ? static::$alias : static::$table).'.'.$field;
+        if ($field) {
+            return (isset(static::$alias) ? static::$alias : self::table()).'.'.$field;
+        }
+        return isset(static::$alias) ? static::$alias : self::table();
     }
 
     /**
      * 
      * @return string
      */
-    public static function getAlias()
-    {
-        return isset(static::$alias) ? static::$alias : static::$table;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public static function getTableName()
+    public static function table()
     {
         return static::$table;
     }
@@ -245,7 +239,7 @@ class Model extends ParentModel
      * 
      * @return string
      */
-    public static function getTableAlias()
+    public static function tableAlias()
     {
         return isset(static::$alias) ? static::$table.' AS '.static::$alias : static::$table;
     }
@@ -254,8 +248,8 @@ class Model extends ParentModel
      * 
      * @return string
      */
-    public static function getPrimaryKeyAlias()
+    public static function primaryKeyAlias()
     {
-        return (isset(static::$alias) ? static::$alias : static::$table).'.'.self::getPrimaryKey();
+        return (isset(static::$alias) ? static::$alias : static::$table).'.'.self::primaryKey();
     }
 }

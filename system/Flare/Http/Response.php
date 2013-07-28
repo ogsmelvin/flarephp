@@ -93,7 +93,7 @@ class Response
      * 
      * @var string
      */
-    private $_contentType = null;
+    protected $_contentType = null;
 
     /**
      * 
