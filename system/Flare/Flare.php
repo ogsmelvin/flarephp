@@ -126,6 +126,7 @@ class Flare
             }
             self::$cookie = Cookie::create(
                 $conf->cookie['namespace'],
+                $conf->cookie['expiration'],
                 $conf->cookie['enable_encryption'] ? $conf->cookie['encryption_key'] : false
             );
         } else {
@@ -154,7 +155,7 @@ class Flare
     public static function createApp()
     {
         if (self::$_application) {
-            show_error("Flare Application is already created");
+            show_error('Flare Application is already created');
         }
         self::$_application = new Application();
         return self::$_application;

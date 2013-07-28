@@ -19,6 +19,6 @@ class Process_Controller extends Controller
                 ));
             }
         }
-        $this->back(array('invalid' => null));
+        !$this->back(array('invalid' => null)) ? $this->redirect($this->uri->moduleUrl) : exit;
     }
 }

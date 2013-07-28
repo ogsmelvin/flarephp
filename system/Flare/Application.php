@@ -445,9 +445,12 @@ class Application
         }
         
         $this->_controller->postdispatch();
-        $cookie = $this->_controller->cookie->serialize();
-        if ($cookie === null) {
-            $this->_controller->response->addCookie($this->_controller->cookie->getNamespace(), $cookie);
+        if ($this->_controller->cookie->hasNewData()) {
+            $this->_controller->response->addCookie(
+                $this->_controller->cookie->getNamespace(),
+                $this->_controller->cookie->serialize(),
+                $this->_controller->cookie->getExpiration()
+            );
         }
         $this->_controller->response->setBody($view)->send();
         $this->_controller->complete();

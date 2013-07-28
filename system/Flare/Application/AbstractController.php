@@ -204,7 +204,7 @@ abstract class AbstractController
     /**
      * 
      * @param array $params
-     * @return void
+     * @return void|boolean
      */
     public function back(array $params = array())
     {
@@ -224,17 +224,7 @@ abstract class AbstractController
             }
             $this->redirect($url);
         }
-    }
-
-    /**
-     * 
-     * @param string $name
-     * @param array $config
-     * @return \Flare\Cache
-     */
-    public function getCache($name, $config = array())
-    {
-        return F::cache($name, $config);
+        return false;
     }
 
     /**

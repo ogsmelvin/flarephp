@@ -26,7 +26,6 @@ class Crypt extends Security
     public static function encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
     {
         $result = null;
-        $key = pack('H*', $key);
         $iv_size = mcrypt_get_iv_size($cipher, $mode);
         if ($iv_size) {
             $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
@@ -48,7 +47,6 @@ class Crypt extends Security
     public static function decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
     {
         $result = null;
-        $key = pack('H*', $key);
         $iv_size = mcrypt_get_iv_size($cipher, $mode);
         if ($iv_size) {
             $str = base64_decode($str);

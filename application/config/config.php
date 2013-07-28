@@ -53,16 +53,17 @@ $config['allow_override'] = false;
  */
 $config['session'] = array(
     'auto_start' => true,
-    'namespace' => 'flare.dev.demo.session'
+    'namespace' => 'flare_dev_demo_session'
 );
 
 /**
  * Cookie configuration
  */
 $config['cookie'] = array(
-    'namespace' => 'flare.dev.demo.cookie',
-    'enable_encryption' => false,
-    'encryption_key' => ''
+    'namespace' => 'flare_dev_demo_cookie',
+    'enable_encryption' => true,
+    'encryption_key' => '1q2w',
+    'expiration' => 0
 );
 
 /**
