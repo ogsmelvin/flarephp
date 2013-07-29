@@ -67,12 +67,6 @@ class Flare
     private static $_application = null;
 
     /**
-     *
-     * @var array
-     */
-    private static $_db = array();
-
-    /**
      * 
      * @var boolean
      */
