@@ -26,7 +26,7 @@ class Config
 
     /**
      *
-     * @param string|array $config
+     * @param string|array $config_file
      * @return \Flare\Application\Config
      */
     public static function load($config_file)
@@ -115,6 +115,42 @@ class Config
             else show_response(500, "'{$key}' doesn't exists in config");
         }
         return $conf;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $this->remove($key);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return \Flare\Application\Config
+     */
+    public function remove($key)
+    {
+        if ($this->_config['allow_override']) {
+            if (!isset($this->_config[$key])) {
+                $key = explode('.', $key);
+                $tmpConf = $this->_config;
+                $conf = & $tmpConf;
+                foreach ($key as $k) {
+                    if (isset($conf[$k])) $conf = & $conf[$k];
+                    else show_error("'{$key}' doesn't exists in config");
+                }
+                $conf = null;
+                $this->_config = $tmpConf;
+                unset($tmpConf, $conf);
+            } else {
+                unset($this->_config[$key]);
+            }
+        }
+        return $this;
     }
 
     /**

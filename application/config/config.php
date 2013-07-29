@@ -46,7 +46,7 @@ $config['default_content_type'] = 'text/html';
 /**
  * Allow override of config in controller
  */
-$config['allow_override'] = false;
+$config['allow_override'] = true;
 
 /**
  * Session configuration
