@@ -170,10 +170,13 @@ class Cookie
      */
     public function get($name, $xss = false)
     {
-        if (!isset($this->_cookies[$name])) {
-            return null;
+        $value = null;
+        if (isset($this->_newData[$name])) {
+            $value = $this->_newData[$name];
+        } elseif (isset($this->_cookies[$name])) {
+            $value = $this->_cookies[$name];
         }
-        return $xss ? Xss::filter($this->_cookies[$name]) : $this->_cookies[$name];
+        return $xss ? Xss::filter($value) : $value;
     }
 
     /**

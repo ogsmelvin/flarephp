@@ -111,7 +111,7 @@ class Flare
                 $conf->session['auto_start']
             );
         } else {
-            show_error("Config[session][namespace] must be set");
+            show_error('Config[session][namespace] must be set');
         }
 
         if ($conf->cookie['namespace']) {
@@ -124,7 +124,7 @@ class Flare
                 $conf->cookie['enable_encryption'] ? $conf->cookie['encryption_key'] : false
             );
         } else {
-            show_error("Config[cookie][namespace] must be set");
+            show_error('Config[cookie][namespace] must be set');
         }
 
         if ($conf->router['require_https']) {

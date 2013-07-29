@@ -13,13 +13,7 @@ class Config
      *
      * @var array
      */
-    private $_config = array();
-
-    /**
-     *
-     * @var \Flare\Application\Config
-     */
-    private static $_instance = null;
+    private $_config;
 
     /**
      *
@@ -37,26 +31,23 @@ class Config
      */
     public static function load($config_file)
     {
-        if (!self::$_instance) {
-            $content = null;
-            if (is_string($config_file)) {
-                $config_file = rtrim($config_file, '.php').'.php';
-                $content = require $config_file;
-                if (!is_array($content)) {
-                    show_error("{$config_file} return must be an array");
-                }
-            } elseif (is_array($config_file)) {
-                $content = $config_file;
-                unset($config_file);
-            } else {
-                show_error("Invalid Config file type");
+        $content = null;
+        if (is_string($config_file)) {
+            $config_file = rtrim($config_file, '.php').'.php';
+            $content = require $config_file;
+            if (!is_array($content)) {
+                show_error("{$config_file} return must be an array");
             }
-            if (!isset($content['allow_override'])) {
-                $content['allow_override'] = false;
-            }
-            self::$_instance = new self($content);
+        } elseif (is_array($config_file)) {
+            $content = $config_file;
+            unset($config_file);
+        } else {
+            show_error('Invalid Config file type');
         }
-        return self::$_instance;
+        if (!isset($content['allow_override'])) {
+            $content['allow_override'] = false;
+        }
+        return new self($content);
     }
 
     /**
@@ -75,7 +66,7 @@ class Config
     /**
      *
      * @param string $key
-     * @param string|array $value
+     * @param mixed $value
      * @return void
      */
     public function __set($key, $value)
@@ -143,5 +134,16 @@ class Config
     public function getAll()
     {
         return $this->_config;
+    }
+
+    /**
+     * 
+     * @param \Flare\Application\Config $content
+     * @return \Flare\Application\Config
+     */
+    public function merge(Config $content)
+    {
+        $this->_config = array_merge($this->_config, $content->getAll());
+        return $this;
     }
 }

@@ -22,7 +22,7 @@ class Collection extends ArrayObject
 
     /**
      * 
-     * @param callable $callback
+     * @param callable|array|string $callback
      * @return \Flare\Util\Collection
      */
     public function each($callback)
