@@ -5,7 +5,6 @@ namespace Flare;
 use Flare\View\Response as ViewResponse;
 use Flare\View\Response\Html;
 use Flare\Application\Data;
-use Flare\View\Javascript;
 use Flare\Http\Response;
 use Flare\Flare as F;
 use Flare\View;
@@ -173,6 +172,27 @@ class Application
             .$module
             .'/'
             .$this->_viewsDirectory;
+        return $path;
+    }
+
+    /**
+     * 
+     * @param string $module
+     * @return string
+     */
+    public function getModuleConfigDirectory($module = null)
+    {
+        if (!$module) {
+            if (!F::$router->getRoute()) {
+                show_error('No route found. Predispatch must be executed first.');
+            }
+            $module = F::$router->getRoute()->getModule();
+        }
+
+        $path = $this->_modulesDirectory
+            .$module
+            .'/'
+            .$this->_configDirectory;
         return $path;
     }
 
