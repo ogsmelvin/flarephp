@@ -48,6 +48,8 @@ if (!function_exists('debug')) {
                     $var = "[[ Empty string ]]";
                 } elseif (is_bool($var)) {
                     $var = "[[ Bool: false ]]";
+                } elseif (is_null($var)) {
+                    $var = "[[ NULL ]]";
                 }
             }
             print_r($var);
