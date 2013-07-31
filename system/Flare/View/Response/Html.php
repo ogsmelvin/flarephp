@@ -28,7 +28,7 @@ class Html extends Response
      * 
      * @var string
      */
-    private $_layoutPath = null;
+    private $_layoutPath;
 
     /**
      * 

@@ -22,49 +22,49 @@ class Flare
      *
      * @var \Flare\Http\Request
      */
-    public static $request = null;
+    public static $request;
 
     /**
      *
      * @var \Flare\Http\Response
      */
-    public static $response = null;
+    public static $response;
 
     /**
      *
      * @var \Flare\Http\Uri
      */
-    public static $uri = null;
+    public static $uri;
 
     /**
      *
      * @var \Flare\Http\Session
      */
-    public static $session = null;
+    public static $session;
 
     /**
      *
      * @var \Flare\Http\Cookie
      */
-    public static $cookie = null;
+    public static $cookie;
 
     /**
      *
      * @var \Flare\Application\Config
      */
-    public static $config = null;
+    public static $config;
 
     /**
      * 
      * @var \Flare\Application\Router
      */
-    public static $router = null;
+    public static $router;
 
     /**
      *
      * @var \Flare\Application
      */
-    private static $_application = null;
+    private static $_application;
 
     /**
      * 

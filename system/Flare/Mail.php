@@ -19,13 +19,13 @@ class Mail
      * 
      * @var string
      */
-    private $_body = null;
+    private $_body;
 
     /**
      * 
      * @var string
      */
-    private $_from = null;
+    private $_from;
 
     /**
      * 
@@ -49,19 +49,19 @@ class Mail
      * 
      * @var string
      */
-    private $_subject = null;
+    private $_subject;
 
     /**
      * 
      * @var string
      */
-    private $_type = null;
+    private $_type;
 
     /**
      * 
      * @return string
      */
-    private $_error = null;
+    private $_error;
 
     /**
      * 

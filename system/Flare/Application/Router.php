@@ -19,7 +19,7 @@ class Router
      * 
      * @var \Flare\Application\Router\Route
      */
-    private $_currentRoute = null;
+    private $_currentRoute;
 
     /**
      * 

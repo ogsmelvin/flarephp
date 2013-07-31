@@ -45,7 +45,7 @@ class Curl
      * 
      * @var string
      */
-    private $_error = null;
+    private $_error;
 
     /**
      * 
@@ -57,7 +57,7 @@ class Curl
      * 
      * @var string
      */
-    private $_url = null;
+    private $_url;
 
     /**
      * 
@@ -75,7 +75,7 @@ class Curl
      * 
      * @var string
      */
-    private $_errorCode = null;
+    private $_errorCode;
 
     /**
      * 

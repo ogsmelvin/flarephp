@@ -17,7 +17,7 @@ class Query
      *
      * @var string
      */
-    private $_qstring = null;
+    private $_qstring;
 
     /**
      * 

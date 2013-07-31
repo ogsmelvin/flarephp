@@ -16,19 +16,19 @@ class Route
      * 
      * @var \Flare\Application\AbstractController
      */
-    private $_controller = null;
+    private $_controller;
 
     /**
      * 
      * @var string
      */
-    private $_module = null;
+    private $_module;
 
     /**
      * 
      * @var string
      */
-    private $_action = null;
+    private $_action;
 
     /**
      * 

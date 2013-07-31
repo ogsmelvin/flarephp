@@ -13,7 +13,7 @@ class Session
      * 
      * @var \Flare\Http\Session
      */
-    private static $_instance = null;
+    private static $_instance;
 
     /**
      * 
@@ -31,7 +31,7 @@ class Session
      *
      * @var string
      */
-    private $_name = null;
+    private $_name;
 
     /**
      * 

@@ -15,43 +15,43 @@ class Pagination
      * 
      * @var int
      */
-    private $_page = null;
+    private $_page;
 
     /**
      * 
      * @var int
      */
-    private $_offset = null;
+    private $_offset;
 
     /**
      * 
      * @var int
      */
-    private $_limit = null;
+    private $_limit;
 
     /**
      * 
      * @var int
      */
-    private $_total = null;
+    private $_total;
 
     /**
      * 
      * @var string
      */
-    private $_url = null;
+    private $_url;
 
     /**
      * 
      * @var string
      */
-    private $_alignment = null;
+    private $_alignment;
 
     /**
      * 
      * @var string
      */
-    private $_size = null;
+    private $_size;
 
     /**
      * 

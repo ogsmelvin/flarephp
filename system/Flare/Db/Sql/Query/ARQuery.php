@@ -28,7 +28,7 @@ class ARQuery
      * 
      * @var string
      */
-    private $_table = null;
+    private $_table;
 
     /**
      * 
@@ -46,13 +46,13 @@ class ARQuery
      *
      * @var string
      */
-    private $_select = null;
+    private $_select;
 
     /**
      *
      * @var string
      */
-    private $_from = null;
+    private $_from;
 
     /**
      *
@@ -76,13 +76,13 @@ class ARQuery
      *
      * @var int
      */
-    private $_limit = null;
+    private $_limit;
 
     /**
      *
      * @var int
      */
-    private $_offset = null;
+    private $_offset;
 
     /**
      *
@@ -106,13 +106,13 @@ class ARQuery
      *
      * @var string
      */
-    private $_insert = null;
+    private $_insert;
 
     /**
      *
      * @var string
      */
-    private $_update = null;
+    private $_update;
 
     /**
      *

@@ -22,7 +22,7 @@ class Cookie
      * 
      * @var string
      */
-    private $_encryptionKey = null;
+    private $_encryptionKey;
 
     /**
      * 

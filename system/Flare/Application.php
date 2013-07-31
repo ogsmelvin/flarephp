@@ -20,73 +20,73 @@ class Application
      * 
      * @var string
      */
-    private $_controllersDirectory = null;
+    private $_controllersDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_errorLayoutsDirectory = null;
+    private $_errorLayoutsDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_viewsDirectory = null;
+    private $_viewsDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_modulesDirectory = null;
+    private $_modulesDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_layoutsDirectory = null;
+    private $_layoutsDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_modelsDirectory = null;
+    private $_modelsDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_librariesDirectory = null;
+    private $_librariesDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_helpersDirectory = null;
+    private $_helpersDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_configDirectory = null;
+    private $_configDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_appDirectory = null;
+    private $_appDirectory;
 
     /**
      * 
      * @var string
      */
-    private $_sysDirectory = null;
+    private $_sysDirectory;
 
     /**
      * 
      * @var mixed
      */
-    private $_controller = null;
+    private $_controller;
 
     /**
      * 

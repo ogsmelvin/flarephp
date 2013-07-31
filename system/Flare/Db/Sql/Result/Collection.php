@@ -30,7 +30,7 @@ class Collection extends ParentCollection
      * 
      * @var \Flare\View\Pagination
      */
-    private $_pagination = null;
+    private $_pagination;
 
     /**
      *

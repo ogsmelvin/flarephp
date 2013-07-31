@@ -35,7 +35,7 @@ class Facebook extends Service
      * 
      * @var string
      */
-    private $_accessToken = null;
+    private $_accessToken;
 
     /**
      * 
@@ -65,7 +65,7 @@ class Facebook extends Service
      * 
      * @var string
      */
-    private $_user = null;
+    private $_user;
 
     /**
      * 

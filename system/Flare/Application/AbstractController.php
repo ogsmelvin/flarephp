@@ -61,7 +61,7 @@ abstract class AbstractController
      * 
      * @var PDO
      */
-    protected $db = null;
+    protected $db;
 
     /**
      * 

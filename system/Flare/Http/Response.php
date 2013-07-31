@@ -81,7 +81,7 @@ class Response
      *
      * @var string
      */
-    protected $_body = null;
+    protected $_body;
 
     /**
      *
@@ -93,7 +93,7 @@ class Response
      * 
      * @var string
      */
-    protected $_contentType = null;
+    protected $_contentType;
 
     /**
      * 

@@ -27,7 +27,7 @@ class View
      * 
      * @var string
      */
-    private $path = null;
+    private $path;
 
     /**
      * 
