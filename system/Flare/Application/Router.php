@@ -39,7 +39,9 @@ class Router
      */
     public function __construct(array $routes = array())
     {
-        $this->addRoutes($routes);
+        if ($routes) {
+            $this->addRoutes($routes);
+        }
     }
 
     /**

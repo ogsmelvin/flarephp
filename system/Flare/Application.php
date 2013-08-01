@@ -4,9 +4,15 @@ namespace Flare;
 
 use Flare\View\Response as ViewResponse;
 use Flare\View\Response\Html;
+use Flare\Application\Config;
+use Flare\Application\Router;
 use Flare\Application\Data;
 use Flare\Http\Response;
+use Flare\Http\Request;
+use Flare\Http\Session;
+use Flare\Http\Cookie;
 use Flare\Flare as F;
+use Flare\Http\Uri;
 use Flare\View;
 
 /**
@@ -578,8 +584,9 @@ class Application
         } elseif (!$this->_appDirectory) {
             show_error("App Directory and System Directory must be set");
         }
-        F::init(require $this->_appDirectory.'config/config.php');
-        $this->setModules(F::$config->modules)
+        $this->init()
+            ->setModules(F::$config->modules)
+            ->configure()
             ->setConfigDirectory($this->_appDirectory.'config')
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
@@ -591,5 +598,77 @@ class Application
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
             ->predispatch()
             ->dispatch();
+    }
+
+    /**
+     *
+     * @return \Flare\Application
+     */
+    private function init()
+    {
+        $tmp = require $this->_appDirectory.'config/config.php';
+        F::$config = Config::load($tmp);
+        if (F::$config->time_limit !== null) {
+            set_time_limit(F::$config->time_limit);
+        }
+        if (F::$config->memory_limit !== null) {
+            ini_set('memory_limit', F::$config->memory_limit);
+        }
+        if (F::$config->timezone !== null) {
+            date_default_timezone_set(F::$config->timezone);
+        }
+
+        F::$request = new Request();
+        F::$response = new Response();
+        F::$uri = new Uri();
+        F::$router = new Router();
+        if (F::$config->router['routes']) {
+            F::$router->addRoutes(F::$config->router['routes']);
+        }
+
+        return $this;
+    }
+
+    /**
+     * 
+     * @return \Flare\Application
+     */
+    private function configure()
+    {
+        if (F::$config->session['namespace']) {
+            F::$session = Session::create(
+                F::$config->session['namespace'],
+                F::$config->session['auto_start']
+            );
+        } else {
+            show_error('Config[session][namespace] must be set');
+        }
+
+        if (F::$config->cookie['namespace']) {
+            if (F::$config->cookie['enable_encryption'] && !F::$config->cookie['encryption_key']) {
+                show_error('Config[encryption_key] must be set');
+            }
+            F::$cookie = Cookie::create(
+                F::$config->cookie['namespace'],
+                F::$config->cookie['expiration'],
+                F::$config->cookie['enable_encryption'] ? F::$config->cookie['encryption_key'] : false
+            );
+        } else {
+            show_error('Config[cookie][namespace] must be set');
+        }
+
+        if (F::$config->router['require_https']) {
+            F::$router->secure();
+        }
+        if (F::$config->auto_compress && !@ini_get('zlib.output_compression')
+            && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
+            && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+        {
+            if (!ob_start('ob_gzhandler')) {
+                show_response(500, 'output compression failed');
+            }
+        }
+
+        return $this;
     }
 }
