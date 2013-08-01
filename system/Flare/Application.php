@@ -586,7 +586,6 @@ class Application
         }
         $this->init()
             ->setModules(F::$config->modules)
-            ->configure()
             ->setConfigDirectory($this->_appDirectory.'config')
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
@@ -597,6 +596,7 @@ class Application
             ->setViewsDirectory('views')
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
             ->predispatch()
+            ->configure()
             ->dispatch();
     }
 
@@ -606,8 +606,20 @@ class Application
      */
     private function init()
     {
-        $tmp = require $this->_appDirectory.'config/config.php';
-        F::$config = Config::load($tmp);
+        F::$config = Config::load(require $this->_appDirectory.'config/config.php');
+        F::$request = new Request();
+        F::$response = new Response();
+        F::$uri = new Uri();
+        F::$router = new Router();
+        return $this;
+    }
+
+    /**
+     * 
+     * @return \Flare\Application
+     */
+    private function configure()
+    {
         if (F::$config->time_limit !== null) {
             set_time_limit(F::$config->time_limit);
         }
@@ -618,23 +630,10 @@ class Application
             date_default_timezone_set(F::$config->timezone);
         }
 
-        F::$request = new Request();
-        F::$response = new Response();
-        F::$uri = new Uri();
-        F::$router = new Router();
         if (F::$config->router['routes']) {
             F::$router->addRoutes(F::$config->router['routes']);
         }
 
-        return $this;
-    }
-
-    /**
-     * 
-     * @return \Flare\Application
-     */
-    private function configure()
-    {
         if (F::$config->session['namespace']) {
             F::$session = Session::create(
                 F::$config->session['namespace'],
