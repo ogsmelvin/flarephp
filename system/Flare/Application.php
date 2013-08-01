@@ -197,8 +197,7 @@ class Application
 
         $path = $this->_modulesDirectory
             .$module
-            .'/'
-            .$this->_configDirectory;
+            .'/config/';
         return $path;
     }
 
@@ -620,6 +619,16 @@ class Application
      */
     private function configure()
     {
+        if (file_exists($this->getModuleConfigDirectory().'config.php')) {
+            $moduleConfig = require $this->getModuleConfigDirectory().'config.php';
+            if (!is_array($moduleConfig)) {
+                show_error('Module config.php must return an array.');
+            }
+            unset($moduleConfig['modules']);
+            F::$config->merge($moduleConfig);
+            unset($moduleConfig);
+        }
+
         if (F::$config->time_limit !== null) {
             set_time_limit(F::$config->time_limit);
         }

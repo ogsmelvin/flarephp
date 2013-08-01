@@ -174,12 +174,15 @@ class Config
 
     /**
      * 
-     * @param \Flare\Application\Config $content
+     * @param \Flare\Application\Config|array $content
      * @return \Flare\Application\Config
      */
-    public function merge(Config $content)
+    public function merge($content)
     {
-        $this->_config = array_merge($this->_config, $content->getAll());
+        if ($content instanceof Config) {
+            $content = $content->getAll();
+        }
+        $this->_config = array_merge($this->_config, $content);
         return $this;
     }
 }
