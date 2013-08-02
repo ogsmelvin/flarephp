@@ -51,20 +51,12 @@ $config['allow_override'] = true;
 /**
  * Session configuration
  */
-$config['session'] = array(
-    'auto_start' => true,
-    'namespace' => 'flare_dev_demo_session'
-);
+$config['session'] = require 'session.php';
 
 /**
  * Cookie configuration
  */
-$config['cookie'] = array(
-    'namespace' => 'flare_dev_demo_cookie',
-    'enable_encryption' => true,
-    'encryption_key' => '1q2w',
-    'expiration' => 0
-);
+$config['cookie'] = require 'cookie.php';
 
 /**
  * View layout configuration

@@ -4,6 +4,7 @@ namespace Flare\Application;
 
 use Flare\Db as Database;
 use Flare\Flare as F;
+use \PDO;
 
 /**
  * 
@@ -43,5 +44,23 @@ class Db
             );
         }
         return self::$_connections[$name];
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @return void
+     */
+    public static function disconnect($name = null)
+    {
+        if (!$name) {
+            foreach (self::$_connections as &$conn) {
+                if (!$conn->getAttribute(PDO::ATTR_PERSISTENT)) $conn = null;
+            }
+        } elseif (isset(self::$_connections[$name]) 
+            && !self::$_connections[$name]->getAttribute(PDO::ATTR_PERSISTENT))
+        {
+            self::$_connections[$name] = null;
+        }
     }
 }

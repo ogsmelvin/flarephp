@@ -7,6 +7,7 @@ use Flare\View\Response\Html;
 use Flare\Application\Config;
 use Flare\Application\Router;
 use Flare\Application\Data;
+use Flare\Application\Db;
 use Flare\Http\Response;
 use Flare\Http\Request;
 use Flare\Http\Session;
@@ -480,6 +481,8 @@ class Application
         $this->_controller->response->setBody($view)->send();
         $this->_controller->complete();
         $this->_dispatched = true;
+
+        return $this;
     }
 
     /**
@@ -596,7 +599,17 @@ class Application
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
             ->predispatch()
             ->configure()
-            ->dispatch();
+            ->dispatch()
+            ->shutdown();
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    public function shutdown()
+    {
+        Db::disconnect();
     }
 
     /**
@@ -611,6 +624,59 @@ class Application
         F::$uri = new Uri();
         F::$router = new Router();
         return $this;
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    private function setupCookie()
+    {
+        $conf = F::$config->cookie;
+        if (!empty($conf['namespace'])) {
+            if ($conf['enable_encryption'] && !$conf['encryption_key']) {
+                show_error('Config[encryption_key] must be set');
+            }
+            F::$cookie = Cookie::create(
+                $conf['namespace'],
+                $conf['expiration'],
+                $conf['enable_encryption'] ? $conf['encryption_key'] : false
+            );
+        } else {
+            show_error('Config[cookie][namespace] must be set');
+        }
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    private function setupRouter()
+    {
+        $router = F::$config->router;
+        if (isset($router['routes'])) {
+            F::$router->addRoutes($router['routes']);
+        }
+        if (!empty($router['require_https'])) {
+            F::$router->secure();
+        }
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    private function setupSession()
+    {
+        $session = F::$config->session;
+        if (!empty($session['namespace'])) {
+            F::$session = Session::create(
+                $session['namespace'],
+                $session['auto_start']
+            );
+        } else {
+            show_error('Config[session][namespace] must be set');
+        }
     }
 
     /**
@@ -639,35 +705,10 @@ class Application
             date_default_timezone_set(F::$config->timezone);
         }
 
-        if (F::$config->router['routes']) {
-            F::$router->addRoutes(F::$config->router['routes']);
-        }
+        $this->setupRouter();
+        $this->setupSession();
+        $this->setupCookie();
 
-        if (F::$config->session['namespace']) {
-            F::$session = Session::create(
-                F::$config->session['namespace'],
-                F::$config->session['auto_start']
-            );
-        } else {
-            show_error('Config[session][namespace] must be set');
-        }
-
-        if (F::$config->cookie['namespace']) {
-            if (F::$config->cookie['enable_encryption'] && !F::$config->cookie['encryption_key']) {
-                show_error('Config[encryption_key] must be set');
-            }
-            F::$cookie = Cookie::create(
-                F::$config->cookie['namespace'],
-                F::$config->cookie['expiration'],
-                F::$config->cookie['enable_encryption'] ? F::$config->cookie['encryption_key'] : false
-            );
-        } else {
-            show_error('Config[cookie][namespace] must be set');
-        }
-
-        if (F::$config->router['require_https']) {
-            F::$router->secure();
-        }
         if (F::$config->auto_compress && !@ini_get('zlib.output_compression')
             && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
             && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)

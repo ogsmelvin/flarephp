@@ -36,7 +36,7 @@ class Collection extends ArrayObject
                 call_user_func_array($callback, array($key, $row));
             }
         } else {
-            show_error('Each method parameter must be callable');
+            show_error('Collection::each method parameter must be callable');
         }
         return $this;
     }
