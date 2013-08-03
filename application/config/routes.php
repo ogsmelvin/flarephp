@@ -32,8 +32,8 @@ $routes = array(
      * statusCode => 'module.controller.action'
      */
     'errors' => array(
-        404 => 'module.controller.action',
-        500 => 'module.controller.action'
+        404 => 'demo.index.index',
+        500 => ''
     ),
 
     /**

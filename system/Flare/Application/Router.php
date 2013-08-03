@@ -159,8 +159,8 @@ class Router
             return null;
         }
 
-        require F::getApp()->getModulesDirectory().$request->getModule().'/bootstrap.php';
-        require $path;
+        require_once F::getApp()->getModulesDirectory().$request->getModule().'/bootstrap.php';
+        require_once $path;
         
         $controller = ucwords($request->getModule())."\\Controllers\\".$request->getControllerClassName();
         $route = new Route();
@@ -172,6 +172,21 @@ class Router
         }
         
         return $route;
+    }
+
+    /**
+     * 
+     * @param string $class
+     * @return \Flare\Application\Router\Route
+     */
+    public function getErrorRoute($class)
+    {
+        $class = explode('.', $class);
+        $module = isset($class[0]) ? $class[0] : F::$config->router['default_module'];
+        $controller = isset($class[1]) ? $class[1] : F::$config->router['default_controller'];
+        $action = isset($class[2]) ? $class[2] : F::$config->router['default_action'];
+        $this->_currentRoute = $this->_route($module, $controller, $action);
+        return $this->_currentRoute ? $this->_currentRoute : null;
     }
 
     /**
@@ -263,7 +278,8 @@ class Router
                 $segmentParamsCount = ($segmentCount - $indexStart) + 1;
                 $segmentParamsCount = $segmentParamsCount < 0 ? 1 : $segmentParamsCount;
                 if ($segmentParamsCount > $route->getAction()->getNumberOfParameters()
-                    || $segmentParamsCount < $route->getAction()->getNumberOfRequiredParameters()) {
+                    || $segmentParamsCount < $route->getAction()->getNumberOfRequiredParameters())
+                {
                     $validUriForParams = false;
                     return;
                 }

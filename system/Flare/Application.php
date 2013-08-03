@@ -126,26 +126,6 @@ class Application
      * @param string $directory
      * @return \Flare\Application
      */
-    public function setErrorsDirectory($directory)
-    {
-        $this->_errorLayoutsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
-        return $this;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getErrorsDirectory()
-    {
-        return $this->_errorLayoutsDirectory;
-    }
-
-    /**
-     * 
-     * @param string $directory
-     * @return \Flare\Application
-     */
     public function setViewsDirectory($directory)
     {
         $this->_viewsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
@@ -423,7 +403,7 @@ class Application
     {
         $route = F::$router->getRoute();
         if (!$route) {
-            show_response(404);
+            $route = $this->error(404);
         }
         
         $this->_controller = $route->getController();
@@ -530,16 +510,19 @@ class Application
      * 
      * @param int $code
      * @param string $message
+     * @param boolean $skipConfig
      * @return void
      */
-    public function error($code, $message = '')
+    public function error($code, $message = '', $skipConfig = false)
     {
         $html = null;
-        if (isset(F::$config->router['errors'][$code]) 
-            && file_exists($this->_errorLayoutsDirectory.$code.'.php'))
-        {
-            $html = new Html($this->_errorLayoutsDirectory.$code.'.php');
-            $html->set('message', $message);
+        if (!$skipConfig && !empty(F::$config->router['errors'][$code])) {
+            $route = F::$router->getErrorRoute(F::$config->router['errors'][$code]);
+            if (!$route) {
+                $this->error($code, null, false);
+            }
+            $route->getController()->response->setCode($code);
+            return $route;
         } elseif ($message) {
             $html = '<pre>'.$message.'</pre>';
         } elseif (isset(Response::$messages[$code])) {
@@ -548,6 +531,7 @@ class Application
         F::$response->setCode($code)
             ->setBody($html)
             ->send();
+        $this->shutdown();
         exit;
     }
 
@@ -592,7 +576,6 @@ class Application
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
             ->setLayoutsDirectory($this->_appDirectory.'layouts')
-            ->setErrorsDirectory($this->_appDirectory.'errors')
             ->setControllersDirectory('controllers')
             ->setModelsDirectory('models')
             ->setViewsDirectory('views')
