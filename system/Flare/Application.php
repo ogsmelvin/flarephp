@@ -33,12 +33,6 @@ class Application
      * 
      * @var string
      */
-    private $_errorLayoutsDirectory;
-
-    /**
-     * 
-     * @var string
-     */
     private $_viewsDirectory;
 
     /**
