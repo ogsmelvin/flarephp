@@ -177,12 +177,15 @@ class Config
      * @param \Flare\Application\Config|array $content
      * @return \Flare\Application\Config
      */
-    public function merge($content)
+    public function merge($new)
     {
-        if ($content instanceof Config) {
-            $content = $content->getAll();
+        if ($new instanceof Config) {
+            $new = $new->getAll();
         }
-        $this->_config = array_merge($this->_config, $content);
+
+        foreach ($this->_config as $key => &$config) {
+            if (isset($new[$key])) $config = array_merge($config, $new[$key]);
+        }
         return $this;
     }
 }
