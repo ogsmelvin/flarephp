@@ -80,6 +80,12 @@ class Uri
 
     /**
      * 
+     * @var boolean
+     */
+    private $_valid = true;
+
+    /**
+     * 
      * @var string
      */
     const DEFAULT_PORT = '80';
@@ -115,7 +121,8 @@ class Uri
         $this->_uri = '/'.ltrim(str_replace($search, '', $_SERVER['REQUEST_URI']), '/');
         $valid = UriSec::validate($this->_uri, $this->_segments);
         if (!$valid) {
-            show_response(400);
+            $this->_valid = false;
+            return;
         }
         $this->suffix = pathinfo($this->_uri, PATHINFO_EXTENSION);
         
@@ -196,6 +203,15 @@ class Uri
     public function isHttps()
     {
         return ($this->protocol === 'https://');
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return $this->_valid;
     }
 
     /**

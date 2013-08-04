@@ -510,23 +510,33 @@ class Application
     public function error($code, $message = '', $skipConfig = false)
     {
         $html = null;
-        if (!$skipConfig && !empty(F::$config->router['errors'][$code])) {
-            $route = F::$router->getErrorRoute(F::$config->router['errors'][$code]);
+        if (!$skipConfig && !empty(F::$config->router['errors'])) {
+
+            $route = null;
+            if (is_array(F::$config->router['errors'])) {
+                if (isset(F::$config->router['errors'][$code])) {
+                    $route = F::$router->getErrorRoute(F::$config->router['errors'][$code]);
+                }
+            } else {
+                $route = F::$router->getErrorRoute(F::$config->router['errors']);
+            }
+
             if (!$route) {
-                $this->error($code, null, false);
+                $this->error($code, null, true);
             }
             $route->getController()->response->setCode($code);
             return $route;
+
         } elseif ($message) {
             $html = '<pre>'.$message.'</pre>';
         } elseif (isset(Response::$messages[$code])) {
             $html = '<pre>'.Response::$messages[$code].'</pre>';
         }
+
         F::$response->setCode($code)
             ->setBody($html)
             ->send();
-        $this->shutdown();
-        exit;
+        $this->shutdown(true);
     }
 
     /**
@@ -564,9 +574,7 @@ class Application
         } elseif (!$this->_appDirectory) {
             show_error("App Directory and System Directory must be set");
         }
-        $this->init()
-            ->setModules(F::$config->modules)
-            ->setConfigDirectory($this->_appDirectory.'config')
+        $this->setConfigDirectory($this->_appDirectory.'config')
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
             ->setLayoutsDirectory($this->_appDirectory.'layouts')
@@ -574,6 +582,8 @@ class Application
             ->setModelsDirectory('models')
             ->setViewsDirectory('views')
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
+            ->init()
+            ->setModules(F::$config->modules)
             ->predispatch()
             ->configure()
             ->dispatch()
@@ -582,11 +592,15 @@ class Application
 
     /**
      * 
+     * @param boolean $withExit
      * @return void
      */
-    public function shutdown()
+    public function shutdown($withExit = false)
     {
         Db::disconnect();
+        if ($withExit) {
+            exit;
+        }
     }
 
     /**
@@ -600,6 +614,10 @@ class Application
         F::$response = new Response();
         F::$uri = new Uri();
         F::$router = new Router();
+
+        if (!F::$uri->isValid()) {
+            $this->error(400);
+        }
         return $this;
     }
 

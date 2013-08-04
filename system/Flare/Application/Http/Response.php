@@ -11,7 +11,20 @@ use Flare\Flare as F;
  * 
  */
 class Response extends ParentResponse
-{
+{   
+    /**
+     * 
+     * @param int $code
+     * @return string
+     */
+    public function getCodeMessage($code = null)
+    {
+        if (!$code) {
+            $code = $this->_code;
+        }
+        return isset(self::$messages[$code]) ? self::$messages[$code] : '';
+    }
+
     /**
      * 
      * @param string $name

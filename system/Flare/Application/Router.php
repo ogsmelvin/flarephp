@@ -177,7 +177,7 @@ class Router
     /**
      * 
      * @param string $class
-     * @return \Flare\Application\Router\Route
+     * @return \Flare\Application\Router\Route|null
      */
     public function getErrorRoute($class)
     {

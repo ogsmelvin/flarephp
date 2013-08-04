@@ -27,14 +27,13 @@ $routes = array(
     ),
 
     /**
-     * 
      * to use the built in just leave the value blank
      * statusCode => 'module.controller.action'
+     * 
+     * You can also do this for wildcard error controller
+     * 'errors' => 'module.controller.action'
      */
-    'errors' => array(
-        404 => 'demo.index.index',
-        500 => ''
-    ),
+    'errors' => 'demo.error.index',
 
     /**
      * Default module, controller and action
