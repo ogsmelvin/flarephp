@@ -3,6 +3,7 @@
 namespace Flare;
 
 use Flare\View\Response as ViewResponse;
+use Flare\Application\ErrorController;
 use Flare\View\Response\Html;
 use Flare\Application\Config;
 use Flare\Application\Router;
@@ -521,7 +522,7 @@ class Application
                 $route = F::$router->getErrorRoute(F::$config->router['errors']);
             }
 
-            if (!$route) {
+            if (!$route || !($route->getController() instanceof ErrorController)) {
                 $this->error($code, null, true);
             }
             $route->getController()->response->setCode($code);
