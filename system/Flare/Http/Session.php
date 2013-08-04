@@ -136,11 +136,15 @@ class Session
      * 
      * @param string $key
      * @param mixed $value
+     * @param int $expiration
      * @return \Flare\Http\Session
      */
-    public function set($key, $value)
+    public function set($key, $value, $expiration = 0)
     {
         $this->__set($key, $value);
+        if ($expiration) {
+            $this->setExpiration($key, $expiration);
+        }
         return $this;
     }
 
@@ -183,14 +187,26 @@ class Session
      * @param string $key
      * @return mixed
      */
-    public function get($key = null)
+    public function get($key)
     {
-        if (!$key) {
-            $session = $_SESSION[$this->_name];
-            unset($session[self::SETTINGS_KEY]);
-            return $session;
-        }
         return $this->__get($key);
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function all()
+    {
+        $session = $_SESSION[$this->_name];
+        unset($session[self::SETTINGS_KEY]);
+        foreach ($session as $key => $value) {
+            $value = $this->__get($key);
+            if ($value === null) {
+                unset($session[$key]);
+            }
+        }
+        return $session;
     }
 
     /**
@@ -226,7 +242,10 @@ class Session
         if (!$this->_started) {
             show_error("Session must be started first");
         }
-        unset($_SESSION[$this->_name][$key]);
+        unset(
+            $_SESSION[$this->_name][$key],
+            $_SESSION[$this->_name][self::SETTINGS_KEY][$key]
+        );
     }
 
     /**
@@ -289,7 +308,10 @@ class Session
     {
         $val = $this->__get($key);
         if ($val !== null) {
-            unset($_SESSION[$this->_name][$key]);
+            unset(
+                $_SESSION[$this->_name][$key],
+                $_SESSION[$this->_name][self::SETTINGS_KEY][$key]
+            );
         }
         return $val;
     }

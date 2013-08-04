@@ -179,7 +179,7 @@ class Router
      * @param string $class
      * @return \Flare\Application\Router\Route|null
      */
-    public function getErrorRoute($class)
+    public function useErrorRoute($class)
     {
         $class = explode('.', $class);
         $module = isset($class[0]) ? $class[0] : F::$config->router['default_module'];

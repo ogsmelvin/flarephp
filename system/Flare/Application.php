@@ -394,11 +394,18 @@ class Application
      * 
      * @return \Flare\Application
      */
-    public function predispatch()
+    private function _predispatch()
     {
-        $route = F::$router->getRoute();
-        if (!$route) {
-            $route = $this->error(404);
+        $route = null;
+        if (F::$uri->isValid()) {
+            $route = F::$router->getRoute();
+            if (!$route) {
+                $route = $this->error(404);
+            } elseif ($route->getController() instanceof ErrorController) {
+                $route->getController()->response->setCode(404);
+            }
+        } else {
+            $route = $this->error(400);
         }
         
         $this->_controller = $route->getController();
@@ -411,7 +418,7 @@ class Application
      * 
      * @return void
      */
-    public function dispatch()
+    private function _dispatch()
     {
         if ($this->_dispatched) {
             show_error('Already dispatched');
@@ -516,10 +523,10 @@ class Application
             $route = null;
             if (is_array(F::$config->router['errors'])) {
                 if (isset(F::$config->router['errors'][$code])) {
-                    $route = F::$router->getErrorRoute(F::$config->router['errors'][$code]);
+                    $route = F::$router->useErrorRoute(F::$config->router['errors'][$code]);
                 }
             } else {
-                $route = F::$router->getErrorRoute(F::$config->router['errors']);
+                $route = F::$router->useErrorRoute(F::$config->router['errors']);
             }
 
             if (!$route || !($route->getController() instanceof ErrorController)) {
@@ -571,9 +578,9 @@ class Application
     public function start()
     {
         if ($this->_dispatched) {
-            show_error("Application is already started");
+            show_error('Application is already started');
         } elseif (!$this->_appDirectory) {
-            show_error("App Directory and System Directory must be set");
+            show_error('App Directory and System Directory must be set');
         }
         $this->setConfigDirectory($this->_appDirectory.'config')
             ->setModulesDirectory($this->_appDirectory.'modules')
@@ -583,11 +590,11 @@ class Application
             ->setModelsDirectory('models')
             ->setViewsDirectory('views')
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
-            ->init()
+            ->_init()
             ->setModules(F::$config->modules)
-            ->predispatch()
-            ->configure()
-            ->dispatch()
+            ->_predispatch()
+            ->_configure()
+            ->_dispatch()
             ->shutdown();
     }
 
@@ -608,17 +615,13 @@ class Application
      *
      * @return \Flare\Application
      */
-    private function init()
+    private function _init()
     {
         F::$config = Config::load(require $this->_appDirectory.'config/config.php');
         F::$request = new Request();
         F::$response = new Response();
         F::$uri = new Uri();
         F::$router = new Router();
-
-        if (!F::$uri->isValid()) {
-            $this->error(400);
-        }
         return $this;
     }
 
@@ -626,7 +629,7 @@ class Application
      * 
      * @return void
      */
-    private function setupCookie()
+    private function _setupCookie()
     {
         $conf = F::$config->cookie;
         if (!empty($conf['namespace'])) {
@@ -647,7 +650,7 @@ class Application
      * 
      * @return void
      */
-    private function setupRouter()
+    private function _setupRouter()
     {
         $router = F::$config->router;
         if (isset($router['routes'])) {
@@ -662,7 +665,7 @@ class Application
      * 
      * @return void
      */
-    private function setupSession()
+    private function _setupSession()
     {
         $session = F::$config->session;
         if (!empty($session['namespace'])) {
@@ -679,7 +682,7 @@ class Application
      * 
      * @return \Flare\Application
      */
-    private function configure()
+    private function _configure()
     {
         if (file_exists($this->getModuleConfigDirectory().'config.php')) {
             $moduleConfig = require $this->getModuleConfigDirectory().'config.php';
@@ -701,9 +704,9 @@ class Application
             date_default_timezone_set(F::$config->timezone);
         }
 
-        $this->setupRouter();
-        $this->setupSession();
-        $this->setupCookie();
+        $this->_setupRouter();
+        $this->_setupSession();
+        $this->_setupCookie();
 
         if (F::$config->auto_compress && !@ini_get('zlib.output_compression')
             && extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
