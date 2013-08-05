@@ -43,7 +43,7 @@ class Memcache extends Cache
      * @param mixed $value
      * @return \Flare\Cache
      */
-    public function set($key, $value)
+    public function set($key, $value, $expiration = 0)
     {
         return $this;
     }

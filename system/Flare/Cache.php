@@ -63,7 +63,8 @@ abstract class Cache
      * 
      * @param string $key
      * @param mixed $value
+     * @param int $expiration
      * @return \Flare\Cache
      */
-    abstract public function set($key, $value);
+    abstract public function set($key, $value, $expiration = 0);
 }
