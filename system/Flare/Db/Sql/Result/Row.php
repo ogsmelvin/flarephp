@@ -111,6 +111,15 @@ class Row
 
     /**
      * 
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->_data;
+    }
+
+    /**
+     * 
      * @param string $key
      * @return mixed
      */
@@ -136,7 +145,7 @@ class Row
      * @param string $field
      * @return int
      */
-    public function getInt($field)
+    public function int($field)
     {
         return intval($this->__get($field));
     }
@@ -147,10 +156,10 @@ class Row
      * @param boolean $xss
      * @return string
      */
-    public function getString($field, $xss = true)
+    public function string($field, $xss = true)
     {
         if ($xss) {
-            return $this->getXssClean($field);
+            return $this->xss($field);
         }
         return (string) $this->__get($field);
     }
@@ -160,17 +169,17 @@ class Row
      * @param string $field
      * @return float
      */
-    public function getFloat($field)
+    public function float($field)
     {
-        return floatval($this->getInt($field));
+        return floatval($this->int($field));
     }
 
     /**
      * 
      * @param string $field
-     * @return mixed
+     * @return string
      */
-    public function getXssClean($field)
+    public function xss($field)
     {
         if (isset($this->_data[$field])) {
             return Xss::filter($this->_data[$field]);
