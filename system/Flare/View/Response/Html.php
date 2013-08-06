@@ -2,6 +2,7 @@
 
 namespace Flare\View\Response;
 
+use Flare\Application\EventListener;
 use Flare\View\Response;
 use Flare\View;
 
@@ -50,7 +51,7 @@ class Html extends Response
      * 
      * @param string $key
      * @param mixed $value
-     * @return \Flare\UI\Html
+     * @return \Flare\View\Html
      */
     public function set($key, $value)
     {
@@ -83,11 +84,22 @@ class Html extends Response
     /**
      * 
      * @param string $file
-     * @return \Flare\UI\Html
+     * @return \Flare\View\Html
      */
     public function setLayout($file)
     {
         $this->_layoutPath = $file;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $selector
+     * @param \Flare\Application\EventListener $listener
+     * @return \Flare\View\Html
+     */
+    public function addEvent($selector, EventListener &$listener)
+    {
         return $this;
     }
 }
