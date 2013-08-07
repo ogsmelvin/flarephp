@@ -58,7 +58,7 @@ class Html extends Response
      * 
      * @param string $key
      * @param mixed $value
-     * @return \Flare\View\Html
+     * @return \Flare\View\Response\Html
      */
     public function set($key, $value)
     {
@@ -116,7 +116,7 @@ class Html extends Response
     /**
      * 
      * @param string $file
-     * @return \Flare\View\Html
+     * @return \Flare\View\Response\Html
      */
     public function setLayout($file)
     {
@@ -128,7 +128,7 @@ class Html extends Response
      * 
      * @param string $selector
      * @param \Flare\Application\EventListener $listener
-     * @return \Flare\View\Html
+     * @return \Flare\View\Response\Html
      */
     public function addEvent($selector, EventListener &$listener)
     {
