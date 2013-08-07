@@ -11,5 +11,5 @@ use Flare\View\Response;
  */
 class Image extends Response
 {
-    
+	
 }

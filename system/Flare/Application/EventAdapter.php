@@ -13,22 +13,22 @@ use Flare\Flare as F;
  */
 class EventAdapter implements EventListener
 {
-    /**
-     * 
-     * @param \Flare\Application\Event $event
-     * @return mixed
-     */
-    public function listen(Event $event)
-    {
-        return $event->fire();
-    }
+	/**
+	 * 
+	 * @param \Flare\Application\Event $event
+	 * @return mixed
+	 */
+	public function listen(Event $event)
+	{
+		return $event->fire();
+	}
 
-    /**
-     * 
-     * @return \Flare\Application\AbstractController
-     */
-    public function getController()
-    {
-        return F::getApp()->getController();
-    }
+	/**
+	 * 
+	 * @return \Flare\Application\AbstractController
+	 */
+	public function getController()
+	{
+		return F::getApp()->getController();
+	}
 }

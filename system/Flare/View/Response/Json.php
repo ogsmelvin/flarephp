@@ -12,37 +12,37 @@ use Flare\View\Response;
  */
 class Json extends Response
 {
-    /**
-     * 
-     * @var string
-     */
-    protected $contentType = 'application/json';
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $contentType = 'application/json';
 
-    /**
-     * 
-     * @var \Flare\Object\Json
-     */
-    private $json;
+	/**
+	 * 
+	 * @var \Flare\Object\Json
+	 */
+	private $json;
 
-    /**
-     * 
-     * @param \Flare\Object\Json|array|string $content
-     * @param boolean $is_url
-     */
-    public function __construct($content)
-    {
-        if (!($content instanceof JsonObject)) {
-            $content = new JsonObject($content);
-        }
-        $this->json = $content;
-    }
+	/**
+	 * 
+	 * @param \Flare\Object\Json|array|string $content
+	 * @param boolean $is_url
+	 */
+	public function __construct($content)
+	{
+		if (!($content instanceof JsonObject)) {
+			$content = new JsonObject($content);
+		}
+		$this->json = $content;
+	}
 
-    /**
-     * 
-     * @return string
-     */
-    public function render()
-    {
-        return (string) $this->json;
-    }
+	/**
+	 * 
+	 * @return string
+	 */
+	public function render()
+	{
+		return (string) $this->json;
+	}
 }

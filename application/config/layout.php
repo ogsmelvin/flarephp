@@ -6,18 +6,18 @@
  */
 $layout = array(
 
-    /**
-     * View Layout settings for main module
-     */
-    'main' => array(
-        'auto' => true,
-        'layout' => 'main'
-    ),
+	/**
+	 * View Layout settings for main module
+	 */
+	'main' => array(
+		'auto' => true,
+		'layout' => 'main'
+	),
 
-    'demo' => array(
-        'auto' => true,
-        'layout' => 'demo'
-    )
+	'demo' => array(
+		'auto' => true,
+		'layout' => 'demo'
+	)
 );
 
 /**

@@ -9,9 +9,9 @@ namespace Flare;
  */
 abstract class Object
 {
-    /**
-     * 
-     * @var mixed
-     */
-    protected $_data;
+	/**
+	 * 
+	 * @var mixed
+	 */
+	protected $_data;
 }

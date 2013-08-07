@@ -11,5 +11,5 @@ use Flare\View;
  */
 class Xml extends View
 {
-    
+	
 }

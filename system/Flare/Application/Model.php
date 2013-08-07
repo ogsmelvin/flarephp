@@ -11,12 +11,12 @@ use Flare\Flare as F;
  */
 abstract class Model
 {
-    /**
-     * 
-     * @return \Flare\Application\AbstractController
-     */
-    protected static function controller()
-    {
-        return F::getApp()->getController();
-    }
+	/**
+	 * 
+	 * @return \Flare\Application\AbstractController
+	 */
+	protected static function controller()
+	{
+		return F::getApp()->getController();
+	}
 }

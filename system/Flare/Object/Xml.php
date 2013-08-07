@@ -11,5 +11,5 @@ use Flare\Object;
  */
 class Xml extends Object
 {
-    
+	
 }
