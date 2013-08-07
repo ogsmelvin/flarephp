@@ -167,7 +167,7 @@ class Config
 	 *
 	 * @return array
 	 */
-	public function getAll()
+	public function all()
 	{
 		return $this->_config;
 	}
@@ -180,7 +180,7 @@ class Config
 	public function merge($new)
 	{
 		if ($new instanceof Config) {
-			$new = $new->getAll();
+			$new = $new->all();
 		}
 
 		foreach ($this->_config as $key => &$config) {

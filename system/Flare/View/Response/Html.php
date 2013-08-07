@@ -2,9 +2,9 @@
 
 namespace Flare\View\Response;
 
-use Flare\Application\EventListener;
+use Flare\View\DOM\Element;
 use Flare\View\Response;
-use \DOMDocument;
+use Flare\View\DOM;
 use Flare\View;
 
 /**
@@ -12,7 +12,7 @@ use Flare\View;
  * @author anthony
  * 
  */
-class Html extends Response
+class Html extends Response implements DOM
 {
 	/**
 	 * 
@@ -25,12 +25,6 @@ class Html extends Response
 	 * @var string
 	 */
 	private $_contentPath;
-
-	/**
-	 * 
-	 * @var array
-	 */
-	private $_events = array();
 
 	/**
 	 * 
@@ -65,14 +59,13 @@ class Html extends Response
 		$this->_view->setVar($key, $value);
 		return $this;
 	}
-
+	
 	/**
 	 * 
-	 * @return string
+	 * @return \Flare\View\Response\Html
 	 */
-	public function render()
+	public function compile()
 	{
-
 		$view = & $this->_view;
 		extract($view->getVars());
 
@@ -85,32 +78,17 @@ class Html extends Response
 			include $this->_layoutPath;
 			$view->setContent((string) ob_get_clean());
 		}
+		
+		return $this;
+	}
 
-		if ($this->_events) {
-
-			$dom = new DOMDocument();
-			$dom->loadHTML($view->getContent());
-
-			$src = $dom->createAttribute('src');
-			$src->value = '';
-
-			$type = $dom->createAttribute('type');
-			$type->value = 'text/javascript';
-
-			$script = $dom->createElement('script');
-			$script->appendChild($src);
-			$script->appendChild($type);
-
-			foreach ($dom->getElementsByTagName('body') as $body) {
-				$body->appendChild($script);
-			}
-
-			$view->setContent($dom->saveHTML());
-			unset($script, $dom, $src, $type);
-
-		}
-
-		return $view->getContent();
+	/**
+	 * 
+	 * @return string
+	 */
+	public function render()
+	{
+		return (string) $this->_view;
 	}
 
 	/**
@@ -123,16 +101,29 @@ class Html extends Response
 		$this->_layoutPath = $file;
 		return $this;
 	}
-
+	
 	/**
 	 * 
-	 * @param string $selector
-	 * @param \Flare\Application\EventListener $listener
-	 * @return \Flare\View\Response\Html
+	 * @param string $id
+	 * @return \Flare\View\DOM\Element
 	 */
-	public function addEvent($selector, EventListener &$listener)
+	public function getElementById($id)
 	{
-		$this->_events[] = $selector;
-		return $this;
+		$element = $this->_view->getDOMDocument()->getElementById($id);
+		if ($element) {
+			$element = new Element();
+			$element->setId($id);
+		}
+		return $element;
+	}
+	
+	/**
+	 * 
+	 * @param string $name
+	 * @return \Flare\Util\Collection
+	 */
+	public function getElementsByTagName($name)
+	{
+		
 	}
 }

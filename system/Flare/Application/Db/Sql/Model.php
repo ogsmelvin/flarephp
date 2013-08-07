@@ -4,7 +4,6 @@ namespace Flare\Application\Db\Sql;
 
 use Flare\Application\Model as ParentModel;
 use Flare\Application\Registry;
-use Flare\Flare as F;
 	
 /**
  * 
@@ -30,12 +29,6 @@ class Model extends ParentModel
 	 * @var PDO
 	 */
 	protected $_adapter;
-
-	/**
-	 * 
-	 * @var array
-	 */
-	private static $_instances = array();
 
 	/**
 	 * 

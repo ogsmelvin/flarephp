@@ -505,7 +505,7 @@ class Application
 		if ($layout) {
 			$html->setLayout($layout);
 		}
-		return $html;
+		return $html->compile();
 	}
 
 	/**

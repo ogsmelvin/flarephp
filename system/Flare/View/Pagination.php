@@ -2,8 +2,6 @@
 
 namespace Flare\View;
 
-use Flare\Flare as F;
-
 /**
  * 
  * @author anthony
@@ -56,7 +54,7 @@ class Pagination
 	/**
 	 * 
 	 * @param int $page
-	 * @return \Flare\UI\Pagination
+	 * @return \Flare\View\Pagination
 	 */
 	public function setCurrentPage($page)
 	{
@@ -67,7 +65,7 @@ class Pagination
 	/**
 	 * 
 	 * @param int $limit
-	 * @return \Flare\UI\Pagination
+	 * @return \Flare\View\Pagination
 	 */
 	public function setLimitPerPage($limit)
 	{
@@ -87,7 +85,7 @@ class Pagination
 	/**
 	 * 
 	 * @param int $count
-	 * @return \Flare\UI\Pagination
+	 * @return \Flare\View\Pagination
 	 */
 	public function setTotalCount($count)
 	{
@@ -116,7 +114,7 @@ class Pagination
 	/**
 	 * 
 	 * @param int $offset
-	 * @return \Flare\UI\Pagination
+	 * @return \Flare\View\Pagination
 	 */
 	public function setOffset($offset)
 	{
@@ -136,7 +134,7 @@ class Pagination
 	/**
 	 * 
 	 * @param string $url
-	 * @return \Flare\UI\Pagination
+	 * @return \Flare\View\Pagination
 	 */
 	public function setBaseUrl($url)
 	{
@@ -156,7 +154,7 @@ class Pagination
 	/**
 	 * 
 	 * @param string $alignment
-	 * @return \Flare\UI\Pagination
+	 * @return \Flare\View\Pagination
 	 */
 	public function setAlignment($alignment)
 	{
@@ -167,7 +165,7 @@ class Pagination
 	/**
 	 * 
 	 * @param string $size
-	 * @return \Flare\UI\Pagination
+	 * @return \Flare\View\Pagination
 	 */
 	public function setSize($size)
 	{

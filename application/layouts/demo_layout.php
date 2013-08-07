@@ -17,7 +17,7 @@
 		</div>
 	</div>
 	<script type="text/javascript" src="<?= $uri->baseUrl ?>js/jquery.min.js"></script>
-	<script type="text/javascript" src="<?= $uri->baseUrl ?>js/bootstrap.min.js"></script>
+	<!--<script type="text/javascript" src="<?= $uri->baseUrl ?>js/bootstrap.min.js"></script>-->
 	<?= $view->getSection('bottom') ?>
 </body>
 </html>

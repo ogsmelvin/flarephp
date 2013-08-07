@@ -10,7 +10,10 @@ class Index_Controller extends Controller implements EventListener
 {
 	public function index_action()
 	{
-		return $this->view('index');
+		$view = $this->view('index');
+		$view->getElementById('name')->addEventListener('click', $this);
+		$view->getElementById('name')->addEventListener('click', $this);
+		return $view;
 	}
 
 	public function submit_event()
