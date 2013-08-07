@@ -2,7 +2,7 @@
 
 namespace Flare\Application;
 
-use Flare\Application\Event;
+use Flare\View\Event;
 
 /**
  * 
@@ -13,7 +13,7 @@ interface EventListener
 {
     /**
      * 
-     * @param \Flare\Application\Event $event
+     * @param \Flare\View\Event $event
      * @return mixed
      */
     public function listen(Event $event);

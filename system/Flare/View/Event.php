@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Application;
+namespace Flare\View;
 
 /**
  * 
@@ -22,7 +22,7 @@ class Event
      * 
      * @param string $name
      * @param callable $handler
-     * @return \Flare\Application\Event
+     * @return \Flare\View\Event
      */
     public static function bind($name, $handler)
     {

@@ -3,7 +3,7 @@
 namespace Demo\Controllers;
 
 use Flare\Application\EventListener;
-use Flare\Application\Event;
+use Flare\View\Event;
 use Demo\Controller;
 
 class Index_Controller extends Controller implements EventListener
