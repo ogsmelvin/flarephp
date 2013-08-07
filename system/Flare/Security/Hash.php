@@ -9,7 +9,7 @@ use Flare\Security;
  * @author anthony
  * 
  */
-class Hash extends Security;
+class Hash extends Security
 {
     /**
      * 

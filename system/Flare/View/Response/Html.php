@@ -4,6 +4,7 @@ namespace Flare\View\Response;
 
 use Flare\Application\EventListener;
 use Flare\View\Response;
+use \DOMDocument;
 use Flare\View;
 
 /**
@@ -24,6 +25,12 @@ class Html extends Response
      * @var string
      */
     private $_contentPath;
+
+    /**
+     * 
+     * @var array
+     */
+    private $_events = array();
 
     /**
      * 
@@ -65,6 +72,7 @@ class Html extends Response
      */
     public function render()
     {
+
         $view = & $this->_view;
         extract($view->getVars());
 
@@ -76,6 +84,30 @@ class Html extends Response
             ob_start();
             include $this->_layoutPath;
             $view->setContent((string) ob_get_clean());
+        }
+
+        if ($this->_events) {
+
+            $dom = new DOMDocument();
+            $dom->loadHTML($view->getContent());
+
+            $src = $dom->createAttribute('src');
+            $src->value = '';
+
+            $type = $dom->createAttribute('type');
+            $type->value = 'text/javascript';
+
+            $script = $dom->createElement('script');
+            $script->appendChild($src);
+            $script->appendChild($type);
+
+            foreach ($dom->getElementsByTagName('body') as $body) {
+                $body->appendChild($script);
+            }
+
+            $view->setContent($dom->saveHTML());
+            unset($script, $dom, $src, $type);
+
         }
 
         return $view->getContent();
@@ -100,6 +132,7 @@ class Html extends Response
      */
     public function addEvent($selector, EventListener &$listener)
     {
+        $this->_events[] = $selector;
         return $this;
     }
 }

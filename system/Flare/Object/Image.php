@@ -37,7 +37,7 @@ class Image extends Object
         $realpath = $realpath !== false ? rtrim(str_replace("\\", "/", $realpath), "/") : rtrim($path, "/");
         $this->_fileinfo = pathinfo($path);
         $image = getimagesize($path);
-        if (isset($image[2]) && in_array($image[2], get_image_types()) {
+        if (isset($image[2]) && in_array($image[2], get_image_types())) {
             $this->_type = $image[2];
             if ($this->_type == IMAGETYPE_JPEG) {
                 $this->_data = imagecreatefromjpeg($filename);
@@ -144,7 +144,6 @@ class Image extends Object
     public function copy($location)
     {
         $this->saveAs($location);
-        return new __CLASS__($location);
     }
 
     /**

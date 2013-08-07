@@ -59,7 +59,7 @@ abstract class AbstractController
 
     /**
      * 
-     * @var PDO
+     * @var \Flare\Db\Sql\Driver
      */
     protected $db;
 
@@ -123,7 +123,7 @@ abstract class AbstractController
     /**
      * 
      * @param string $key
-     * @return \PDO
+     * @return \Flare\Db\Sql\Driver
      */
     public function getDatabase($key = null)
     {
@@ -171,7 +171,7 @@ abstract class AbstractController
      * @param string $path
      * @param array $data
      * @param string|boolean $layout
-     * @return mixed
+     * @return \Flare\View\Response\Html
      */
     public function view($path, $data = null, $layout = null)
     {

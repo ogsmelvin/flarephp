@@ -2,12 +2,14 @@
 
 namespace Flare\Db\Sql;
 
+use \PDO;
+
 /**
  * 
  * @author anthony
- * @abstract
+ * 
  */
-interface Sql
+abstract class Driver extends PDO
 {
     /**
      * 
@@ -15,7 +17,7 @@ interface Sql
      * @param array $bindings
      * @return void
      */
-    public function sql($query = null, $bindings = null);
+    abstract public function sql($query = null, $bindings = null);
 
     /**
      * 
@@ -24,14 +26,14 @@ interface Sql
      * @param boolean $check_columns
      * @return \Flare\Db\Sql\Query\ARQuery
      */
-    public function insert($table, $data = array(), $check_columns = true);
+    abstract public function insert($table, $data = array(), $check_columns = true);
 
     /**
      * 
      * @param string|array $select
      * @return \Flare\Db\Sql\Query\ARQuery
      */
-    public function select($select);
+    abstract public function select($select);
 
     /**
      * 
@@ -40,19 +42,19 @@ interface Sql
      * @param boolean $check_columns
      * @return \Flare\Db\Sql\Query\ARQuery
      */
-    public function update($table, $data = array(), $check_columns = true);
+    abstract public function update($table, $data = array(), $check_columns = true);
 
     /**
      * 
      * @param string $table
      * @return \Flare\Db\Sql\Query\ARQuery
      */
-    public function delete($table);
+    abstract public function delete($table);
 
     /**
      * 
      * @param string $table
      * @return string
      */
-    public function getPrimaryKey($table);
+    abstract public function getPrimaryKey($table);
 }

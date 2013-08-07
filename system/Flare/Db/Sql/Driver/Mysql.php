@@ -4,17 +4,15 @@ namespace Flare\Db\Sql\Driver;
 
 use Flare\Db\Sql\Query\ARQuery;
 use Flare\Db\Sql\Query\Query;
-use Flare\Db\Sql\Sql;
+use Flare\Db\Sql\Driver;
 use \PDOStatement;
-use \PDO;
-
 
 /**
  *
  * @author anthony
  *
  */
-class Mysql extends PDO implements Sql
+class Mysql extends Driver
 {
     /**
      *

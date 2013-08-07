@@ -23,7 +23,7 @@ class Db
      * 
      * @param string $name
      * @param array $config
-     * @return \PDO
+     * @return \Flare\Db\Sql\Driver
      */
     public static function getConnection($name, $config = array())
     {
