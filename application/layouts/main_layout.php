@@ -57,7 +57,7 @@
 				</div>
 				<div class="span9">
 					<div class="doc-content-box">
-						<?= $view->getContent() ?>
+						<?= $view->getLayoutContent() ?>
 					</div>
 				</div>
 			</div>

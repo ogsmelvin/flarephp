@@ -35,6 +35,12 @@ class View
 	 * @var array
 	 */
 	private $sections = array();
+	
+	/**
+	 *
+	 * @var string
+	 */
+	private $layoutContent;
 
 	/**
 	 * 
@@ -174,6 +180,26 @@ class View
 	public function getContent()
 	{
 		return $this->content->saveHTML();
+	}
+	
+	/**
+	 * 
+	 * @param string $content
+	 * @return \Flare\View\Response\Html
+	 */
+	public function setLayoutContent($content)
+	{
+		$this->layoutContent = $content;
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	public function getLayoutContent()
+	{
+		return $this->layoutContent;
 	}
 	
 	/**

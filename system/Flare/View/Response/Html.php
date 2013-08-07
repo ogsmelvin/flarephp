@@ -59,7 +59,7 @@ class Html extends Response implements DOM
 		$this->_view->setVar($key, $value);
 		return $this;
 	}
-	
+    
 	/**
 	 * 
 	 * @return \Flare\View\Response\Html
@@ -68,16 +68,20 @@ class Html extends Response implements DOM
 	{
 		$view = & $this->_view;
 		extract($view->getVars());
-
+		
 		ob_start();
-		include $this->_contentPath;
-		$view->setContent((string) ob_get_clean());
-
 		if ($this->_layoutPath) {
+			
+			include $this->_contentPath;
+			$view->setLayoutContent((string) ob_get_clean());
+
 			ob_start();
 			include $this->_layoutPath;
-			$view->setContent((string) ob_get_clean());
+			
+		} else {
+			include $this->_contentPath;
 		}
+		$view->setContent((string) ob_get_clean());
 		
 		return $this;
 	}

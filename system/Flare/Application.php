@@ -693,7 +693,8 @@ class Application
 			F::$config->merge($moduleConfig);
 			unset($moduleConfig);
 		}
-
+		
+		libxml_use_internal_errors(true);
 		if (F::$config->time_limit !== null) {
 			set_time_limit(F::$config->time_limit);
 		}

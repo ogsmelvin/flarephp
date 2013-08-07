@@ -12,12 +12,12 @@
 	<div class="container well">
 		<div class="row-fluid">
 			<div class="span12">
-			<?= $view->getContent() ?>
+			<?= $view->getLayoutContent() ?>
 			</div>
 		</div>
 	</div>
 	<script type="text/javascript" src="<?= $uri->baseUrl ?>js/jquery.min.js"></script>
-	<!--<script type="text/javascript" src="<?= $uri->baseUrl ?>js/bootstrap.min.js"></script>-->
+	<script type="text/javascript" src="<?= $uri->baseUrl ?>js/bootstrap.min.js"></script>
 	<?= $view->getSection('bottom') ?>
 </body>
 </html>
