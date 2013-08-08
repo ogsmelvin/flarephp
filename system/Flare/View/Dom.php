@@ -18,7 +18,7 @@ interface Dom
 	 * @param \Flare\View\EventListener $listener
 	 * @return \Flare\View\Response
 	 */
-	public function addEventListener($selector, $event, EventListener &$listener);
+	public function addEvent($selector, $event, EventListener &$listener);
 	
 	/**
 	 * 
@@ -26,7 +26,7 @@ interface Dom
 	 * @param string $event
 	 * @return \Flare\View\Response
 	 */
-	public function removeEventListener($selector, $event);
+	public function removeEvent($selector, $event);
 	
 	/**
 	 * 

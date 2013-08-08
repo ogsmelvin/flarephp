@@ -120,7 +120,7 @@ class Html extends Response implements Dom
 	 * @param \Flare\Application\EventListener $listener
 	 * @return \Flare\View\Response\Html
 	 */
-	public function addEventListener($selector, $event, EventListener &$listener)
+	public function addEvent($selector, $event, EventListener &$listener)
 	{
 		$event .= '_event';
 		if (!method_exists($listener, $event)) {
@@ -139,7 +139,7 @@ class Html extends Response implements Dom
 	 * @param string $event
 	 * @return \Flare\View\Response\Html
 	 */
-	public function removeEventListener($selector, $event = null)
+	public function removeEvent($selector, $event = null)
 	{
 		if ($event) {
 			$event .= '_event';
