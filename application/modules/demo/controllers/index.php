@@ -16,18 +16,18 @@ class Index_Controller extends Controller implements EventListener
 		return $html;
 	}
 
-	public function click_event()
+	public function click_event(Event $event)
 	{
 		
 	}
 	
-	public function submit_event()
+	public function submit_event(Event $event)
 	{
 		
 	}
 
 	public function listen(Event $event)
-	{		
+	{
 		return $event->fire();
 	}
 }

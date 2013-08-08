@@ -72,7 +72,7 @@ class Html extends Response implements Dom
 	 * 
 	 * @return string
 	 */
-	public function compile()
+	private function _compile()
 	{
 		$view = & $this->_view;
 		extract($view->getVars());
@@ -99,7 +99,7 @@ class Html extends Response implements Dom
 	 */
 	public function render()
 	{
-		return $this->compile();
+		return $this->_compile();
 	}
 
 	/**

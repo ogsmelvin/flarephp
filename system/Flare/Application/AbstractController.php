@@ -35,7 +35,7 @@ abstract class AbstractController
 
 	/**
 	 * 
-	 * @var \Flare\Http\Response
+	 * @var \Flare\Application\Http\Response
 	 */
 	public $response;
 
@@ -66,7 +66,7 @@ abstract class AbstractController
 	/**
 	 * 
 	 * @param \Flare\Application\Http\Request $request
-	 * @param \Flare\Http\Response $response
+	 * @param \Flare\Application\Http\Response $response
 	 */
 	public function __construct(Request &$request, Response &$response)
 	{
