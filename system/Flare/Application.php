@@ -95,6 +95,12 @@ class Application
 	 * @var boolean
 	 */
 	private $_dispatched = false;
+	
+	/**
+	 *
+	 * @var boolean
+	 */
+	private $_predispatched = false;
 
 	/**
 	 * 
@@ -396,21 +402,23 @@ class Application
 	 */
 	private function _predispatch()
 	{
-		$route = null;
 		if (F::$uri->isValid()) {
 			$route = F::$router->getRoute();
 			if (!$route) {
-				$route = $this->error(404);
-			} elseif ($route->getController() instanceof ErrorController) {
+				$this->error(404);
+			} elseif ($route->getController() instanceof ErrorController
+				&& $route->getController()->response->getCode() == 200)
+			{
 				$route->getController()->response->setCode(404);
 			}
 		} else {
-			$route = $this->error(400);
+			$this->error(400);
 		}
 		
-		$this->_controller = $route->getController();
+		$this->_controller = F::$router->getRoute()->getController();
 		View::create()->setIncludePath($this->getModuleViewsDirectory());
 		F::$uri->setModuleUrl();
+		$this->_predispatched = true;
 		return $this;
 	}
 
@@ -420,10 +428,6 @@ class Application
 	 */
 	private function _dispatch()
 	{
-		if ($this->_dispatched) {
-			show_error('Already dispatched');
-		}
-
 		if (!$this->_controller) {
 			show_error('Controller is not initilized');
 		}
@@ -460,6 +464,7 @@ class Application
 				$this->_controller->cookie->getExpiration()
 			);
 		}
+		debug(get_class($this->_controller));
 		$this->_controller->response->setBody($view)->send();
 		$this->_controller->complete();
 		$this->_dispatched = true;
@@ -528,19 +533,26 @@ class Application
 			} else {
 				$route = F::$router->useErrorRoute(F::$config->router['errors']);
 			}
-
 			if (!$route || !($route->getController() instanceof ErrorController)) {
 				$this->error($code, null, true);
 			}
+			debug($message);
 			$route->getController()->response->setCode($code);
-			return $route;
-
+			if ($this->_predispatched) {
+				$this->_predispatch();
+				if (!$this->_dispatched) {
+					$this->_dispatch()
+						->shutdown();
+				}
+			}
+			return;
+			
 		} elseif ($message) {
 			$html = '<pre>'.$message.'</pre>';
 		} elseif (isset(Response::$messages[$code])) {
 			$html = '<pre>'.Response::$messages[$code].'</pre>';
 		}
-
+		
 		F::$response->setCode($code)
 			->setBody($html)
 			->send();
@@ -694,7 +706,6 @@ class Application
 			unset($moduleConfig);
 		}
 		
-		libxml_use_internal_errors(true);
 		if (F::$config->time_limit !== null) {
 			set_time_limit(F::$config->time_limit);
 		}

@@ -2,9 +2,9 @@
 
 namespace Flare\View\Response;
 
-use Flare\View\DOM\Element;
+use Flare\Application\EventListener;
 use Flare\View\Response;
-use Flare\View\DOM;
+use Flare\View\Dom;
 use Flare\View;
 
 /**
@@ -12,7 +12,7 @@ use Flare\View;
  * @author anthony
  * 
  */
-class Html extends Response implements DOM
+class Html extends Response implements Dom
 {
 	/**
 	 * 
@@ -37,6 +37,12 @@ class Html extends Response implements DOM
 	 * @var \Flare\View
 	 */
 	private $_view;
+	
+	/**
+	 *
+	 * @var array
+	 */
+	private $_events = array();
 
 	/**
 	 * 
@@ -108,26 +114,41 @@ class Html extends Response implements DOM
 	
 	/**
 	 * 
-	 * @param string $id
-	 * @return \Flare\View\DOM\Element
+	 * @param string $selector
+	 * @param string $event
+	 * @param \Flare\Application\EventListener $listener
+	 * @return \Flare\View\Response\Html
 	 */
-	public function getElementById($id)
+	public function addEventListener($selector, $event, EventListener &$listener)
 	{
-		$element = $this->_view->getDOMDocument()->getElementById($id);
-		if ($element) {
-			$element = new Element();
-			$element->setId($id);
+		$event = rtrim($event, '_event').'_event';
+		if (!method_exists($listener, $event)) {
+			show_error("Listener doesn't have '{$event}' method");
 		}
-		return $element;
+		$this->_events[$selector] = array(
+			'event' => $event,
+			'listener' => $listener
+		);
+		return $this;
 	}
 	
 	/**
 	 * 
-	 * @param string $name
-	 * @return \Flare\Util\Collection
+	 * @param string $selector
+	 * @param string $event
+	 * @return \Flare\View\Response\Html
 	 */
-	public function getElementsByTagName($name)
+	public function removeEventListener($selector, $event)
 	{
-		
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * @return array
+	 */
+	public function getEvents()
+	{
+		return array();
 	}
 }

@@ -17,15 +17,4 @@ class Event
 	{
 
 	}
-
-	/**
-	 * 
-	 * @param string $name
-	 * @param callable $handler
-	 * @return \Flare\View\Event
-	 */
-	public static function bind($name, $handler)
-	{
-		
-	}
 }

@@ -8,6 +8,9 @@ class Error_Controller extends ErrorController
 {
 	public function index_action()
 	{
-		debug($this->getErrorCode().' : '.$this->getErrorMessage());
+		return $this->view('error', array(
+			'errorCode' => $this->getErrorCode(),
+			'errorMessage' => $this->getErrorMessage()
+		));
 	}
 }

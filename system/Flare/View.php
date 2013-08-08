@@ -3,7 +3,6 @@
 namespace Flare;
 
 use Flare\Security\Xss;
-use \DOMDocument;
 
 /**
  * 
@@ -179,7 +178,7 @@ class View
 	 */
 	public function getContent()
 	{
-		return $this->content->saveHTML();
+		return $this->content;
 	}
 	
 	/**
@@ -201,15 +200,6 @@ class View
 	{
 		return $this->layoutContent;
 	}
-	
-	/**
-	 * 
-	 * @return \DOMDocument
-	 */
-	public function getDOMDocument()
-	{
-		return $this->content;
-	}
 
 	/**
 	 * 
@@ -218,8 +208,7 @@ class View
 	 */
 	public function setContent($content)
 	{
-		$this->content = new DOMDocument();
-		$this->content->loadHTML($content);
+		$this->content = $content;
 		return $this;
 	}
 
