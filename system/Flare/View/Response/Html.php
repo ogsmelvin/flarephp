@@ -122,6 +122,7 @@ class Html extends Response implements Dom
 	 */
 	public function addEventListener($selector, $event, EventListener &$listener)
 	{
+		$event .= '_event';
 		if (!method_exists($listener, $event)) {
 			show_error("Listener doesn't have '{$event}' method");
 		}
@@ -141,6 +142,7 @@ class Html extends Response implements Dom
 	public function removeEventListener($selector, $event = null)
 	{
 		if ($event) {
+			$event .= '_event';
 			if (isset($this->_events[$selector])) {
 				foreach ($this->_events[$selector] as $key => $evt) {
 					if ($evt->name === $event) 
