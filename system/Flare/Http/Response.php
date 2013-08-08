@@ -12,6 +12,12 @@ use Flare\Flare as F;
 class Response
 {
 	/**
+	 * 
+	 * @var int
+	 */
+	const DEFAULT_CODE = 200;
+	
+	/**
 	 *
 	 * @var array
 	 */
@@ -237,7 +243,7 @@ class Response
 		if ($this->_sent) {
 			show_response(500, "Response::send already executed");
 		}
-		if ($this->_code !== 200 && isset(self::$messages[$this->_code])) {
+		if ($this->_code !== self::DEFAULT_CODE && isset(self::$messages[$this->_code])) {
 			if (!empty($_SERVER['SERVER_PROTOCOL'])) {
 				header($_SERVER['SERVER_PROTOCOL'].' '.$this->_code.' '.self::$messages[$this->_code]);
 			} else {

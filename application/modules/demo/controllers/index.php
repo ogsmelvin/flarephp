@@ -15,7 +15,7 @@ class Index_Controller extends Controller implements EventListener
 		return $html;
 	}
 
-	public function submit_event()
+	public function click_event()
 	{
 		
 	}

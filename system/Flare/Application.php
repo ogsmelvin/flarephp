@@ -407,7 +407,7 @@ class Application
 			if (!$route) {
 				$this->error(404);
 			} elseif ($route->getController() instanceof ErrorController
-				&& $route->getController()->response->getCode() == 200)
+				&& $route->getController()->response->getCode() === Response::DEFAULT_CODE)
 			{
 				$route->getController()->response->setCode(404);
 			}
@@ -464,7 +464,7 @@ class Application
 				$this->_controller->cookie->getExpiration()
 			);
 		}
-		debug(get_class($this->_controller));
+
 		$this->_controller->response->setBody($view)->send();
 		$this->_controller->complete();
 		$this->_dispatched = true;
@@ -536,13 +536,16 @@ class Application
 			if (!$route || !($route->getController() instanceof ErrorController)) {
 				$this->error($code, null, true);
 			}
-			debug($message);
-			$route->getController()->response->setCode($code);
+
+			$route->getController()->setErrorCode($code);
+			if ($message) {
+				$route->getController()->setErrorMessage($message);
+			}
 			if ($this->_predispatched) {
 				$this->_predispatch();
 				if (!$this->_dispatched) {
 					$this->_dispatch()
-						->shutdown();
+						->shutdown(true);
 				}
 			}
 			return;

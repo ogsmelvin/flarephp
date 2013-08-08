@@ -3,6 +3,7 @@
 		
 	</head>
 	<body>
-		<?= $data->errorCode ?> : <?= $data->errorMessage ?>
+		Error Code : <?= $data->errorCode ?><br>
+		Error Message : <?= $data->errorMessage ?>
 	</body>
 </html>
