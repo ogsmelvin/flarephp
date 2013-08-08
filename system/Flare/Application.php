@@ -151,7 +151,7 @@ class Application
 	{
 		if (!$module) {
 			if (!F::$router->getRoute()) {
-				show_error('No route found. Predispatch must be executed first.');
+				$this->error(500, 'No route found. Predispatch must be executed first.');
 			}
 			$module = F::$router->getRoute()->getModule();
 		}
@@ -172,7 +172,7 @@ class Application
 	{
 		if (!$module) {
 			if (!F::$router->getRoute()) {
-				show_error('No route found. Predispatch must be executed first.');
+				$this->error(500, 'No route found. Predispatch must be executed first.');
 			}
 			$module = F::$router->getRoute()->getModule();
 		}
@@ -429,7 +429,7 @@ class Application
 	private function _dispatch()
 	{
 		if (!$this->_controller) {
-			show_error('Controller is not initilized');
+			$this->error(500, 'Controller is not initilized');
 		}
 
 		$this->_controller->init();
@@ -447,7 +447,7 @@ class Application
 		if (!$this->_controller->response->hasContentType()) {
 			if (!($view instanceof ViewResponse)) {
 				if (!empty($view)) {
-					show_error("Action must return a 'View\Response' instance");
+					$this->error(500, "Action must return a 'View\Response' instance");
 				} elseif (F::$config->default_content_type) {
 					$this->_controller->response->setContentType(F::$config->default_content_type);
 				}
@@ -494,7 +494,7 @@ class Application
 
 		$path = $this->getModuleViewsDirectory().$path.'.php';
 		if (!file_exists($path)) {
-			show_error("{$path} not found");
+			$this->error(500, "{$path} not found");
 		}
 		$html = new Html($path);
 		$html->set('uri', F::$uri)
@@ -510,7 +510,7 @@ class Application
 		if ($layout) {
 			$html->setLayout($layout);
 		}
-		return $html->compile();
+		return $html;
 	}
 
 	/**
@@ -593,9 +593,9 @@ class Application
 	public function start()
 	{
 		if ($this->_dispatched) {
-			show_error('Application is already started');
+			$this->error(500, 'Application is already started');
 		} elseif (!$this->_appDirectory) {
-			show_error('App Directory and System Directory must be set');
+			$this->error(500, 'App Directory and System Directory must be set');
 		}
 		$this->setConfigDirectory($this->_appDirectory.'config')
 			->setModulesDirectory($this->_appDirectory.'modules')
@@ -649,7 +649,7 @@ class Application
 		$conf = F::$config->cookie;
 		if (!empty($conf['namespace'])) {
 			if ($conf['enable_encryption'] && !$conf['encryption_key']) {
-				show_error('Config[encryption_key] must be set');
+				$this->error(500, 'Config[encryption_key] must be set');
 			}
 			F::$cookie = Cookie::create(
 				$conf['namespace'],
@@ -657,7 +657,7 @@ class Application
 				$conf['enable_encryption'] ? $conf['encryption_key'] : false
 			);
 		} else {
-			show_error('Config[cookie][namespace] must be set');
+			$this->error(500, 'Config[cookie][namespace] must be set');
 		}
 	}
 
@@ -689,7 +689,7 @@ class Application
 				$session['auto_start']
 			);
 		} else {
-			show_error('Config[session][namespace] must be set');
+			$this->error(500, 'Config[session][namespace] must be set');
 		}
 	}
 
@@ -702,7 +702,7 @@ class Application
 		if (file_exists($this->getModuleConfigDirectory().'config.php')) {
 			$moduleConfig = require $this->getModuleConfigDirectory().'config.php';
 			if (!is_array($moduleConfig)) {
-				show_error('Module config.php must return an array.');
+				$this->error(500, 'Module config.php must return an array.');
 			}
 			unset($moduleConfig['modules']);
 			F::$config->merge($moduleConfig);
@@ -728,7 +728,7 @@ class Application
 			&& strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
 		{
 			if (!ob_start('ob_gzhandler')) {
-				show_response(500, 'output compression failed');
+				$this->error(500, 'output compression failed');
 			}
 		}
 

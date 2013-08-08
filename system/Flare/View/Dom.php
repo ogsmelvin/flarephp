@@ -30,7 +30,7 @@ interface Dom
 	
 	/**
 	 * 
-	 * @return array
+	 * @return \Flare\Util\Collection
 	 */
 	public function getEvents();
 }

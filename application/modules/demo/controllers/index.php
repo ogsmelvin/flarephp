@@ -3,7 +3,7 @@
 namespace Demo\Controllers;
 
 use Flare\Application\EventListener;
-use Flare\View\Event;
+use Flare\View\Dom\Event;
 use Demo\Controller;
 
 class Index_Controller extends Controller implements EventListener
@@ -11,11 +11,17 @@ class Index_Controller extends Controller implements EventListener
 	public function index_action()
 	{
 		$html = $this->view('index')
-			->addEventListener('#submitBtn', 'click', $this);
+			->addEventListener('#submitBtn', 'click', $this)
+			->addEventListener('#submitBtn', 'submit', $this);
 		return $html;
 	}
 
 	public function click_event()
+	{
+		
+	}
+	
+	public function submit_event()
 	{
 		
 	}

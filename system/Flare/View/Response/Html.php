@@ -3,6 +3,8 @@
 namespace Flare\View\Response;
 
 use Flare\Application\EventListener;
+use Flare\Util\Collection;
+use Flare\View\Dom\Event;
 use Flare\View\Response;
 use Flare\View\Dom;
 use Flare\View;
@@ -40,9 +42,9 @@ class Html extends Response implements Dom
 	
 	/**
 	 *
-	 * @var array
+	 * @var \Flare\Util\Collection
 	 */
-	private $_events = array();
+	private $_events;
 
 	/**
 	 * 
@@ -68,7 +70,7 @@ class Html extends Response implements Dom
     
 	/**
 	 * 
-	 * @return \Flare\View\Response\Html
+	 * @return string
 	 */
 	public function compile()
 	{
@@ -88,8 +90,7 @@ class Html extends Response implements Dom
 			include $this->_contentPath;
 		}
 		$view->setContent((string) ob_get_clean());
-		
-		return $this;
+		return $view->getContent();
 	}
 
 	/**
@@ -98,7 +99,7 @@ class Html extends Response implements Dom
 	 */
 	public function render()
 	{
-		return (string) $this->_view;
+		return $this->compile();
 	}
 
 	/**
@@ -121,14 +122,13 @@ class Html extends Response implements Dom
 	 */
 	public function addEventListener($selector, $event, EventListener &$listener)
 	{
-		$event = rtrim($event, '_event').'_event';
 		if (!method_exists($listener, $event)) {
 			show_error("Listener doesn't have '{$event}' method");
 		}
-		$this->_events[$selector] = array(
-			'event' => $event,
-			'listener' => $listener
-		);
+		if (!$this->_events) {
+			$this->_events = new Collection();
+		}
+		$this->_events[$selector][] = new Event($event, $selector);
 		return $this;
 	}
 	
@@ -138,17 +138,27 @@ class Html extends Response implements Dom
 	 * @param string $event
 	 * @return \Flare\View\Response\Html
 	 */
-	public function removeEventListener($selector, $event)
+	public function removeEventListener($selector, $event = null)
 	{
+		if ($event) {
+			if (isset($this->_events[$selector])) {
+				foreach ($this->_events[$selector] as $key => $evt) {
+					if ($evt->name === $event) 
+						unset($this->_events[$selector][$key]);
+				}
+			}
+		} else {
+			unset($this->_events[$selector]);
+		}
 		return $this;
 	}
 	
 	/**
 	 * 
-	 * @return array
+	 * @return \Flare\Util\Collection
 	 */
 	public function getEvents()
 	{
-		return array();
+		return $this->_events;
 	}
 }
