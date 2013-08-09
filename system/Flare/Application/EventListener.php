@@ -14,7 +14,7 @@ interface EventListener
 	/**
 	 * 
 	 * @param \Flare\View\Dom\Event $event
-	 * @return mixed
+	 * @return void
 	 */
 	public function listen(Event $event);
 }

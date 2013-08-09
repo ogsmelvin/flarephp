@@ -10,9 +10,10 @@ class Index_Controller extends Controller implements EventListener
 {
 	public function index_action()
 	{
+		$listener = new IndexListener();
 		$html = $this->view('index')
-			->addEvent('#submitBtn', 'click', $this)
-			->addEvent('#submitBtn', 'submit', $this);
+			->addEvent('#submitBtn', 'click', $listener)
+			->addEvent('#submitBtn', 'submit', $listener);
 		return $html;
 	}
 
@@ -23,11 +24,11 @@ class Index_Controller extends Controller implements EventListener
 	
 	public function submit_event(Event $event)
 	{
-		
+		$source = $event->getSource();
 	}
 
 	public function listen(Event $event)
 	{
-		return $event->fire();
+		
 	}
 }

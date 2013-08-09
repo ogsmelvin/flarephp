@@ -16,12 +16,9 @@ class EventAdapter implements EventListener
 	/**
 	 * 
 	 * @param \Flare\View\Dom\Event $event
-	 * @return mixed
+	 * @return void
 	 */
-	public function listen(Event $event)
-	{
-		return $event->fire();
-	}
+	public function listen(Event $event) {}
 
 	/**
 	 * 
