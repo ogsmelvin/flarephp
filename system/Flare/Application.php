@@ -446,8 +446,8 @@ class Application
 
 		if (!$this->_controller->response->hasContentType()) {
 			if (!($view instanceof ViewResponse)) {
-				if (!empty($view)) {
-					$this->error(500, "Action must return a 'View\Response' instance");
+				if (!empty($view) && !is_string($view)) {
+					$this->error(500, "Action must return a 'View\Response' instance or string");
 				} elseif (F::$config->default_content_type) {
 					$this->_controller->response->setContentType(F::$config->default_content_type);
 				}
