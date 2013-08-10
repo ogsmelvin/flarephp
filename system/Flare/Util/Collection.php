@@ -14,10 +14,11 @@ class Collection extends ArrayObject
 	/**
 	 * 
 	 * @param array $content
+	 * @param int $flag
 	 */
-	public function __construct(array $content = array())
+	public function __construct(array $content = array(), $flag = 0)
 	{
-		parent::__construct($content);
+		parent::__construct($content, $flag);
 	}
 
 	/**

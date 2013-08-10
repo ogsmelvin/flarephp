@@ -7,7 +7,7 @@ use Flare\Application\ErrorController;
 use Flare\View\Response\Html;
 use Flare\Application\Config;
 use Flare\Application\Router;
-use Flare\Application\Data;
+use Flare\Util\Collection;
 use Flare\Application\Db;
 use Flare\Http\Response;
 use Flare\Http\Request;
@@ -502,9 +502,9 @@ class Application
 			->set('session', F::$session)
 			->set('config', F::$config);
 		if ($data === null) {
-			$data = new Data();
-		} elseif (!($data instanceof Data) && is_array($data)) {
-			$data = new Data($data);
+			$data = new Collection(array(), Collection::ARRAY_AS_PROPS);
+		} elseif (!($data instanceof Collection) && is_array($data)) {
+			$data = new Collection($data, Collection::ARRAY_AS_PROPS);
 		}
 		$html->set('data', $data);
 		if ($layout) {
