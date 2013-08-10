@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Application;
+namespace Flare;
 
 /**
  * 
@@ -26,6 +26,12 @@ class Registry
 	 * @var string
 	 */
 	const CACHE_ENGINES_NAMESPACE = '__Flare_Cache';
+	
+	/**
+	 * 
+	 * @var string
+	 */
+	const EVENTS_NAMESPACE = '__Flare_Events';
 
 	/**
 	 * 
@@ -63,7 +69,7 @@ class Registry
 	 * 
 	 * @param string $namespace
 	 * @param array $content
-	 * @return \Flare\Application\Registry
+	 * @return \Flare\Registry
 	 */
 	public static function create($namespace, array $content = array())
 	{
@@ -78,7 +84,7 @@ class Registry
 	/**
 	 * 
 	 * @param string $namespace
-	 * @return \Flare\Application\Registry
+	 * @return \Flare\Registry
 	 */
 	public static function get($namespace)
 	{
@@ -92,18 +98,27 @@ class Registry
 	 * 
 	 * @param string $name
 	 * @param mixed $object
-	 * @return \Flare\Application\Registry
+	 * @return \Flare\Registry
 	 */
 	public function add($name, $object)
 	{
 		$this->_storage[$name] = $object;
 		return $this;
 	}
+	
+	/**
+	 * 
+	 * @return array
+	 */
+	public function all()
+	{
+		return $this->_storage;
+	}
 
 	/**
 	 * 
 	 * @param string $name
-	 * @return \Flare\Service|null
+	 * @return array
 	 */
 	public function fetch($name)
 	{
@@ -113,7 +128,7 @@ class Registry
 	/**
 	 * 
 	 * @param string $name
-	 * @return \Flare\Application\Registry
+	 * @return \Flare\Registry
 	 */
 	public function remove($name)
 	{
@@ -133,11 +148,27 @@ class Registry
 
 	/**
 	 * 
-	 * @return \Flare\Application\Registry
+	 * @return \Flare\Registry
 	 */
 	public function clear()
 	{
 		$this->_storage = array();
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * @param string $name
+	 * @param mixed $object
+	 * @return \Flare\Registry
+	 */
+	public function push($name, $object)
+	{
+		if (!$this->has($name)) {
+			$this->add($name, array($object));
+		} else {
+			$this->_storage[$name][] = $object;
+		}
 		return $this;
 	}
 }

@@ -2,8 +2,8 @@
 
 namespace Flare;
 
-use Flare\Application\Registry;
 use Flare\Flare as F;
+use Flare\Registry;
 
 /**
  * 

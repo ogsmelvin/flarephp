@@ -2,9 +2,9 @@
 
 namespace Flare;
 
-use Flare\Application\Registry;
 use Flare\Http\Client\Curl;
 use Flare\Flare as F;
+use Flare\Registry;
 
 /**
  * 

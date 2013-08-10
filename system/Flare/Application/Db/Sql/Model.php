@@ -3,7 +3,7 @@
 namespace Flare\Application\Db\Sql;
 
 use Flare\Application\Model as ParentModel;
-use Flare\Application\Registry;
+use Flare\Registry;
 	
 /**
  * 
