@@ -2,11 +2,7 @@
 
 namespace Flare\View\Response;
 
-use Flare\Application\EventListener;
-use Flare\View\Dom\Event;
 use Flare\View\Response;
-use Flare\Registry;
-use Flare\View\Dom;
 use Flare\View;
 
 /**
@@ -14,7 +10,7 @@ use Flare\View;
  * @author anthony
  * 
  */
-class Html extends Response implements Dom
+class Html extends Response
 {
 	/**
 	 * 
@@ -105,56 +101,5 @@ class Html extends Response implements Dom
 	{
 		$this->_layoutPath = $file;
 		return $this;
-	}
-	
-	/**
-	 * 
-	 * @param string $selector
-	 * @param string $event
-	 * @param \Flare\Application\EventListener $listener
-	 * @return \Flare\View\Response\Html
-	 */
-	public function addEvent($selector, $event, EventListener &$listener)
-	{
-		$event .= '_event';
-		if (!method_exists($listener, $event)) {
-			show_error("Listener doesn't have '{$event}' method");
-		}
-		Registry::get(Registry::EVENTS_NAMESPACE)
-			->push($selector, new Event($event, $selector));
-		return $this;
-	}
-	
-	/**
-	 * 
-	 * @param string $selector
-	 * @param string $event
-	 * @return \Flare\View\Response\Html
-	 */
-	public function removeEvent($selector, $event = null)
-	{
-		$registry = Registry::get(Registry::EVENTS_NAMESPACE);
-		if ($event) {
-			$event .= '_event';
-			$events = $registry->fetch($selector);
-			if ($events) {
-				foreach ($events as $key => $evt) {
-					if ($evt->getName() == $event) unset($events[$key]);
-				}
-				$registry->add($selector, $events);
-			}
-		} else {
-			$registry->remove($selector);
-		}
-		return $this;
-	}
-	
-	/**
-	 * 
-	 * @return \Flare\Util\Collection
-	 */
-	public function getEvents()
-	{
-		return $this->_events;
 	}
 }

@@ -3,7 +3,7 @@
 namespace Flare\Application;
 
 use Flare\Application\EventListener;
-use Flare\View\Dom\Event;
+use Flare\Application\Event;
 use Flare\Flare as F;
 
 /**
@@ -15,7 +15,7 @@ class EventAdapter implements EventListener
 {
 	/**
 	 * 
-	 * @param \Flare\View\Dom\Event $event
+	 * @param \Flare\Application\Event $event
 	 * @return void
 	 */
 	public function listen(Event $event) {}

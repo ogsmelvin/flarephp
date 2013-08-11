@@ -4,9 +4,11 @@ namespace Flare\Application;
 
 use Flare\Application\Http\Response;
 use Flare\Application\Http\Request;
+use Flare\Application\Event;
 use Flare\Application\Db;
 use Flare\Flare as F;
 use Flare\Http\File;
+use Flare\Registry;
 
 /**
  * 
@@ -225,6 +227,57 @@ abstract class AbstractController
 			$this->redirect($url);
 		}
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @param string $selector
+	 * @param string $event
+	 * @param \Flare\Application\EventListener $listener
+	 * @return \Flare\View\Response\Html
+	 */
+	public function addEvent($selector, $event, EventListener &$listener)
+	{
+		$event .= '_event';
+		if (!method_exists($listener, $event)) {
+			show_error("Listener doesn't have '{$event}' method");
+		}
+		Registry::get(Registry::EVENTS_NAMESPACE)
+			->push($selector, new Event($event, $selector));
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * @param string $selector
+	 * @param string $event
+	 * @return \Flare\View\Response\Html
+	 */
+	public function removeEvent($selector, $event = null)
+	{
+		$registry = Registry::get(Registry::EVENTS_NAMESPACE);
+		if ($event) {
+			$event .= '_event';
+			$events = $registry->fetch($selector);
+			if ($events) {
+				foreach ($events as $key => $evt) {
+					if ($evt->getName() == $event) unset($events[$key]);
+				}
+				$registry->add($selector, $events);
+			}
+		} else {
+			$registry->remove($selector);
+		}
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * @return array
+	 */
+	public function getEvents()
+	{
+		return Registry::get(Registry::EVENTS_NAMESPACE)->all();
 	}
 
 	/**
