@@ -9,8 +9,7 @@ use Demo\Controller;
 class Index_Controller extends Controller implements EventListener
 {
 	public function index_action()
-	{
-		$this->addEvent('#submitBtn', 'click', $this);
+	{	
 		return $this->view('index');
 	}
 
@@ -21,7 +20,7 @@ class Index_Controller extends Controller implements EventListener
 	
 	public function submit_event(Event $event)
 	{
-		return $event->getSource();
+		
 	}
 	
 	public function listen(Event $event)

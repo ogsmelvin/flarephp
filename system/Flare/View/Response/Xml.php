@@ -2,14 +2,21 @@
 
 namespace Flare\View\Response;
 
-use Flare\View;
+use Flare\View\Response;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Xml extends View
+class Xml extends Response
 {
-	
+	/**
+	 * 
+	 * @return string
+	 */
+	public function render()
+	{
+		
+	}
 }

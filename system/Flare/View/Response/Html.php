@@ -35,6 +35,12 @@ class Html extends Response
 	 * @var \Flare\View
 	 */
 	private $_view;
+	
+	/**
+	 *
+	 * @var array
+	 */
+	private $_scripts = array();
 
 	/**
 	 * 
@@ -80,6 +86,17 @@ class Html extends Response
 			include $this->_contentPath;
 		}
 		$view->setContent((string) ob_get_clean());
+		
+		if ($this->_scripts) {
+			$view->setContent(
+				preg_replace(
+					"#<body(.*)>(.*?)</body>#is", 
+					'<body$1>$2'.implode('', $this->_scripts).'</body>', 
+					$view->getContent()
+				)
+			);
+		}
+		
 		return $view->getContent();
 	}
 
@@ -100,6 +117,22 @@ class Html extends Response
 	public function setLayout($file)
 	{
 		$this->_layoutPath = $file;
+		return $this;
+	}
+
+	/**
+	 * 
+	 * @param string $content
+	 * @param boolean $src
+	 * @return \Flare\View\Response\Html
+	 */
+	public function addScript($content, $src = false)
+	{
+		if ($src) {
+			$this->_scripts[] = "<script type=\"text/javascript\" src=\"{$content}\"></script>";
+		} else {
+			$this->_scripts[] = '<script type="text/javascript">'.$content.'</script>';
+		}
 		return $this;
 	}
 }

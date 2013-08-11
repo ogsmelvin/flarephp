@@ -86,7 +86,7 @@ class Application
 
 	/**
 	 * 
-	 * @var mixed
+	 * @var \Flare\Application\AbstractController
 	 */
 	private $_controller;
 
@@ -464,7 +464,13 @@ class Application
 				$this->_controller->cookie->getExpiration()
 			);
 		}
-
+		
+		if ($view instanceof Html && $this->_controller->getEvents()) {
+			foreach ($this->_controller->getEvents() as $event) {
+				$view->addScript();
+			}
+		}
+		
 		$this->_controller->response->setBody($view)->send();
 		$this->_controller->complete();
 		$this->_dispatched = true;
@@ -477,7 +483,7 @@ class Application
 	 * @param string $path
 	 * @param array $data
 	 * @param string|boolean $layout
-	 * @return \Flare\Object\Html
+	 * @return \Flare\View\Response\Html
 	 */
 	public function view($path, $data = null, $layout = null)
 	{
