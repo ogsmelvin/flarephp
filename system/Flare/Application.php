@@ -28,6 +28,12 @@ class Application
 	 * 
 	 * @var string
 	 */
+	const JAVASCRIPT_FILE = 'flare.js';
+	
+	/**
+	 * 
+	 * @var string
+	 */
 	private $_controllersDirectory;
 
 	/**
@@ -466,9 +472,14 @@ class Application
 		}
 		
 		if ($view instanceof Html && $this->_controller->getEvents()) {
+			$events = array();
 			foreach ($this->_controller->getEvents() as $event) {
-				$view->addScript();
+				foreach ($event as $evt) {
+					$events[$evt->getSource()][] = base64_encode(serialize($evt));
+				}
 			}
+			$view->addScript(F::$uri->baseUrl.self::JAVASCRIPT_FILE, true)
+				->addScript('Flare.Events.bind('.json_encode($events).')');
 		}
 		
 		$this->_controller->response->setBody($view)->send();
@@ -642,8 +653,24 @@ class Application
 		F::$request = new Request();
 		F::$response = new Response();
 		F::$uri = new Uri();
+		if (F::$uri->getSegmentCount() === 1 && F::$uri->getSegment(1) == self::JAVASCRIPT_FILE) {
+			$this->_renderJavascript();
+		}
 		F::$router = new Router();
 		return $this;
+	}
+	
+	/**
+	 * 
+	 * @return void
+	 */
+	private function _renderJavascript()
+	{
+		F::$response->setContentType('application/javascript')
+			->setHeader('Cache-Control', 'no-cache, must-revalidate')
+			->setBody(FLARE_DIR.'Flare/Application/Javascript/Main.js', true)
+			->send();
+		$this->shutdown(true);
 	}
 
 	/**

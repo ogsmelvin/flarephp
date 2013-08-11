@@ -1,4 +1,0 @@
-
-Flare.Ajax = function () {
-	
-}

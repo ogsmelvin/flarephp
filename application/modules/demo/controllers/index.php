@@ -9,7 +9,8 @@ use Demo\Controller;
 class Index_Controller extends Controller implements EventListener
 {
 	public function index_action()
-	{	
+	{
+		$this->addEvent('#submit', 'submit', $this);
 		return $this->view('index');
 	}
 
