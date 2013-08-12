@@ -1,24 +1,24 @@
-var Flare = {};
+var flare = {};
 
-Flare.trim = function (str, chr) {
+flare.trim = function (str, chr) {
 	var rgxtrim = (!chr) ? new RegExp('^\\s+|\\s+$', 'g') : new RegExp('^'+chr+'+|'+chr+'+$', 'g');
 	return str.replace(rgxtrim, '');
 }
 
-Flare.rtrim = function (str, chr) {
+flare.rtrim = function (str, chr) {
 	var rgxtrim = (!chr) ? new RegExp('\\s+$') : new RegExp(chr+'+$');
 	return str.replace(rgxtrim, '');
 }
 
-Flare.ltrim = function (str, chr) {
+flare.ltrim = function (str, chr) {
 	var rgxtrim = (!chr) ? new RegExp('^\\s+') : new RegExp('^'+chr+'+');
 	return str.replace(rgxtrim, '');
 }
 
-Flare.getElement = function (selector) {
+flare.getElement = function (selector) {
 	var element;
 	if (selector.indexOf("#") === 0) {
-		element = document.getElementById(Flare.ltrim(selector, "#"));
+		element = document.getElementById(flare.ltrim(selector, "#"));
 	} else if (selector.indexOf(".") === 0) {
 		
 	} else {
@@ -27,7 +27,11 @@ Flare.getElement = function (selector) {
 	return element;
 }
 
-Flare.GET = (function () {
+flare.require = function (module) {
+	
+};
+
+flare.GET = (function () {
 	var match,
 		pl     = /\+/g,  // Regex for replacing addition symbol with a space
 		search = /([^&=]+)=?([^&]*)/g,
@@ -40,7 +44,7 @@ Flare.GET = (function () {
 	return urlParams;
 }());
 
-Flare.Ajax = function (method, data, doneCallback) {
+flare.Ajax = function (method, data, doneCallback) {
 
 	var done;
 	var requestUrl;
@@ -60,19 +64,19 @@ Flare.Ajax = function (method, data, doneCallback) {
 	
 	this.getParams = function () {
 		return params;
-	}
+	};
 
 	this.setParams = function (parameters) {
 		for (i in parameters) {
 			self.setParam(i, parameters[i]);
 		}
 		return self;
-	}
+	};
 	
 	this.setParam = function (key, value) {
 		params[encodeURIComponent(key)] = encodeURIComponent(value);
 		return self;
-	}
+	};
 	
 	this.setRequestMethod = function (method) {
 		requestMethod = method.toUpperCase();
@@ -80,11 +84,11 @@ Flare.Ajax = function (method, data, doneCallback) {
 			self.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		}
 		return self;
-	}
+	};
 	
 	this.getRequestMethod = function () {
 		return requestMethod;
-	}
+	};
 	
 	this.setRequestHeader = function (header, value) {
 		if (header instanceof Array) {
@@ -95,25 +99,25 @@ Flare.Ajax = function (method, data, doneCallback) {
 			requestHeaders[header] = value;
 		}
 		return self;
-	}
+	};
 	
 	this.getRequestHeader = function () {
 		return requestHeaders;
-	}
+	};
 	
 	this.setRequestUrl = function (url) {
 		requestUrl = url;
 		return self;
-	}
+	};
 	
 	this.getRequestUrl = function () {
 		return requestUrl;
-	}
+	};
 	
 	this.done = function (callback) {
 		done = callback;
 		return self;
-	}
+	};
 	
 	this.reset = function () {
 		done = undefined;
@@ -121,7 +125,7 @@ Flare.Ajax = function (method, data, doneCallback) {
 		params = [];
 		requestMethod = "GET";
 		requestHeaders = [];
-	}
+	};
 	
 	this.send = function () {
 		if (!requestUrl) {
@@ -153,13 +157,13 @@ Flare.Ajax = function (method, data, doneCallback) {
 			}
 		}
 		xhr.send(requestMethod == "POST" ? qstring.join("&") : "");
-	}
+	};
 	
 	var self = this;
 	init(method, data, doneCallback);
 };
 
-Flare.Events = new function () {
+flare.Events = new function () {
 	
 	function _bind(elem, event, callback) {
 		if (window.addEventListener) {
@@ -170,7 +174,7 @@ Flare.Events = new function () {
 	}
 	
 	this.bind = function (selector, event, callback) {
-		var selected = Flare.getElement(selector);
+		var selected = flare.getElement(selector);
 		if (selected instanceof Array) {
 			for (i in selected) {
 				_bind(selected[i], event, callback);
@@ -179,24 +183,29 @@ Flare.Events = new function () {
 		}
 		_bind(selected, event, callback);
 		return self;
-	}
+	};
 	
 	var self = this;
 };
 
-Flare.App = new function () {
+flare.Application = function () {
+	
+	if (flare.Application.instance) {
+		return flare.Application.instance;
+	}
+	
 	var host;
 	this.connect = function (url, events) {
 		host = url;
 		if (events != undefined) {
 			self.bindings(events);
 		}
-	}
+	};
 	this.bindings = function (events) {
 		for (elem in events) {
 			for (evt in events[elem]) {
-				Flare.Events.bind(elem, events[elem][evt], function () {
-					var ajax = new Flare.Ajax();
+				flare.Events.bind(elem, events[elem][evt], function () {
+					var ajax = new flare.Ajax();
 					ajax.setRequestUrl(host + "flare.js?request=")
 						.setRequestMethod("GET")
 						.done( function (response) {
@@ -206,6 +215,10 @@ Flare.App = new function () {
 				});
 			}
 		}
-	}
+	};
+	
 	var self = this;
-}
+	flare.Application.instance = this;
+};
+
+var App = new flare.Application();

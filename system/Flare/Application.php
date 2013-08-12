@@ -477,7 +477,7 @@ class Application
 				foreach ($event as $evt) $events[$evt->getSource()][] = $evt->getName();
 			}
 			$view->addScript(F::$uri->baseUrl.self::JAVASCRIPT_FILE, true)
-				->addScript('Flare.App.connect("'.F::$uri->baseUrl.'",'.json_encode($events).');');
+				->addScript('App.connect("'.F::$uri->baseUrl.'",'.json_encode($events).');');
 		}
 		
 		$this->_controller->response->setBody($view)->send();
