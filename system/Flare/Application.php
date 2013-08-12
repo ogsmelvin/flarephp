@@ -474,12 +474,10 @@ class Application
 		if ($view instanceof Html && $this->_controller->getEvents()) {
 			$events = array();
 			foreach ($this->_controller->getEvents() as $event) {
-				foreach ($event as $evt) {
-					$events[$evt->getSource()][] = base64_encode(serialize($evt));
-				}
+				foreach ($event as $evt) $events[$evt->getSource()][] = $evt->getName();
 			}
 			$view->addScript(F::$uri->baseUrl.self::JAVASCRIPT_FILE, true)
-				->addScript('Flare.Events.bind('.json_encode($events).')');
+				->addScript('Flare.App.connect("'.F::$uri->baseUrl.'",'.json_encode($events).');');
 		}
 		
 		$this->_controller->response->setBody($view)->send();
@@ -666,6 +664,7 @@ class Application
 	 */
 	private function _renderJavascript()
 	{
+		$this->_compress();
 		F::$response->setContentType('application/javascript')
 			->setHeader('Cache-Control', 'no-cache, must-revalidate')
 			->setBody(FLARE_DIR.'Flare/Application/Javascript/Main.js', true)
@@ -755,7 +754,17 @@ class Application
 		$this->_setupRouter();
 		$this->_setupSession();
 		$this->_setupCookie();
+		$this->_compress();
 
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * @return void
+	 */
+	private function _compress()
+	{
 		if (F::$config->auto_compress && !@ini_get('zlib.output_compression')
 			&& extension_loaded('zlib') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) 
 			&& strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
@@ -764,7 +773,5 @@ class Application
 				$this->error(500, 'output compression failed');
 			}
 		}
-
-		return $this;
 	}
 }

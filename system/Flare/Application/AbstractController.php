@@ -238,9 +238,8 @@ abstract class AbstractController
 	 */
 	public function addEvent($selector, $event, EventListener &$listener)
 	{
-		$event .= '_event';
-		if (!method_exists($listener, $event)) {
-			show_error("Listener doesn't have '{$event}' method");
+		if (!method_exists($listener, $event.'_event')) {
+			show_error("Listener doesn't have '{$event}_event' method");
 		}
 		Registry::get(Registry::EVENTS_NAMESPACE)
 			->push($selector, new Event($event, $selector));
@@ -257,7 +256,6 @@ abstract class AbstractController
 	{
 		$registry = Registry::get(Registry::EVENTS_NAMESPACE);
 		if ($event) {
-			$event .= '_event';
 			$events = $registry->fetch($selector);
 			if ($events) {
 				foreach ($events as $key => $evt) {
