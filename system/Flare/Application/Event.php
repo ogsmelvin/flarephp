@@ -30,6 +30,26 @@ class Event implements Serializable
 	
 	/**
 	 * 
+	 * @param mixed $data
+	 * @return \Flare\Application\Event
+	 */
+	public function setData($data)
+	{
+		$this->_info['data'] = $data;
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * @return array
+	 */
+	public function getData()
+	{
+		return !empty($this->_info['data']) ? $this->_info['data'] : array();
+	}
+	
+	/**
+	 * 
 	 * @return string
 	 */
 	public function getName()
