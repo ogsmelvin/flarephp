@@ -49,6 +49,14 @@ $config['default_content_type'] = 'text/html';
 $config['allow_override'] = true;
 
 /**
+ * JQuery version
+ * Auto JQuery inclusion
+ * Just leave it blank to turn it off
+ * OR give a value of 'latest' to use the latest version
+ */
+$config['jquery'] = '';
+
+/**
  * Session configuration
  */
 $config['session'] = require 'session.php';

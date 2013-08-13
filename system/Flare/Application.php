@@ -476,8 +476,14 @@ class Application
 			foreach ($this->_controller->getEvents() as $event) {
 				foreach ($event as $evt) $events[$evt->getSource()][] = $evt->getName();
 			}
-			$view->addScript(F::$uri->baseUrl.self::JAVASCRIPT_FILE, true)
-				->addScript('App.connect("'.F::$uri->baseUrl.'",'.json_encode($events).');');
+			if (!empty(F::$config->jquery)) {
+				if (F::$config->jquery == 'latest') {
+					$view->addScript('//code.jquery.com/jquery.min.js', true);
+				} else {
+					$view->addScript('//ajax.googleapis.com/ajax/libs/jquery/'.urlencode(F::$config->jquery).'/jquery.min.js', true);
+				}
+			}
+			$view->addScript(F::$uri->baseUrl.self::JAVASCRIPT_FILE, true);
 		}
 		
 		$this->_controller->response->setBody($view)->send();
