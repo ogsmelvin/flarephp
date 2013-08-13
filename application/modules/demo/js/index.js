@@ -1,0 +1,4 @@
+
+App.Controller.Index = function () {
+	
+}

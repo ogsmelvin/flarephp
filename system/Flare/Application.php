@@ -23,13 +23,7 @@ use Flare\View;
  * 
  */
 class Application
-{
-	/**
-	 * 
-	 * @var string
-	 */
-	const JAVASCRIPT_FILE = 'flare.js';
-	
+{	
 	/**
 	 * 
 	 * @var string
@@ -598,6 +592,7 @@ class Application
 	 */
 	public function start()
 	{
+		$withExit = false;
 		if ($this->_dispatched) {
 			$this->error(500, 'Application is already started');
 		} elseif (!$this->_appDirectory) {
@@ -612,11 +607,24 @@ class Application
 			->setViewsDirectory('views')
 			->setLibrariesDirectory($this->_appDirectory.'libraries')
 			->_init()
-			->setModules(F::$config->modules)
-			->_predispatch()
-			->_configure()
-			->_dispatch()
-			->shutdown();
+			->setModules(F::$config->modules);
+		
+		$segment = F::$uri->getSegment(1);
+		if (F::$uri->getSegmentCount() === 2 && pathinfo($segment, PATHINFO_EXTENSION) === 'js') {
+			$js = F::$uri->getSegment(2);
+			if ($js) {
+				
+			} else {
+				
+			}
+			$withExit = true;
+		} else {
+			$this->_predispatch()
+				->_configure()
+				->_dispatch();
+		}
+		
+		$this->shutdown($withExit);
 	}
 
 	/**
@@ -642,25 +650,8 @@ class Application
 		F::$request = new Request();
 		F::$response = new Response();
 		F::$uri = new Uri();
-		if (F::$uri->getSegmentCount() === 1 && F::$uri->getSegment(1) == self::JAVASCRIPT_FILE) {
-			$this->_renderJavascript();
-		}
 		F::$router = new Router();
 		return $this;
-	}
-	
-	/**
-	 * 
-	 * @return void
-	 */
-	private function _renderJavascript()
-	{
-		$this->_compress();
-		F::$response->setContentType('application/javascript')
-			->setHeader('Cache-Control', 'no-cache, must-revalidate')
-			->setBody(FLARE_DIR.'Flare/Application/Javascript/Main.js', true)
-			->send();
-		$this->shutdown(true);
 	}
 
 	/**
