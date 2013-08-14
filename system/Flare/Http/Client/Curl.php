@@ -4,7 +4,6 @@ namespace Flare\Http\Client;
 
 use Flare\Object\Json;
 use Flare\Object\Xml;
-use Flare\Flare as F;
 
 if (!function_exists('curl_init')) {
     show_error('CURL is not supported by your server');

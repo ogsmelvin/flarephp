@@ -124,7 +124,6 @@ class Application
      */
     public function getControllersDirectory()
     {
-        
         return $this->_controllersDirectory;
     }
 

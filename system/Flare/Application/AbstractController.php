@@ -4,11 +4,9 @@ namespace Flare\Application;
 
 use Flare\Application\Http\Response;
 use Flare\Application\Http\Request;
-use Flare\Application\Event;
 use Flare\Application\Db;
 use Flare\Flare as F;
 use Flare\Http\File;
-use Flare\Registry;
 
 /**
  * 

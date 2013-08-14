@@ -4,8 +4,8 @@ namespace Flare\Db\Sql\Result;
 
 use Flare\Util\Collection as ParentCollection;
 use Flare\View\Pagination;
+use Flare\Db\Sql\Driver;
 use Flare\Object\Json;
-use \PDO;
 
 /**
  *
@@ -16,7 +16,7 @@ class Collection extends ParentCollection
 {
     /**
      *
-     * @var \PDO
+     * @var \Flare\Db\Sql\Driver
      */
     private $_conn;
 
@@ -34,11 +34,11 @@ class Collection extends ParentCollection
 
     /**
      *
-     * @param \PDO $conn
+     * @param \Flare\Db\Sql\Driver $conn
      * @param int $count
      * @param array $rows
      */
-    public function __construct(PDO &$conn, $count = 0, $rows = array())
+    public function __construct(Driver &$conn, $count = 0, $rows = array())
     {
         $this->_conn = & $conn;
         $this->_dbRowCount = $count;
