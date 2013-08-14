@@ -475,7 +475,8 @@ class Application
 					.'/js/'
 					.$this->_controller->request->getController()
 					.'.js';
-			$view->addScript(F::$uri->baseUrl.'app.js/'.Crypt::encode($jsfile, '1q2w'), true);
+			$front = substr(md5(uniqid(mt_rand(), true)), 0, 4).'.js';
+			$view->addScript(F::$uri->baseUrl.$front.'/'.Crypt::encode($jsfile, $front), true);
 		}
 		
 		$this->_controller->response->setBody($view)->send();
@@ -648,7 +649,7 @@ class Application
 	private function _js()
 	{
 		$js = new Javascript(FLARE_DIR.'Flare/Application/Window/Script.js');
-		$location = Crypt::decode(F::$uri->getSegment(2), '1q2w');
+		$location = Crypt::decode(F::$uri->getSegment(2), F::$uri->getSegment(1));
 		$js->merge($this->_modulesDirectory.$location);
 
 		@list($module, $location, $controller) = explode('/', $location, 3);
