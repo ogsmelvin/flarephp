@@ -163,16 +163,11 @@ class Response
 	/**
 	 *
 	 * @param string $view
-	 * @param boolean $readfile
 	 * @return \Flare\Http\Response
 	 */
-	public function setBody($view, $readfile = false)
+	public function setBody($view)
 	{
-		if (!$readfile) {
-			$this->_body = (string) $view;
-		} else {
-			$this->_body = (string) file_get_contents($view);
-		}
+		$this->_body = (string) $view;
 		return $this;
 	}
 

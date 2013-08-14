@@ -29,7 +29,7 @@ class Javascript extends Response
 	 */
 	public function __construct($path)
 	{
-		$this->_paths[] = $path;
+		$this->merge($path);
 	}
 	
 	/**
@@ -39,7 +39,7 @@ class Javascript extends Response
 	 */
 	public function merge($path)
 	{
-		$this->_paths[] = $path;
+		$this->_paths[] = str_replace('/', DIRECTORY_SEPARATOR, $path);
 		return $this;
 	}
 	
@@ -51,11 +51,10 @@ class Javascript extends Response
 	{
 		$content = '';
 		foreach ($this->_paths as $path) {
-			$tmp = @file_get_contents($path);
-			if ($tmp === false) {
-				show_error("Javascript '$path' doesn't exists");
+			$tmp = file_get_contents($path);
+			if ($tmp !== false) {
+				$content .= $tmp;
 			}
-			$content .= $tmp;
 			unset($tmp);
 		}
 		

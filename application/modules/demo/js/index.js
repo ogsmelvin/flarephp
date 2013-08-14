@@ -1,4 +1,4 @@
-
-App.Controller.Index = function () {
+App.Controller = function () {
 	
-}
+};
+alert("tonton");

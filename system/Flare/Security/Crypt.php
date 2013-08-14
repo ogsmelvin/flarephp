@@ -23,7 +23,7 @@ class Crypt extends Security
 	 * @param string $mode
 	 * @return string
 	 */
-	public static function encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+	private static function _encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
 	{
 		$result = null;
 		$iv_size = mcrypt_get_iv_size($cipher, $mode);
@@ -43,9 +43,9 @@ class Crypt extends Security
 	 * @param string $mode
 	 * @return string
 	 */
-	public static function encode64($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+	public static function encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
 	{
-		return base64_encode(self::encode($str, $key, $cipher, $mode));
+		return strtr(base64_encode(self::_encode($str, $key, $cipher, $mode)), "+/=", "-_.");
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Crypt extends Security
 	 * @param string $mode
 	 * @return string
 	 */
-	public static function decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+	private static function _decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
 	{
 		$result = null;
 		$iv_size = mcrypt_get_iv_size($cipher, $mode);
@@ -77,8 +77,8 @@ class Crypt extends Security
 	 * @param string $mode
 	 * @return string
 	 */
-	public static function decode64($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+	public static function decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
 	{
-		return self::decode(base64_decode($str), $key, $cipher, $mode);
+		return self::removeInvisibleChars(self::_decode(base64_decode(strtr($str, "-_.", "+/=" )), $key, $cipher, $mode));
 	}
 }

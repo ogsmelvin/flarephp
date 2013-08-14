@@ -5,6 +5,7 @@ namespace Flare;
 use Flare\View\Response as ViewResponse;
 use Flare\Application\ErrorController;
 use Flare\View\Response\Javascript;
+use Flare\Application\Window;
 use Flare\View\Response\Html;
 use Flare\Application\Config;
 use Flare\Application\Router;
@@ -466,6 +467,15 @@ class Application
 				$this->_controller->cookie->getExpiration()
 			);
 		}
+
+		if ($this->_controller instanceof Window) { 
+			$jsfile = $this->_controller->request->getModule()
+					.'/js/'
+					.$this->_controller->request->getController()
+					.'.js';
+			$this->_controller->load();
+			$view->addScript(F::$uri->baseUrl.'app.js/'.Crypt::encode($jsfile, '1q2w'), true);
+		}
 		
 		$this->_controller->response->setBody($view)->send();
 		$this->_controller->complete();
@@ -611,13 +621,11 @@ class Application
 			->_init()
 			->setModules(F::$config->modules);
 		
-		if (pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) === 'js') {
+		if (F::$uri->getSegmentCount() <= 2 && pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) == 'js') {
 			$js = new Javascript(FLARE_DIR.'Flare/Application/Window/Script.js');
-			if (F::$uri->getSegment(2)) {
-				$moduleJs = Crypt::decode(F::$uri->getSegment(2));
-				$js->merge($this->_modulesDirector.$moduleJs);
+			if (F::$uri->getSegment(2)) {;
+				$js->merge($this->_modulesDirectory.Crypt::decode(F::$uri->getSegment(2), '1q2w'));
 			}
-			$this->_compress();
 			F::$response->setContentType($js->getContentType())
 				->setBody($js)
 				->send();
