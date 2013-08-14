@@ -626,6 +626,7 @@ class Application
 			if (F::$uri->getSegment(2)) {;
 				$js->merge($this->_modulesDirectory.Crypt::decode(F::$uri->getSegment(2), '1q2w'));
 			}
+			$this->_compress();
 			F::$response->setContentType($js->getContentType())
 				->setBody($js)
 				->send();
