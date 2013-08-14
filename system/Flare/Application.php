@@ -632,46 +632,51 @@ class Application
 		if (F::$uri->getSegmentCount() == 2 
 			&& pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) == 'js')
 		{
-			$js = new Javascript(FLARE_DIR.'Flare/Application/Window/Script.js');
-			$location = Crypt::decode(F::$uri->getSegment(2), '1q2w');
-			$js->merge($this->_modulesDirectory.$location);
-
-			@list($module, $location, $controller) = explode('/', $location, 3);
-			if (isset($module, $location, $controller)) {
-				
-				$controller = pathinfo($controller, PATHINFO_FILENAME);
-				require_once $this->_modulesDirectory.$module.'/bootstrap.php';
-				require_once $this->_modulesDirectory
-						.$module
-						.'/'
-						.$this->_controllersDirectory
-						.$controller
-						.'.php';
-
-				$request = new AppRequest();
-				$request->setController($controller)
-					->setModule($module);
-
-				$controller = ucwords($module)."\\Controllers\\".$request->getControllerClassName();
-				$this->_controller = new $controller($request, new AppResponse());
-				$this->_controller->load();
-				
-				$this->_compress();
-				$this->_controller->response->setContentType($js->getContentType())
-					->setBody($js)
-					->send();
-				
-				$this->shutdown(true);
-				
-			} else {
-				$this->error(404);
-			}
+			$this->_js();
 		}
 		
 		$this->_predispatch()
 			->_configure()
 			->_dispatch()
 			->shutdown();
+	}
+	
+	/**
+	 * 
+	 * @return void
+	 */
+	private function _js()
+	{
+		$js = new Javascript(FLARE_DIR.'Flare/Application/Window/Script.js');
+		$location = Crypt::decode(F::$uri->getSegment(2), '1q2w');
+		$js->merge($this->_modulesDirectory.$location);
+
+		@list($module, $location, $controller) = explode('/', $location, 3);
+		if (!isset($module, $location, $controller)) {
+			$this->error(404);
+		}
+		
+		$controller = pathinfo($controller, PATHINFO_FILENAME);
+		require_once $this->_modulesDirectory.$module.'/bootstrap.php';
+		require_once $this->_modulesDirectory
+				.$module
+				.'/'
+				.$this->_controllersDirectory
+				.$controller
+				.'.php';
+
+		$this->_configure($module, array('Session', 'Cookie'));
+		$request = new AppRequest();
+		$request->setController($controller)
+			->setModule($module);
+
+		$controller = ucwords($module)."\\Controllers\\".$request->getControllerClassName();
+		$this->_controller = new $controller($request, new AppResponse());
+		$this->_controller->response->setContentType($js->getContentType())
+			->setBody($js)
+			->send();
+		$this->_controller->load();
+		$this->shutdown(true);
 	}
 
 	/**
@@ -756,12 +761,20 @@ class Application
 
 	/**
 	 * 
+	 * @param string $module
+	 * @param array $components
 	 * @return \Flare\Application
 	 */
-	private function _configure()
+	private function _configure($module = null, $components = array())
 	{
-		if (file_exists($this->getModuleConfigDirectory().'config.php')) {
-			$moduleConfig = require $this->getModuleConfigDirectory().'config.php';
+		if (!$module) {
+			$module = $this->getModuleConfigDirectory();
+		} else {
+			$module = $module.'/config/';
+		}
+		
+		if (file_exists($module.'config.php')) {
+			$moduleConfig = require $module.'config.php';
 			if (!is_array($moduleConfig)) {
 				$this->error(500, 'Module config.php must return an array.');
 			}
@@ -779,12 +792,18 @@ class Application
 		if (F::$config->timezone !== null) {
 			date_default_timezone_set(F::$config->timezone);
 		}
-
-		$this->_setupRouter();
-		$this->_setupSession();
-		$this->_setupCookie();
+		
+		if (!$components) {
+			$this->_setupRouter();
+			$this->_setupSession();
+			$this->_setupCookie();
+		} else {
+			foreach ($components as $component) {
+				$this->{'_setup'.$component}();
+			}
+		}
+		
 		$this->_compress();
-
 		return $this;
 	}
 	
