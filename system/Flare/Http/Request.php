@@ -2,8 +2,6 @@
 
 namespace Flare\Http;
 
-use Flare\Flare as F;
-
 /**
  *
  * @author anthony

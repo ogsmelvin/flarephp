@@ -2,6 +2,8 @@
 
 namespace Flare;
 
+use Flare\Application\Http\Response as AppResponse;
+use Flare\Application\Http\Request as AppRequest;
 use Flare\View\Response as ViewResponse;
 use Flare\Application\ErrorController;
 use Flare\View\Response\Javascript;
@@ -473,7 +475,6 @@ class Application
 					.'/js/'
 					.$this->_controller->request->getController()
 					.'.js';
-			$this->_controller->load();
 			$view->addScript(F::$uri->baseUrl.'app.js/'.Crypt::encode($jsfile, '1q2w'), true);
 		}
 		
@@ -604,7 +605,6 @@ class Application
 	 */
 	public function start()
 	{
-		$withExit = false;
 		if ($this->_dispatched) {
 			$this->error(500, 'Application is already started');
 		} elseif (!$this->_appDirectory) {
@@ -619,25 +619,59 @@ class Application
 			->setViewsDirectory('views')
 			->setLibrariesDirectory($this->_appDirectory.'libraries')
 			->_init()
-			->setModules(F::$config->modules);
-		
-		if (F::$uri->getSegmentCount() <= 2 && pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) == 'js') {
+			->setModules(F::$config->modules)
+			->_route();
+	}
+	
+	/**
+	 * 
+	 * @return void
+	 */
+	private function _route()
+	{
+		if (F::$uri->getSegmentCount() == 2 
+			&& pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) == 'js')
+		{
 			$js = new Javascript(FLARE_DIR.'Flare/Application/Window/Script.js');
-			if (F::$uri->getSegment(2)) {;
-				$js->merge($this->_modulesDirectory.Crypt::decode(F::$uri->getSegment(2), '1q2w'));
+			$location = Crypt::decode(F::$uri->getSegment(2), '1q2w');
+			$js->merge($this->_modulesDirectory.$location);
+
+			@list($module, $location, $controller) = explode('/', $location, 3);
+			if (isset($module, $location, $controller)) {
+				
+				$controller = pathinfo($controller, PATHINFO_FILENAME);
+				require_once $this->_modulesDirectory.$module.'/bootstrap.php';
+				require_once $this->_modulesDirectory
+						.$module
+						.'/'
+						.$this->_controllersDirectory
+						.$controller
+						.'.php';
+
+				$request = new AppRequest();
+				$request->setController($controller)
+					->setModule($module);
+
+				$controller = ucwords($module)."\\Controllers\\".$request->getControllerClassName();
+				$this->_controller = new $controller($request, new AppResponse());
+				$this->_controller->load();
+				
+				$this->_compress();
+				$this->_controller->response->setContentType($js->getContentType())
+					->setBody($js)
+					->send();
+				
+				$this->shutdown(true);
+				
+			} else {
+				$this->error(404);
 			}
-			$this->_compress();
-			F::$response->setContentType($js->getContentType())
-				->setBody($js)
-				->send();
-			$withExit = true;
-		} else {
-			$this->_predispatch()
-				->_configure()
-				->_dispatch();
 		}
 		
-		$this->shutdown($withExit);
+		$this->_predispatch()
+			->_configure()
+			->_dispatch()
+			->shutdown();
 	}
 
 	/**
