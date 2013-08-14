@@ -1,3 +1,1 @@
-App.Controller("Index", function () {
-	
-});
+App = {};

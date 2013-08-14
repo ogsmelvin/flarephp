@@ -4,10 +4,12 @@ namespace Flare;
 
 use Flare\View\Response as ViewResponse;
 use Flare\Application\ErrorController;
+use Flare\View\Response\Javascript;
 use Flare\View\Response\Html;
 use Flare\Application\Config;
 use Flare\Application\Router;
 use Flare\Util\Collection;
+use Flare\Security\Crypt;
 use Flare\Application\Db;
 use Flare\Http\Response;
 use Flare\Http\Request;
@@ -609,14 +611,16 @@ class Application
 			->_init()
 			->setModules(F::$config->modules);
 		
-		$segment = F::$uri->getSegment(1);
-		if (F::$uri->getSegmentCount() === 2 && pathinfo($segment, PATHINFO_EXTENSION) === 'js') {
-			$js = F::$uri->getSegment(2);
-			if ($js) {
-				
-			} else {
-				
+		if (pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) === 'js') {
+			$js = new Javascript(FLARE_DIR.'Flare/Application/Window/Script.js');
+			if (F::$uri->getSegment(2)) {
+				$moduleJs = Crypt::decode(F::$uri->getSegment(2));
+				$js->merge($this->_modulesDirector.$moduleJs);
 			}
+			$this->_compress();
+			F::$response->setContentType($js->getContentType())
+				->setBody($js)
+				->send();
 			$withExit = true;
 		} else {
 			$this->_predispatch()

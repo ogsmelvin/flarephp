@@ -29,11 +29,23 @@ class Crypt extends Security
 		$iv_size = mcrypt_get_iv_size($cipher, $mode);
 		if ($iv_size) {
 			$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-			$result = mcrypt_encrypt($cipher, $key, $str, $mode, $iv);
-			$result = base64_encode($iv.$result);
+			$result = $iv.mcrypt_encrypt($cipher, $key, $str, $mode, $iv);
 		}
 
 		return $result;
+	}
+	
+	/**
+	 * 
+	 * @param string $str
+	 * @param string $key
+	 * @param string $cipher
+	 * @param string $mode
+	 * @return string
+	 */
+	public static function encode64($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+	{
+		return base64_encode(self::encode($str, $key, $cipher, $mode));
 	}
 
 	/**
@@ -49,12 +61,24 @@ class Crypt extends Security
 		$result = null;
 		$iv_size = mcrypt_get_iv_size($cipher, $mode);
 		if ($iv_size) {
-			$str = base64_decode($str);
 			$iv_dec = substr($str, 0, $iv_size);
 			$str = substr($str, $iv_size);
 			$result = mcrypt_decrypt($cipher, $key, $str, $mode, $iv_dec);
 		}
 
 		return $result;
+	}
+	
+	/**
+	 * 
+	 * @param string $str
+	 * @param string $key
+	 * @param string $cipher
+	 * @param string $mode
+	 * @return string
+	 */
+	public static function decode64($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+	{
+		return self::decode(base64_decode($str), $key, $cipher, $mode);
 	}
 }
