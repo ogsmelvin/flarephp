@@ -9,13 +9,13 @@ namespace Flare\Util;
  */
 class Console
 {
-	/**
-	 * 
-	 * @param string $command
-	 * @return string
-	 */
-	public static function exec($command)
-	{
-		
-	}
+    /**
+     * 
+     * @param string $command
+     * @return string
+     */
+    public static function exec($command)
+    {
+        
+    }
 }

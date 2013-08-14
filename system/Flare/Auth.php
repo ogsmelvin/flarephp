@@ -9,18 +9,18 @@ namespace Flare;
  */
 class Auth
 {
-	/**
-	 * 
-	 * @param array $setup
-	 * @return void
-	 */
-	public static function setup($setup)
-	{
+    /**
+     * 
+     * @param array $setup
+     * @return void
+     */
+    public static function setup($setup)
+    {
 
-	}
+    }
 
-	public static function valid()
-	{
-		
-	}
+    public static function valid()
+    {
+        
+    }
 }

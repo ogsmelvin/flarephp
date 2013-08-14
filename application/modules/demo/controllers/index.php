@@ -7,13 +7,13 @@ use Demo\Controller;
 
 class Index_Controller extends Controller implements Window
 {
-	public function index_action()
-	{
-		return $this->view('index');
-	}
-	
-	public function load()
-	{
-		
-	}
+    public function index_action()
+    {
+        return $this->view('index');
+    }
+    
+    public function load()
+    {
+        
+    }
 }

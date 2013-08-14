@@ -3,7 +3,7 @@
 namespace Flare\Security;
 
 if (!function_exists('mcrypt_encrypt')) {
-	show_error('Flare\Security\Crypt requires mcrypt library');
+    show_error('Flare\Security\Crypt requires mcrypt library');
 }
 
 use Flare\Security;
@@ -15,70 +15,70 @@ use Flare\Security;
  */
 class Crypt extends Security
 {
-	/**
-	 * 
-	 * @param string $str
-	 * @param string $key
-	 * @param string $cipher
-	 * @param string $mode
-	 * @return string
-	 */
-	private static function _encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
-	{
-		$result = null;
-		$iv_size = mcrypt_get_iv_size($cipher, $mode);
-		if ($iv_size) {
-			$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-			$result = $iv.mcrypt_encrypt($cipher, $key, $str, $mode, $iv);
-		}
+    /**
+     * 
+     * @param string $str
+     * @param string $key
+     * @param string $cipher
+     * @param string $mode
+     * @return string
+     */
+    private static function _encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+    {
+        $result = null;
+        $iv_size = mcrypt_get_iv_size($cipher, $mode);
+        if ($iv_size) {
+            $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+            $result = $iv.mcrypt_encrypt($cipher, $key, $str, $mode, $iv);
+        }
 
-		return $result;
-	}
-	
-	/**
-	 * 
-	 * @param string $str
-	 * @param string $key
-	 * @param string $cipher
-	 * @param string $mode
-	 * @return string
-	 */
-	public static function encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
-	{
-		return strtr(base64_encode(self::_encode($str, $key, $cipher, $mode)), "+/=", "-_.");
-	}
+        return $result;
+    }
+    
+    /**
+     * 
+     * @param string $str
+     * @param string $key
+     * @param string $cipher
+     * @param string $mode
+     * @return string
+     */
+    public static function encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+    {
+        return strtr(base64_encode(self::_encode($str, $key, $cipher, $mode)), "+/=", "-_.");
+    }
 
-	/**
-	 * 
-	 * @param string $str
-	 * @param string $key
-	 * @param string $cipher
-	 * @param string $mode
-	 * @return string
-	 */
-	private static function _decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
-	{
-		$result = null;
-		$iv_size = mcrypt_get_iv_size($cipher, $mode);
-		if ($iv_size) {
-			$iv_dec = substr($str, 0, $iv_size);
-			$str = substr($str, $iv_size);
-			$result = mcrypt_decrypt($cipher, $key, $str, $mode, $iv_dec);
-		}
+    /**
+     * 
+     * @param string $str
+     * @param string $key
+     * @param string $cipher
+     * @param string $mode
+     * @return string
+     */
+    private static function _decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+    {
+        $result = null;
+        $iv_size = mcrypt_get_iv_size($cipher, $mode);
+        if ($iv_size) {
+            $iv_dec = substr($str, 0, $iv_size);
+            $str = substr($str, $iv_size);
+            $result = mcrypt_decrypt($cipher, $key, $str, $mode, $iv_dec);
+        }
 
-		return $result;
-	}
-	
-	/**
-	 * 
-	 * @param string $str
-	 * @param string $key
-	 * @param string $cipher
-	 * @param string $mode
-	 * @return string
-	 */
-	public static function decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
-	{
-		return self::removeInvisibleChars(self::_decode(base64_decode(strtr($str, "-_.", "+/=" )), $key, $cipher, $mode));
-	}
+        return $result;
+    }
+    
+    /**
+     * 
+     * @param string $str
+     * @param string $key
+     * @param string $cipher
+     * @param string $mode
+     * @return string
+     */
+    public static function decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
+    {
+        return self::removeInvisibleChars(self::_decode(base64_decode(strtr($str, "-_.", "+/=" )), $key, $cipher, $mode));
+    }
 }

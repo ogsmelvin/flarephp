@@ -6,9 +6,9 @@ use Main\Controller;
 
 class Index_Controller extends Controller
 {
-	public function index_action()
-	{
-		$data = array();
-		return $this->view('index', $data);
-	}
+    public function index_action()
+    {
+        $data = array();
+        return $this->view('index', $data);
+    }
 }

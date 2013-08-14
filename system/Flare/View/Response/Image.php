@@ -11,12 +11,12 @@ use Flare\View\Response;
  */
 class Image extends Response
 {
-	/**
-	 * 
-	 * @return string
-	 */
-	public function render()
-	{
-		
-	}
+    /**
+     * 
+     * @return string
+     */
+    public function render()
+    {
+        
+    }
 }

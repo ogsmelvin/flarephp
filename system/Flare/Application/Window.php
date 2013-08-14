@@ -9,9 +9,9 @@ namespace Flare\Application;
  */
 interface Window
 {
-	/**
-	 * 
-	 * @return void
-	 */
-	public function load();
+    /**
+     * 
+     * @return void
+     */
+    public function load();
 }

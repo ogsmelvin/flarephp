@@ -11,12 +11,12 @@ use Flare\View\Response;
  */
 class Xml extends Response
 {
-	/**
-	 * 
-	 * @return string
-	 */
-	public function render()
-	{
-		
-	}
+    /**
+     * 
+     * @return string
+     */
+    public function render()
+    {
+        
+    }
 }
