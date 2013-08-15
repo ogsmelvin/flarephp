@@ -16,10 +16,6 @@ function clone(obj) {
     }
 }
 
-function require(script) {
-    
-}
-
 function addEvent(elem, event, listener) {
     if (typeof event == "string" && typeof elem == "string") {
         elem = document.getElementById(elem);
