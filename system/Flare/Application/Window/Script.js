@@ -16,6 +16,10 @@ function clone(obj) {
     }
 }
 
+function require(script) {
+    
+}
+
 function addEvent(elem, event, listener) {
     if (typeof event == "string" && typeof elem == "string") {
         elem = document.getElementById(elem);
@@ -48,7 +52,7 @@ flare.Ajax = (function () {
 
     this.get = function (url, data, done) {
         var params = [];
-        var request = self.createRequest();
+        var request = this.createRequest();
         if (typeof data == "object") {
             for (i in data) {
                 params.push(encodeURIComponent(i) + "=" + encodeURIComponent(data[i]));
@@ -67,7 +71,7 @@ flare.Ajax = (function () {
 
     this.post = function (url, data, done) {
         var params = [];
-        var request = self.createRequest();
+        var request = this.createRequest();
         if (typeof data == "object") {
             for (i in data) {
                 params.push(encodeURIComponent(i) + "=" + encodeURIComponent(data[i]));
@@ -96,26 +100,6 @@ flare.Ajax = (function () {
 
 flare.Application = function () {
 
-    this.routes = {};
-    this.route = function (url, callback) {
-        self.routes[url] = {
-            callback : callback
-        };
-    }
-
-    function _scanRoutes(evt) {
-        var url = window.location.hash.substring(1);
-        url = !url ? "/" : "/" + url.ltrim("/");
-        if (self.routes[url] != undefined) {
-            self.routes[url].callback(evt);
-        }
-    }
-
-    this.run = function () {
-        window.addEvent("hashchange", _scanRoutes);
-        window.addEvent("load", _scanRoutes);
-    }
-
     this.GET = (function () {
         var match,
             pl     = /\+/g,
@@ -128,6 +112,44 @@ flare.Application = function () {
             urlParams[decode(match[1])] = decode(match[2]);
         return urlParams;
     })();
+
+    function Action(callback) {
+        var params = {};
+        this.execute = callback;
+        this.GET = self.GET;
+        this.model = function () {
+
+        }
+        this.setParam = function (key, val) {
+            params[key] = decodeURIComponent(val);
+            return this;
+        }
+        this.getParam = function (key) {
+            return params[key] != undefined ? params[key] : console.log("Undefined param '" + key + "'");
+        }
+        this.getParams = function () {
+            return params;
+        }
+    }
+
+    this.routes = {};
+    this.route = function (url, action) {
+        this.routes[url] = new Action(action);
+    }
+
+    function _scanRoutes(evt) {
+        var url = window.location.hash.substring(1);
+        url = !url ? "/" : "/" + url.ltrim("/");
+        if (self.routes[url] != undefined) {
+            var action = self.routes[url];
+            action.execute(evt);
+        }
+    }
+
+    this.run = function () {
+        window.addEvent("hashchange", _scanRoutes);
+        window.addEvent("load", _scanRoutes);
+    }
 
     var self = this;
 }

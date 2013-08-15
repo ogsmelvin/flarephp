@@ -1,7 +1,3 @@
-App.route("/", function () {
-    
-});
-
-App.route("/hash", function () {
+App.route("/about", function () {
     
 });
