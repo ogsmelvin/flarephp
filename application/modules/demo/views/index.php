@@ -4,7 +4,7 @@
     Invalid
 </div>
 <?php endif ?>
-<form method="POST" action="<?= $uri->moduleUrl ?>process/register" enctype="multipart/form-data" class="form-horizontal">
+<form method="POST" action="<?= $uri->moduleUrl ?>process/register" id="form" enctype="multipart/form-data" class="form-horizontal">
     <div class="control-group">
         <label class="control-label" for="inputEmail">Email</label>
         <div class="controls">
@@ -28,4 +28,5 @@
             <button type="submit" value="submit" name="submit" id="submitBtn" class="btn">Submit</button>
         </div>
     </div>
+    <a href="#hash">hash</a>
 </form>

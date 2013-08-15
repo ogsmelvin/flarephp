@@ -49,15 +49,16 @@ class Javascript extends Response
      */
     private function _compile()
     {
+        $tmp = '';
         $content = '';
         foreach ($this->_paths as $path) {
-            $tmp = file_get_contents($path);
-            if ($tmp !== false) {
-                $content .= $tmp;
-            }
-            unset($tmp);
+            ob_start();
+            include $path;
+            $tmp = (string) ob_get_clean();
+            $content .= $tmp ? $tmp."\n" : '';
         }
-        
+
+        unset($tmp);
         return $content;
     }
     
