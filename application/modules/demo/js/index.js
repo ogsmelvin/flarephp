@@ -1,3 +1,3 @@
-App.Controller = function () {
-	
-};
+app.route("/", function () {
+    console.log("sample");
+});
