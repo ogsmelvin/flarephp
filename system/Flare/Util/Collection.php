@@ -82,4 +82,22 @@ class Collection extends ArrayObject
         $this->exchangeArray(array_merge($this->getArrayCopy(), $array));
         return $this;
     }
+
+    /**
+     * 
+     * @return string
+     */
+    public function toJSON()
+    {
+        return json_encode($this);
+    }
+
+    /**
+     * 
+     * @return \Flare\Object\Json
+     */
+    public function toJSONObject()
+    {
+        return new Json($this->getArrayCopy());
+    }
 }

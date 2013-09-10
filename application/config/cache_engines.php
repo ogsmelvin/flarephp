@@ -9,20 +9,20 @@ $cache_engines = array(
     /**
      * APC Configuration
      */
-    'Apc' => array(),
+    // 'Apc' => array(),
 
     /**
      * Memcache Configuration
      */
-    'Memcache' => array(
-        'host' => 'localhost',
-        'port' => 1121
-    ),
+    // 'Memcache' => array(
+    //     'host' => 'localhost',
+    //     'port' => 1121
+    // ),
 
     /**
      * Memcached Configuration
      */
-    'Memcached' => array()
+    // 'Memcached' => array()
 );
 
 /**

@@ -4,7 +4,7 @@ namespace Flare\Db\Sql\Query;
 
 use Flare\Db\Sql\Result\Collection;
 use Flare\Db\Sql\Result\Row;
-use Flare\View\Pagination;
+use Flare\View\Util\Pagination;
 use Flare\Object\Json;
 use \PDOException;
 use \PDOStatement;

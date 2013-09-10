@@ -1,3 +1,0 @@
-App.route("/about", function () {
-
-});

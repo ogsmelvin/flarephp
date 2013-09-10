@@ -2,8 +2,8 @@
 
 namespace Flare\Http\Client;
 
-use Flare\Object\Json;
-use Flare\Object\Xml;
+use Flare\Http\Client\Curl\Response;
+use Flare\Http\Client\Curl\Request;
 
 if (!function_exists('curl_init')) {
     show_error('CURL is not supported by your server');
@@ -18,362 +18,67 @@ class Curl
 {
     /**
      * 
-     * @var string
+     * @param \Flare\Http\Client\Curl\Request $request
+     * @return \Flare\Http\Client\Curl\Response
      */
-    const POST = 'POST';
-
-    /**
-     * 
-     * @var string
-     */
-    const GET = 'GET';
-
-    /**
-     * 
-     * @var resource
-     */
-    private $_curl;
-
-    /**
-     * 
-     * @var array
-     */
-    private $_params = array();
-
-    /**
-     * 
-     * @var string
-     */
-    private $_error;
-
-    /**
-     * 
-     * @var string
-     */
-    private $_method = 'GET';
-
-    /**
-     * 
-     * @var string
-     */
-    private $_url;
-
-    /**
-     * 
-     * @var boolean
-     */
-    private $_autoReset = true;
-
-    /**
-     * 
-     * @var array
-     */
-    private $_httpHeaders = array();
-
-    /**
-     * 
-     * @var string
-     */
-    private $_errorCode;
-
-    /**
-     * 
-     * @param string $url
-     */
-    public function __construct($url = null)
+    public static function execute(Request $request)
     {
-        $this->open($url);
-    }
+        $curl = curl_init();
+        $options = $request->getOptions();
 
-    /**
-     * 
-     * @param boolean $switch
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setAutoReset($switch)
-    {
-        $this->_autoReset = (boolean) $switch;
-        return $this;
-    }
+        switch ($request->getMethod()) {
 
-    /**
-     * 
-     * @param string $url
-     * @return \Flare\Http\Client\Curl
-     */
-    public function open($url = null)
-    {
-        $this->_curl = curl_init($url);
-        if ($url) {
-            $this->_url = $url;
+            case Request::METHOD_POST:
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $request->getParams());
+                break;
+            
+            case Request::METHOD_PUT:
+                curl_setopt($curl, CURLOPT_PUT, true);
+                break;
+
+            case Request::METHOD_GET:
+                if ($request->getParams()) {
+                    $url = parse_url($options[CURLOPT_URL]);
+                    if (!empty($url['query'])) {
+                        parse_str($url['query'], $params);
+                        $url['query'] = http_build_query(array_merge($params, $request->getParams()));
+                    } else {
+                        $url['query'] = http_build_query($request->getParams());
+                    }
+                    $options[CURLOPT_URL] = http_build_url($url);
+                }
+                curl_setopt($curl, CURLOPT_HTTPGET, true);
+                break;
+
+            default:
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $request->getMethod());
+                break;
         }
-        return $this;
-    }
 
-    /**
-     * 
-     * @param string $url
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setUrl($url)
-    {
-        $this->_url = $url;
-        curl_setopt($this->_curl, CURLOPT_URL, $url);
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string $method
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setRequestMethod($method)
-    {
-        $method = strtoupper($method);
-        if ($method === self::POST) {
-            $this->_method = self::POST;
-            curl_setopt($this->_curl, CURLOPT_POST, true);
-        } elseif ($method === self::GET) {
-            $this->_method = self::GET;
-            curl_setopt($this->_curl, CURLOPT_POST, false);
-        } else {
-            show_error("Invalid request method");
+        foreach ($options as $key => $option) {
+            curl_setopt($curl, $key, $option);
         }
-        return $this;
-    }
 
-    /**
-     * 
-     * @param string|array $type
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setContentType($type)
-    {
-        if (strpos($type, 'Content-Type: ') !== 0) {
-            $type = 'Content-Type: '.$type;
+        if ($request->isHeaderOut()) {
+            curl_setopt($curl, CURLINFO_HEADER_OUT, true);
         }
-        return $this->setOption(CURLOPT_HTTPHEADER, $type);
-    }
 
-    /**
-     * 
-     * @param array $headers
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setHeaders(array $headers)
-    {
-        return $this->setOption(CURLOPT_HTTPHEADER, $headers);
-    }
+        $response = (string) curl_exec($curl);
 
-    /**
-     * 
-     * @param array $params
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setParams($params)
-    {
-        foreach ($params as $k => $v) {
-            $this->setParam($k, $v);
+        $errorMessage = null;
+        if ($errorCode = curl_errno($curl)) {
+            $errorMessage = curl_error($curl);
         }
-        return $this;
-    }
 
-    /**
-     * 
-     * @param string $key
-     * @param string|int $value
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setParam($key, $value)
-    {
-        $this->_params[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * 
-     * @return \Flare\Http\Client\Curl
-     */
-    public function clearParams()
-    {
-        $this->_params = array();
-        return $this;
-    }
-
-    /**
-     * 
-     * @param int $key
-     * @param mixed $value
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setOption($key, $value)
-    {
-        if (strpos($key, 'CURLOPT_') !== 0) {
-            $key = constant('CURLOPT_'.$key);
+        $body = null;
+        $header = null;
+        if ($response) {
+            list($header, $body) = explode("\r\n\r\n", $response, 2);
         }
-        if ($key === CURLOPT_URL) {
-            $this->_url = $value;
-        } elseif ($key === CURLOPT_HTTPHEADER) {
-            if (is_string($value)) {
-                $value = (array) $value;
-                $this->_httpHeaders = $value;
-            }
-        }
-        curl_setopt($this->_curl, $key, $value);
-        return $this;
-    }
-
-    /**
-     * 
-     * @param array $options
-     * @return \Flare\Http\Client\Curl
-     */
-    public function setOptions($options)
-    {
-        if (isset($options[CURLOPT_URL])) {
-            $this->_url = $options[CURLOPT_URL];
-        }
-        curl_setopt_array($this->_curl, $options);
-        return $this;
-    }
-
-    /**
-     * 
-     * @return \Flare\Http\Client\Curl
-     */
-    public function execute()
-    {
-        $this->_prepare();
-        curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, false);
-        curl_exec($this->_curl);
-        if ($this->_errorCode = curl_errno($this->_curl)) {
-            $this->_error = curl_error($this->_curl);
-        }
-        if ($this->_autoReset) {
-            $this->reset();
-        }
-        return $this;
-    }
-
-    /**
-     * 
-     * @return void
-     */
-    private function _prepare()
-    {
-        if ($this->_method === self::POST) {
-            curl_setopt($this->_curl, CURLOPT_POSTFIELDS, $this->_params);
-        } elseif ($this->_method === self::GET) {
-            $url = parse_url($this->_url);
-            if (!isset($url['query'])) {
-                $url['query'] = http_build_query($this->_params);
-            }
-            $this->_url = http_build_url($url);
-            $this->setOption(CURLOPT_URL, $this->_url);
-        } else {
-            show_error("Invalid request method");
-        }
-        return;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getContent()
-    {
-        $this->_prepare();
-        curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
-        $return = (string) curl_exec($this->_curl);
-        if ($this->_errorCode = curl_errno($this->_curl)) {
-            $this->_error = curl_error($this->_curl);
-        }
-        if ($this->_autoReset) {
-            $this->reset();
-        }
-        return $return;
-    }
-
-    /**
-     * 
-     * @return string|null
-     */
-    public function getUrl()
-    {
-        return $this->_url;
-    }
-
-    /**
-     * 
-     * @param string $key
-     * @return mixed
-     */
-    public function getParam($key)
-    {
-        return isset($this->_params[$key]) ? $this->_params[$key] : null;
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->_params;
-    }
-
-    /**
-     * 
-     * @return string|null
-     */
-    public function getError()
-    {
-        return $this->_error;
-    }
-
-    /**
-     * 
-     * @return string|null
-     */
-    public function getErrorCode()
-    {
-        return $this->_errorCode;
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    public function hasError()
-    {
-        return !empty($this->_error) || !empty($this->_errorCode);
-    }
-
-    /**
-     * 
-     * @return \Flare\Http\Client\Curl
-     */
-    public function reset()
-    {
-        curl_close($this->_curl);
-        return $this->open();
-    }
-
-    /**
-     * 
-     * @return \Flare\Http\Json
-     */
-    public function getContentAsJson()
-    {
-        return new Json($this->getContent());
-    }
-
-    /**
-     * 
-     * @return \Flare\Http\Xml
-     */
-    public function getContentAsXml()
-    {
-        return new Xml($this->getContent());
+        $info = curl_getinfo($curl);
+        curl_close($curl);
+        
+        return new Response($body, $info, $header, $errorCode, $errorMessage);
     }
 }

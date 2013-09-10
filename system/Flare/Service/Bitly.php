@@ -2,6 +2,8 @@
 
 namespace Flare\Service;
 
+use Flare\Http\Client\Curl\Request;
+use Flare\Http\Client\Curl;
 use Flare\Service;
 
 /**
@@ -67,13 +69,17 @@ class Bitly extends Service
      */
     public function shorten($link, $format = 'txt')
     {
-        $result = (string) $this->curl
-            ->setUrl(self::API_HOST.'shorten')
-            ->setParam('login', $this->_username)
+        $request = new Request(self::API_HOST.'shorten');
+        $request->setParam('login', $this->_username)
             ->setParam('apiKey', $this->_password)
             ->setParam('uri', $link)
-            ->setParam('format', $format)
-            ->getContent();
-        return $result;
+            ->setParam('format', $format);
+
+        $response = Curl::execute($request);
+        if ($response->hasError()) {
+            show_error($response->getError());
+        }
+
+        return $response->getBody();
     }
 }

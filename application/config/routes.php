@@ -22,9 +22,7 @@ $routes = array(
      *  )
      *
      */
-    'routes' => array(
-        '/welcome/home' => 'module.controller.action'
-    ),
+    'routes' => array(),
 
     /**
      * to use the built in just leave the value blank
@@ -33,7 +31,7 @@ $routes = array(
      * You can also do this for wildcard error controller
      * 'errors' => 'module.controller.action'
      */
-    'errors' => 'demo.error.index',
+    'errors' => 'main.error.index',
 
     /**
      * Default module, controller and action

@@ -8,7 +8,7 @@ require 'constants.php';
 /**
  * Define modules
  */
-$config['modules'] = array('main', 'demo');
+$config['modules'] = array('main');
 
 /**
  * To return it to its default value

@@ -13,6 +13,12 @@ class View
 {
     /**
      * 
+     * @var string
+     */
+    const EXTENSION_NAME = 'phtml';
+
+    /**
+     * 
      * @var \Flare\View
      */
     private static $instance;
@@ -107,9 +113,9 @@ class View
         extract($this->vars);
         ob_start();
         if ($useIncludePath && $this->path) {
-            include $this->path.rtrim(ltrim($path, '/'), '.php').'.php';
+            include $this->path.ltrim($path, '/').'.'.self::EXTENSION_NAME;
         } elseif (!$useIncludePath) {
-            include rtrim($path, '.php').'.php';
+            include $path.'.'.self::EXTENSION_NAME;
         }
         return (string) ob_get_clean();
     }

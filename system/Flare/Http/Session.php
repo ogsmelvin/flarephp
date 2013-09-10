@@ -52,13 +52,15 @@ class Session
      */
     public function start()
     {
-        session_start();
+        if (!$this->_started) {
+            session_start();
+            $this->_started = true;
+        }
         if (!isset($_SESSION[$this->_name])) {
             $_SESSION[$this->_name] = array(
                 self::SETTINGS_KEY => array()
             );
         }
-        $this->_started = true;
         return $this;
     }
 

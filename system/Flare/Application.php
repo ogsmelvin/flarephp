@@ -2,17 +2,12 @@
 
 namespace Flare;
 
-use Flare\Application\Http\Response as AppResponse;
-use Flare\Application\Http\Request as AppRequest;
-use Flare\View\Response as ViewResponse;
 use Flare\Application\ErrorController;
-use Flare\View\Response\Javascript;
-use Flare\Application\Window;
+use Flare\Application\Dispatcher;
 use Flare\View\Response\Html;
 use Flare\Application\Config;
 use Flare\Application\Router;
 use Flare\Util\Collection;
-use Flare\Security\Crypt;
 use Flare\Application\Db;
 use Flare\Http\Response;
 use Flare\Http\Request;
@@ -28,7 +23,7 @@ use Flare\View;
  * 
  */
 class Application
-{   
+{
     /**
      * 
      * @var string
@@ -100,6 +95,12 @@ class Application
      * @var boolean
      */
     private $_dispatched = false;
+
+    /**
+     * 
+     * @var boolean
+     */
+    private $_configured = false;
     
     /**
      *
@@ -421,7 +422,10 @@ class Application
         }
         
         $this->_controller = F::$router->getRoute()->getController();
-        View::create()->setIncludePath($this->getModuleViewsDirectory());
+        if (F::$router->getAdapterName() == Router::DEFAULT_ADAPTER) {
+            View::create()->setIncludePath($this->getModuleViewsDirectory());
+        }
+        
         F::$uri->setModuleUrl();
         $this->_predispatched = true;
         return $this;
@@ -437,51 +441,15 @@ class Application
             $this->error(500, 'Controller is not initilized');
         }
 
-        $this->_controller->init();
-        $this->_controller->predispatch();
-        $view = null;
-        if (!$this->_controller->router->getRoute()->getActionParams()) {
-            $view = $this->_controller->{$this->_controller->request->getActionMethodName()}();
-        } else {
-            $view = call_user_func_array(
-                array($this->_controller, $this->_controller->request->getActionMethodName()), 
-                $this->_controller->router->getRoute()->getActionParams()
-            );
-        }
-
-        if (!$this->_controller->response->hasContentType()) {
-            if (!($view instanceof ViewResponse)) {
-                if (!empty($view) && !is_string($view)) {
-                    $this->error(500, "Action must return a 'View\Response' instance or string");
-                } elseif (F::$config->default_content_type) {
-                    $this->_controller->response->setContentType(F::$config->default_content_type);
-                }
-            } else {
-                $this->_controller->response->setContentType($view->getContentType());
-            }
+        if (!$this->_configured) {
+            $this->_configure();
+            $this->_configured = true;
         }
         
-        $this->_controller->postdispatch();
-        if ($this->_controller->cookie->hasNewData()) {
-            $this->_controller->response->addCookie(
-                $this->_controller->cookie->getNamespace(),
-                $this->_controller->cookie->serialize(),
-                $this->_controller->cookie->getExpiration()
-            );
+        $dispatcher = new Dispatcher($this->_controller, F::$router->getAdapterName());
+        if ($dispatcher->dispatch()) {
+            $this->_dispatched = true;
         }
-
-        if ($this->_controller instanceof Window) { 
-            $jsfile = $this->_controller->request->getModule()
-                    .'/js/'
-                    .$this->_controller->request->getController()
-                    .'.js';
-            $front = substr(md5(uniqid(mt_rand(), true)), 0, 4).'.js';
-            $view->addScript(F::$uri->baseUrl.$front.'/'.Crypt::encode($jsfile, $front), true);
-        }
-        
-        $this->_controller->response->setBody($view)->send();
-        $this->_controller->complete();
-        $this->_dispatched = true;
 
         return $this;
     }
@@ -501,12 +469,12 @@ class Application
             && F::$config->layout[$module]['auto'])
         {
             $layout = $this->_layoutsDirectory
-                .F::$config->layout[$module]['layout'].'_layout.php';
+                .F::$config->layout[$module]['layout'].'_layout.'.View::EXTENSION_NAME;
         } elseif ($layout !== false && $layout !== null) {
-            $layout = $this->_layoutsDirectory.$layout.'_layout.php';
+            $layout = $this->_layoutsDirectory.$layout.'_layout.'.View::EXTENSION_NAME;
         }
 
-        $path = $this->getModuleViewsDirectory().$path.'.php';
+        $path = $this->getModuleViewsDirectory().$path.'.'.View::EXTENSION_NAME;
         if (!file_exists($path)) {
             $this->error(500, "{$path} not found");
         }
@@ -537,6 +505,7 @@ class Application
     public function error($code, $message = '', $skipConfig = false)
     {
         $html = null;
+        F::$router->setAdapter('page');
         if (!$skipConfig && !empty(F::$config->router['errors'])) {
 
             $route = null;
@@ -548,7 +517,7 @@ class Application
                 $route = F::$router->useErrorRoute(F::$config->router['errors']);
             }
             if (!$route || !($route->getController() instanceof ErrorController)) {
-                $this->error($code, null, true);
+                $this->error($code, $message, true);
             }
 
             $route->getController()->setErrorCode($code);
@@ -621,63 +590,9 @@ class Application
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
             ->_init()
             ->setModules(F::$config->modules)
-            ->_route();
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    private function _route()
-    {
-        if (F::$uri->getSegmentCount() == 2 
-            && pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) == 'js')
-        {
-            $this->_js();
-        }
-        
-        $this->_predispatch()
-            ->_configure()
+            ->_predispatch()
             ->_dispatch()
             ->shutdown();
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    private function _js()
-    {
-        $js = new Javascript(FLARE_DIR.'Flare/Application/Window/Script.js');
-        $location = Crypt::decode(F::$uri->getSegment(2), F::$uri->getSegment(1));
-        $js->merge($this->_modulesDirectory.$location);
-
-        @list($module, $location, $controller) = explode('/', $location, 3);
-        if (!isset($module, $location, $controller)) {
-            $this->error(404);
-        }
-        
-        $controller = pathinfo($controller, PATHINFO_FILENAME);
-        require_once $this->_modulesDirectory.$module.'/bootstrap.php';
-        require_once $this->_modulesDirectory
-                .$module
-                .'/'
-                .$this->_controllersDirectory
-                .$controller
-                .'.php';
-
-        $this->_configure($module, array('Session', 'Cookie'));
-        $request = new AppRequest();
-        $request->setController($controller)
-            ->setModule($module);
-
-        $controller = ucwords($module)."\\Controllers\\".$request->getControllerClassName();
-        $this->_controller = new $controller($request, new AppResponse());
-        $this->_controller->response->setContentType($js->getContentType())
-            ->setBody($js)
-            ->send();
-        $this->_controller->load();
-        $this->shutdown(true);
     }
 
     /**
@@ -704,6 +619,17 @@ class Application
         F::$response = new Response();
         F::$uri = new Uri();
         F::$router = new Router();
+        if (F::$uri->getSegmentCount() == 1
+            && pathinfo(F::$uri->getSegment(1), PATHINFO_EXTENSION) == 'js')
+        {
+            F::$router->setAdapter('javascript');
+        } elseif (F::$request->isAjax()
+            && F::$request->isPost()
+            && F::$uri->getSegmentCount() == 2
+            && pathinfo(F::$uri->getSegment(2), PATHINFO_EXTENSION) == 'do')
+        {
+            F::$router->setAdapter('model');
+        }
         return $this;
     }
 
@@ -735,8 +661,8 @@ class Application
     private function _setupRouter()
     {
         $router = F::$config->router;
-        if (isset($router['routes'])) {
-            F::$router->addRoutes($router['routes']);
+        if (isset($router['routes']) && F::$router->getAdapterName() == Router::DEFAULT_ADAPTER) {
+            F::$router->getAdapter()->addRoutes($router['routes']);
         }
         if (!empty($router['require_https'])) {
             F::$router->secure();

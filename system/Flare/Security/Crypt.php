@@ -45,7 +45,7 @@ class Crypt extends Security
      */
     public static function encode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
     {
-        return strtr(base64_encode(self::_encode($str, $key, $cipher, $mode)), "+/=", "-_.");
+        return bin2hex(self::_encode($str, $key, $cipher, $mode));
     }
 
     /**
@@ -79,6 +79,6 @@ class Crypt extends Security
      */
     public static function decode($str, $key, $cipher = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC)
     {
-        return self::removeInvisibleChars(self::_decode(base64_decode(strtr($str, "-_.", "+/=" )), $key, $cipher, $mode));
+        return self::removeInvisibleChars(self::_decode(pack('H*', $str), $key, $cipher, $mode));
     }
 }

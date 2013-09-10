@@ -2,6 +2,9 @@
 
 namespace Flare\Service;
 
+use Flare\Service\OneWaySMS\Result;
+use Flare\Http\Client\Curl\Request;
+use Flare\Http\Client\Curl;
 use Flare\Service;
 
 /**
@@ -31,39 +34,9 @@ class OneWaySMS extends Service
 
     /**
      * 
-     * @var array
-     */
-    private $_error = array();
-
-    /**
-     * 
      * @var string
      */
     private $_host = 'http://gateway.onewaysms.ph:10001/';
-
-    /**
-     * 
-     * @var array
-     */
-    private static $_errorMessages = array(
-        'send_sms' => array(
-            '-100' => 'apipassname or apipassword is invalid',
-            '-200' => 'senderid parameter is invalid',
-            '-300' => 'mobileno parameter is invalid',
-            '-400' => 'languagetype is invalid',
-            '-500' => 'Invalid characters in message',
-            '-600' => 'Insufficient credit balance'
-        ),
-        'transaction_status' => array(
-            //0 Success receive on mobile handset
-            '100' => 'Message delivered to Telco',
-            '-100' => 'mtid invalid / not found',
-            '-200' => 'Message sending fail'
-        ),
-        'credit_balance' => array(
-            '-100' => 'apipassname or apipassword is invalid'
-        )
-    );
 
     /**
      * 
@@ -89,116 +62,81 @@ class OneWaySMS extends Service
      * @param string $to
      * @param string $message
      * @param int $languagetype
-     * @return string|null
+     * @return \Flare\Service\OneWaySMS\Result
      */
     public function send($from, $to, $message, $languagetype = 1)
     {
-        $this->_error = array();
-        $result = $this->curl
-            ->setParam('senderid', $from)
+        $request = new Request($this->_host.'api.aspx');
+        $request->setParam('senderid', $from)
             ->setParam('mobileno', $to)
             ->setParam('message', $message)
             ->setParam('languagetype', $languagetype)
             ->setParam('apiusername', $this->_username)
-            ->setParam('apipassword', $this->_password)
-            ->setUrl($this->_host.'api.aspx')
-            ->getContent();
+            ->setParam('apipassword', $this->_password);
 
-        if ($this->curl->hasError()) {
-            $this->_error = array(
-                'code' => $this->curl->getErrorCode(),
-                'message' => $this->curl->getError()
-            );
-            $result = null;
-        } elseif ($result < 0) {
-            $this->_setError('send_sms', $result);
-            $result = null;
+        $errorCode = null;
+        $errorMessage = null;
+        $response = Curl::execute($request);
+
+        if ($response->hasError()) {
+            $errorCode = $response->getErrorCode();
+            $errorMessage = $response->getError();
+        } elseif ($response->getBody() < 0) {
+            $errorCode = $response->getBody();
+            $errorMessage = Result::$errors[Result::SEND_SMS][$errorCode];
         }
-        return $result;
+
+        return new Result($response->getBody(), Result::SEND_SMS, $errorCode, $errorMessage);
     }
 
     /**
      * 
      * @param string $mtid
-     * @return boolean
+     * @return \Flare\Service\OneWaySMS\Result
      */
-    public function getTransactionStatus($mtid)
+    public function getTransaction($mtid)
     {
-        $this->_error = array();
-        $result = $this->curl
-            ->setParam('mtid', $mtid)
-            ->setUrl($this->_host.'bulktrx.aspx')
-            ->getContent();
+        $request = new Request($this->_host.'bulktrx.aspx');
+        $request->setParam('mtid', $mtid);
 
-        if ($this->curl->hasError()) {
-            $this->_error = array(
-                'code' => $this->curl->getErrorCode(),
-                'message' => $this->curl->getError()
-            );
-            return false;
-        } elseif ($result != 0) {
-            $this->_setError('transaction_status', $result);
-            return false;
+        $errorCode = null;
+        $errorMessage = null;
+        $response = Curl::execute($request);
+
+        if ($response->hasError()) {
+            $errorCode = $response->getErrorCode();
+            $errorMessage = $response->getError();
+        } elseif ($response->getBody() < 0) {
+            $errorCode = $response->getBody();
+            $errorMessage = Result::$errors[Result::TRANSACTION_STATUS][$errorCode];
         }
-        return true;
+
+        return new Result(!$errorCode && !$errorMessage, Result::TRANSACTION_STATUS, $errorCode, $errorMessage);
     }
 
     /**
      * 
-     * @return int
+     * @return \Flare\Service\OneWaySMS\Result
      */
     public function getCreditBalance()
     {
-        $this->_error = array();
-        $result = $this->curl
-            ->setParam('apiusername', $this->_username)
-            ->setParam('apipassword', $this->_password)
-            ->setUrl($this->_host.'bulkcredit.aspx')
-            ->getContent();
+        $request = new Request($this->_host.'bulkcredit.aspx');
+        $request->setParam('apiusername', $this->_username)
+            ->setParam('apipassword', $this->_password);
 
-        if ($this->curl->hasError()) {
-            $this->_error = array(
-                'code' => $this->curl->getErrorCode(),
-                'message' => $this->curl->getError()
-            );
-            return null;
-        } elseif ($result < 0) {
-            $this->_setError('credit_balance', $result);
-            return null;
+        $errorCode = null;
+        $errorMessage = null;
+        $response = Curl::execute($request);
+
+        if ($response->hasError()) {
+            $errorCode = $response->getErrorCode();
+            $errorMessage = $response->getError();
+        } elseif ($response->getBody() < 0) {
+            $errorCode = $response->getBody();
+            $errorMessage = Result::$errors[Result::CREDIT_BALANCE][$errorCode];
         }
-        return (int) $result;
-    }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $code
-     * @return void
-     */
-    private function _setError($type, $code)
-    {
-        $this->_error = array('code' => $code);
-        if (isset(self::$_errorMessages[$type][$code])) {
-            $this->_error['message'] = self::$_errorMessages[$type][$code];
-        }
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public function getError()
-    {
-        return $this->_error;
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    public function hasError()
-    {
-        return !empty($this->_error);
+        return new Result($response->getBody(), Result::CREDIT_BALANCE, $errorCode, $errorMessage);
     }
 
     /**

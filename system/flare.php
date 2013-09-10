@@ -77,8 +77,8 @@ if (!function_exists('http_build_url')) {
         $pass = isset($parsed_url['pass']) ? ':'.$parsed_url['pass']  : '';
         $pass = ($user || $pass) ? "$pass@" : '';
         $path = isset($parsed_url['path']) ? $parsed_url['path'] : '';
-        $query = isset($parsed_url['query']) ? '?'.$parsed_url['query'] : '';
-        $fragment = isset($parsed_url['fragment']) ? '#'.$parsed_url['fragment'] : '';
+        $query = !empty($parsed_url['query']) ? '?'.$parsed_url['query'] : '';
+        $fragment = !empty($parsed_url['fragment']) ? '#'.$parsed_url['fragment'] : '';
         return "$scheme$user$pass$host$port$path$query$fragment";
     }
 }
@@ -156,24 +156,6 @@ if (!function_exists('show_error')) {
     }
 }
 
-// if (!function_exists('_flare_show_error')) {
-
-    /**
-     * 
-     * @author anthony
-     * @param int $errno
-     * @param string $errstr
-     * @param string $errfile
-     * @param int $errline
-     * @param array $errcontext
-     * @return void
-     */
-    // function _flare_show_error($errno, $errstr, $errfile, $errline, $errcontext)
-    // {
-    //   show_response(500, 'Error Code '.$errno.' : '.$errstr.' in line '.$errline.' : '.$errfile);
-    // }
-// }
-
 if (!function_exists('_flare_show_exception')) {
 
     /**
@@ -202,7 +184,6 @@ if (!function_exists('with')) {
     }
 }
 
-// set_error_handler('_flare_show_error');
 set_exception_handler('_flare_show_exception');
 spl_autoload_register('flare_load_class');
 

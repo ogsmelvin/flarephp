@@ -112,7 +112,7 @@ class Model extends ParentModel
      */
     public function update($data = array(), $check_columns = true)
     {
-        return $this->_adapter->update(static::$table, $data, $check_columns)->execute();
+        return $this->_adapter->update(static::$table, $data, $check_columns);
     }
 
     /**
@@ -121,7 +121,7 @@ class Model extends ParentModel
      */
     public function delete()
     {
-        return $this->_adapter->delete(static::$table)->execute();
+        return $this->_adapter->delete(static::$table);
     }
 
     /**
@@ -204,6 +204,38 @@ class Model extends ParentModel
     public static function save($data)
     {
         return self::query()->insert($data);
+    }
+
+    /**
+     * 
+     * @param string|int $value
+     * @param string $column
+     * @return int
+     */
+    public static function remove($value, $column = null)
+    {
+        if (!$column) {
+            $column = self::primaryKey();
+        }
+        return self::query()->delete()->where($value, $column)->execute();
+    }
+
+    /**
+     * 
+     * @param array $values
+     * @param string|int $key
+     * @param string $column
+     * @return int
+     */
+    public static function replace($values, $key = null, $column = null)
+    {
+        $sql = self::query()->update($values);
+        if ($key && $column) {
+            $sql->where($key, $column);
+        } elseif ($key && !$column) {
+            $sql->where($key, self::primaryKey());
+        }
+        return $sql->execute();
     }
 
     /**

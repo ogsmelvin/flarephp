@@ -5,8 +5,16 @@
  * @var array
  */
 $session = array(
+
+    /**
+     * Auto session_start()
+     */
     'auto_start' => true,
-    'namespace' => 'flare_dev_demo_session'
+
+    /**
+     * Session namespace
+     */
+    'namespace' => 'flare_framework'
 );
 
 /**

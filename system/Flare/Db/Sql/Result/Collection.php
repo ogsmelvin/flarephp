@@ -3,7 +3,7 @@
 namespace Flare\Db\Sql\Result;
 
 use Flare\Util\Collection as ParentCollection;
-use Flare\View\Pagination;
+use Flare\View\Util\Pagination;
 use Flare\Db\Sql\Driver;
 use Flare\Object\Json;
 
@@ -89,7 +89,7 @@ class Collection extends ParentCollection
 
     /**
      * 
-     * @return \Flare\Object\JSON
+     * @return \Flare\Object\Json
      */
     public function toJSONObject()
     {

@@ -32,7 +32,10 @@ class Xss extends Security
     {
         if ($options) {
             $options = array_merge(self::$_defaultOptions, $options);
+        } else {
+            $options = self::$_defaultOptions;
         }
+        
         if (is_array($value)) {
             foreach ($value as &$val) {
                 $val = self::filter($val, $options);

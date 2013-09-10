@@ -48,7 +48,7 @@ class Request
         if ($key === null) {
             return !empty($_SERVER) ? $_SERVER : $default;
         }
-        $key = strtoupper($key);
+        $key = strtoupper(str_replace('-', '_', $key));
         return isset($_SERVER[$key]) ? $_SERVER[$key] : $default;
     }
 
@@ -58,10 +58,7 @@ class Request
      */
     public function isPost()
     {
-        if ($this->server('REQUEST_METHOD') !== 'POST') {
-            return false;
-        }
-        return true;
+        return ($this->server('REQUEST_METHOD') === 'POST');
     }
 
     /**
@@ -70,10 +67,7 @@ class Request
      */
     public function isGet()
     {
-        if ($this->server('REQUEST_METHOD') !== 'GET') {
-            return false;
-        }
-        return true;
+        return ($this->server('REQUEST_METHOD') === 'GET');
     }
 
     /**
@@ -82,10 +76,7 @@ class Request
      */
     public function isAjax()
     {
-        if (strtoupper($this->server('HTTP_X_REQUESTED_WITH')) === 'XMLHTTPREQUEST') {
-            return true;
-        }
-        return false;
+        return (strtoupper($this->server('HTTP_X_REQUESTED_WITH')) === 'XMLHTTPREQUEST');
     }
 
     /**

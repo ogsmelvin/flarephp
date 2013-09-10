@@ -11,28 +11,28 @@ $services = array(
     /**
      * Flare\Service\Facebook settings
      */
-    'Facebook'  => array(
-        'app_id' => '',
-        'app_secret' => '',
-        'file_upload' => true
-    ),
+    // 'Facebook'  => array(
+    //     'app_id' => '',
+    //     'app_secret' => '',
+    //     'file_upload' => true
+    // ),
 
     /**
      * Flare\Service\OneWaySMS settings
      */
-    'OneWaySMS' => array(
-        'username' => '',
-        'password' => '',
-        'host' => ''
-    ),
+    // 'OneWaySMS' => array(
+    //     'username' => '',
+    //     'password' => '',
+    //     'host' => ''
+    // ),
 
     /**
      * Flare\Service\Twitter settings
      */
-    'Twitter' => array(
-        'consumer_key' => '',
-        'consumer_secret' => ''
-    )
+    // 'Twitter' => array(
+    //     'consumer_key' => '',
+    //     'consumer_secret' => ''
+    // )
 );
 
 /**

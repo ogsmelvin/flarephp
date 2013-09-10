@@ -12,11 +12,6 @@ $layout = array(
     'main' => array(
         'auto' => true,
         'layout' => 'main'
-    ),
-
-    'demo' => array(
-        'auto' => true,
-        'layout' => 'demo'
     )
 );
 
