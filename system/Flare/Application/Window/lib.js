@@ -59,6 +59,49 @@ flare.Collection = function (content) {
     flare.Data.call(this, content);
 }
 
+flare.ViewComponent = function (methods) {
+    this.element = null;
+    function init (methods) {
+        for (m in methods) {
+            self[m] = methods[m];
+        }
+    }
+    this.bindTo = function (selector) {
+        var selected = $(selector);
+        if (selected.length) this.element = selected;
+    }
+    this.onRouteChange = function (route) {}
+    var self = this;
+    init(methods);
+}
+
+flare.TabbedPane = function (methods) {
+    flare.ViewComponent.call(this, methods);
+    this.tabs = "> li > a";
+    this.activeClassName = "active";
+    this.setActive = function (uri) {
+        this.element.find(this.tabs + "[href=\"#" + uri + "\"]")
+            .parent()
+            .addClass(this.activeClassName)
+            .siblings()
+            .removeClass(this.activeClassName);
+    }
+    this.onRouteChange = function (route) {
+        this.setActive(route.URI);
+    }
+}
+
+flare.Form = function (methods) {
+    flare.ViewComponent.call(this, methods);
+    this.async = false;
+    this.onSubmit = function (evt) {
+
+    }
+    this.submit = function () {
+        this.onSubmit(evt);
+    }
+}
+
 flare.Ajax = new function () {
 
     function createRequest() {
@@ -144,13 +187,21 @@ flare.Ajax = new function () {
 flare.Application = function () {
 
     this.Config = {
-        defaultController : "index",
-        defaultAction : "index",
-        actionSuffix : "_action",
-        appRunningKey : "__isRunning__",
-        appScriptType : "text/x-flare",
-        tagLayoutReplacement : "div",
-        modelApiExtension : ".do"
+        controller : {
+            defaultController : "index",
+            defaultAction : "index",
+            actionSuffix : "_action",
+            appRunningKey : "__isRunning__",
+        },
+        model : {
+            ApiExtension : ".do",
+        },
+        view : {
+            appScriptType : "text/x-flare",
+            tagLayoutReplacement : "div",
+            uiComponentAttribute : "ui-component",
+            viewTypeAttribute : "view-type"
+        }  
     };
 
     this.use = function (module, onLoad) {
@@ -222,7 +273,7 @@ flare.Application = function () {
                 }
                 callback(new flare.Data(response), status);
             });
-            var url = self.Config.baseUrl + self.Config.pageId + "/" + (this.name + "/" + method).bin2hex() + self.Config.modelApiExtension;
+            var url = self.Config.baseUrl + self.Config.pageId + "/" + (this.name + "/" + method).bin2hex() + self.Config.model.ApiExtension;
             request.open(flare.Ajax.METHOD_POST, url, true);
             request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             request.setRequestHeader(flare.Ajax.HEADER_NAME, flare.Ajax.HEADER_VALUE);
@@ -231,6 +282,15 @@ flare.Application = function () {
                 params[i] = "params[]=" + params[i];
             }
             request.send(params.join("&"));
+        }
+    }
+
+    this.Service = new function () {
+        this.post = function (url, data, done) {
+            flare.Ajax.post(url, data, done);
+        }
+        this.get = function (url, data, done) {
+            flare.Ajax.get(url, data, done);
         }
     }
 
@@ -256,9 +316,7 @@ flare.Application = function () {
         this.actions = {};
         this.execute = function (name, evt) {
             this.current = this.actions[name];
-            this.current.view.before();
             this.current.view.render();
-            this.current.view.after();
             this.current(evt);
         }
         this.action = function (name, methods) {
@@ -266,7 +324,7 @@ flare.Application = function () {
             if (typeof name == "object") {
                 methods = name;
                 for (method in methods) {
-                    var methodSuffixed = method + self.Config.actionSuffix;
+                    var methodSuffixed = method + self.Config.controller.actionSuffix;
                     var type = typeof this.actions[methodSuffixed];
                     if (type != "undefined" && type == "object") {
                         view = this.actions[methodSuffixed].view;
@@ -275,12 +333,12 @@ flare.Application = function () {
                     this.actions[methodSuffixed].view = view ? view : self.View.create(this.name, methodSuffixed);
                 }
             } else {
-                var type = typeof this.actions[name + self.Config.actionSuffix];
+                var type = typeof this.actions[name + self.Config.controller.actionSuffix];
                 if (type != "undefined" && type == "object") {
-                    view = this.actions[name + self.Config.actionSuffix].view;
+                    view = this.actions[name + self.Config.controller.actionSuffix].view;
                 }                
-                this.actions[name + self.Config.actionSuffix] = methods;
-                this.actions[name + self.Config.actionSuffix].view = view;
+                this.actions[name + self.Config.controller.actionSuffix] = methods;
+                this.actions[name + self.Config.controller.actionSuffix].view = view;
             }
             return this;
         }
@@ -318,9 +376,9 @@ flare.Application = function () {
             var layoutContentInner = null;
             this.render = function () {
                 templateObj.replaceWith(
-                    "<" + self.Config.tagLayoutReplacement + " id=\"" + this.name + 
-                    "\" data-view-type=\"" + templateObj.data("view-type") + "\">" + templateObj.html() 
-                    + "</" + self.Config.tagLayoutReplacement + ">"
+                    "<" + self.Config.view.tagLayoutReplacement + " id=\"" + this.name + 
+                    "\" data-" + self.Config.view.viewTypeAttribute + "=\"" + templateObj.data(self.Config.view.viewTypeAttribute) + "\">" + templateObj.html() 
+                    + "</" + self.Config.view.tagLayoutReplacement + ">"
                 );
                 templateObj = $(document.getElementById(this.name));
             }
@@ -339,7 +397,7 @@ flare.Application = function () {
                     }
                     return;
                 }
-                if (self.Router.route) self.Router.route.action.view.setContent(layoutContentInner.html());
+                if (self.Router.previous) self.Router.previous.action.view.setContent(layoutContentInner.html());
                 layoutContentInner.html(content);
             }
             this.LAYOUT_CONTENT_ID_SUFFIX = ':content';
@@ -348,22 +406,16 @@ flare.Application = function () {
         }
         function ActionView(controller, action) {
             var viewContent;
-            this.viewName = controller + "/" + action.substring(0, action.length - self.Config.actionSuffix.length);
+            this.viewName = controller + "/" + action.substring(0, action.length - self.Config.controller.actionSuffix.length);
             function init() {
-                jqView = viewClass.get(thisClass.viewName);
+                var jqView = viewClass.get(thisClass.viewName);
                 if (jqView) {
                     viewContent = jqView.html();
                     jqView.remove();
                 }
             }
-            this.before = function () {
-
-            }
             this.render = function () {
                 this.getLayout().setContent(viewContent);
-            }
-            this.after = function () {
-
             }
             this.setContent = function (html) {
                 viewContent = html;
@@ -397,13 +449,25 @@ flare.Application = function () {
         var viewClass = this;
     }
 
+    this.Component = new function () {
+        this.components = {};
+        this.bind = function (selector, component) {
+            if (this.components[selector] == undefined) this.components[selector] = [ component ];
+            else this.components[selector].push(component);
+        }
+    }
+
+    AbstractController.prototype.goto = function (action) {
+        window.location.hash = action.ltrim("/");
+    }
+
     AbstractController.prototype.view = function (action, events) {
         if (events == undefined) {
             events = action;
             action = this.actions;
         } else if (typeof events == "object") {
             if (typeof action == "string") {
-                var key = action + self.Config.actionSuffix;
+                var key = action + self.Config.controller.actionSuffix;
                 action = {};
                 action[key] = key;
             }
@@ -429,11 +493,13 @@ flare.Application = function () {
 
     this.Router = new function () {
         this.route = null;
+        this.previous = null;
         this._routes = function () {}
-        this._filter = function (evt) {}
+        this._hook = { found : function (route, evt) {} , notfound : function (evt) {} };
         function Route(controller, action) {
             this.controller = controller;
             this.action = controller.actions[action];
+            this.URI = window.location.hash.substring(1);
         }
         this.init = function (routes) {
             this._routes = routes;
@@ -444,8 +510,8 @@ flare.Application = function () {
             return this;
         }
         this.scan = function (evt) {
-            var controller = self.Config.defaultController;
-            var action = self.Config.defaultAction;
+            var controller = self.Config.controller.defaultController;
+            var action = self.Config.controller.defaultAction;
             var uri = window.location.hash.substring(1).split("/");
             if (uri.length > 2) return; 
             if (typeof uri[0] != "undefined" && uri[0]) {
@@ -454,36 +520,49 @@ flare.Application = function () {
             if (typeof uri[1] != "undefined" && uri[1]) {
                 action = uri[1];
             }
-            this._filter(evt);
             var capsController = controller.capitalize();
-            action = action + self.Config.actionSuffix;
+            action = action + self.Config.controller.actionSuffix;
+            if (this.route) this.previous = this.route;
             if (typeof self.Controller[capsController] != "undefined" 
                 && typeof self.Controller[capsController].actions[action] != "undefined")
             {
-                self.Controller[capsController].execute(action, evt);
                 this.route = new Route(self.Controller[capsController], action);
+                this._hook['found'](this.route, evt);
+                self.Controller[capsController].execute(action, evt);
             } else {
                 this.route = null;
+                this._hook['notfound'](evt);
             }
         }
-        this.filter = function (filter) {
-            this._filter = filter;
+        this.found = function (found) {
+            this._hook['found'] = found;
+        }
+        this.notfound = function (notfound) {
+            this._hook['notfound'] = notfound;
         }
     }
 
     function _run(evt) {
         self.Router.scan(evt);
+        for (selector in self.Component.components) {
+            for (component in self.Component.components[selector]) {
+                if (!self.Component.components[selector][component].element) {
+                    self.Component.components[selector][component].bindTo(selector);
+                }
+                self.Component.components[selector][component].onRouteChange(self.Router.route);
+            }
+        }
     }
 
     this.run = function () {
-        if (this.get(this.Config.appRunningKey)) {
+        if (this.get(this.Config.controller.appRunningKey)) {
             console.log("Application is already running");
             return;
         }
-        this.set(this.Config.appRunningKey, true);
+        this.set(this.Config.controller.appRunningKey, true);
         $(window).bind("hashchange", _run);
         $(document).ready(function (evt) {
-            var layout = $("script[type='" + self.Config.appScriptType + "'][data-view-type='" + self.View.TEMPLATE_TYPE + "']");
+            var layout = $("script[type='" + self.Config.view.appScriptType + "'][data-" + self.Config.view.viewTypeAttribute + "='" + self.View.TEMPLATE_TYPE + "']");
             if (layout.length) {
                 self.View.setLayout(layout.attr("id"));
                 if (self.View.layout) self.View.layout.render();

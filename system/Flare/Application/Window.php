@@ -30,7 +30,7 @@ namespace {
          */
         function asset($location, $cacheBuster = null)
         {
-            return ltrim($location, '/').'.js'.($cacheBuster ? '?v='.$cacheBuster : '');
+            return ltrim($location, '/').'.js'.($cacheBuster ? '?'.$cacheBuster : '');
         }
     }
 

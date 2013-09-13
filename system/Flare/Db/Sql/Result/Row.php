@@ -46,6 +46,7 @@ class Row
      * 
      * @param \Flare\Db\Sql\Query\ARQuery $query
      * @param string $table
+     * @param string|int $pk
      * @param string|int $id
      */
     public function __construct(ARQuery &$query, $table = null, $pk = null, $id = null)
