@@ -4,10 +4,8 @@ namespace Flare;
 
 use Flare\Application\ErrorController;
 use Flare\Application\Dispatcher;
-use Flare\View\Response\Html;
 use Flare\Application\Config;
 use Flare\Application\Router;
-use Flare\Util\Collection;
 use Flare\Application\Db;
 use Flare\Http\Response;
 use Flare\Http\Request;
@@ -15,7 +13,6 @@ use Flare\Http\Session;
 use Flare\Http\Cookie;
 use Flare\Flare as F;
 use Flare\Http\Uri;
-use Flare\View;
 
 /**
  * 
@@ -422,10 +419,6 @@ class Application
         }
         
         $this->_controller = F::$router->getRoute()->getController();
-        if (F::$router->getAdapterName() == Router::DEFAULT_ADAPTER) {
-            View::create()->setIncludePath($this->getModuleViewsDirectory());
-        }
-        
         F::$uri->setModuleUrl();
         $this->_predispatched = true;
         return $this;
@@ -452,47 +445,6 @@ class Application
         }
 
         return $this;
-    }
-
-    /**
-     * 
-     * @param string $path
-     * @param array $data
-     * @param string|boolean $layout
-     * @return \Flare\View\Response\Html
-     */
-    public function view($path, $data = null, $layout = null)
-    {
-        $module = $this->_controller->request->getModule();
-        if ($layout === null 
-            && isset(F::$config->layout[$module]) 
-            && F::$config->layout[$module]['auto'])
-        {
-            $layout = $this->_layoutsDirectory
-                .F::$config->layout[$module]['layout'].'_layout.'.View::EXTENSION_NAME;
-        } elseif ($layout !== false && $layout !== null) {
-            $layout = $this->_layoutsDirectory.$layout.'_layout.'.View::EXTENSION_NAME;
-        }
-
-        $path = $this->getModuleViewsDirectory().$path.'.'.View::EXTENSION_NAME;
-        if (!file_exists($path)) {
-            $this->error(500, "{$path} not found");
-        }
-        $html = new Html($path);
-        $html->set('uri', F::$uri)
-            ->set('request', $this->_controller->request)
-            ->set('session', F::$session)
-            ->set('config', F::$config);
-        if ($data === null) {
-            $data = new Collection(array(), Collection::ARRAY_AS_PROPS);
-        } elseif (!($data instanceof Collection) && is_array($data)) {
-            $data = new Collection($data, Collection::ARRAY_AS_PROPS);
-        }
-        $html->set('data', $data);
-        if ($layout) {
-            $html->setLayout($layout);
-        }
-        return $html;
     }
 
     /**

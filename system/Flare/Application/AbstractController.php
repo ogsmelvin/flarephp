@@ -4,6 +4,8 @@ namespace Flare\Application;
 
 use Flare\Application\Http\Response;
 use Flare\Application\Http\Request;
+use Flare\View\Response\Html;
+use Flare\Util\Collection;
 use Flare\Application\Db;
 use Flare\Flare as F;
 use Flare\Http\File;
@@ -168,18 +170,6 @@ abstract class AbstractController
 
     /**
      * 
-     * @param string $path
-     * @param array $data
-     * @param string|boolean $layout
-     * @return \Flare\View\Response\Html
-     */
-    public function view($path, $data = null, $layout = null)
-    {
-        return F::getApp()->view($path, $data, $layout);
-    }
-
-    /**
-     * 
      * @return string
      */
     public function getAppDirectory()
@@ -196,7 +186,7 @@ abstract class AbstractController
     public function redirect($url, $code = 302)
     {
         if (parse_url($url, PHP_URL_SCHEME) === null) {
-            $url = F::$uri->baseUrl.ltrim($url, '/');
+            $url = $this->uri->baseUrl.ltrim($url, '/');
         }
         $this->response->setRedirect($url, $code)->send(false);
     }
@@ -225,6 +215,41 @@ abstract class AbstractController
             $this->redirect($url);
         }
         return false;
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @param array $data
+     * @param string|boolean $layout
+     * @return \Flare\View\Response\Html
+     */
+    public function view($path, $data = array(), $layout = null)
+    {
+        $module = $this->request->getModule();
+        if ($layout === null 
+            && isset($this->config->layout[$module]) 
+            && $this->config->layout[$module]['auto'])
+        {
+            $layout = F::getApp()->getLayoutsDirectory()
+                .$this->config->layout[$module]['layout'].'_layout';
+        } elseif ($layout !== false && $layout !== null) {
+            $layout = F::getApp()->getLayoutsDirectory().$layout.'_layout';
+        }
+
+        $html = new Html(F::getApp()->getModuleViewsDirectory().$path);
+        $html->setIncludePath(F::getApp()->getModuleViewsDirectory());
+        if ($data) {
+            $html->setData($data);
+        }
+        $html->with('session', $this->session)
+            ->with('uri', $this->uri)
+            ->with('config', $this->config)
+            ->with('request', $this->request);
+        if ($layout) {
+            $html->setLayout($layout);
+        }
+        return $html;
     }
 
     /**

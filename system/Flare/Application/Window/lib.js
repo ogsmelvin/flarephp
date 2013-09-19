@@ -38,7 +38,8 @@ if (!String.prototype.bin2hex) {
     }
 }
 
-var flare = {};
+var flare = { $body : null };
+
 flare.clone = function (obj) {
     return new function () {
         this.prototype = obj;
@@ -59,24 +60,36 @@ flare.Collection = function (content) {
     flare.Data.call(this, content);
 }
 
-flare.ViewComponent = function (methods) {
+flare.ViewComponent = function () {
+    this.name = null;
     this.element = null;
-    function init (methods) {
+    this.elementId = null;
+    this.init = function (methods) {
         for (m in methods) {
-            self[m] = methods[m];
+            this[m] = methods[m];
         }
     }
-    this.bindTo = function (selector) {
-        var selected = $(selector);
-        if (selected.length) this.element = selected;
+    this.onRouteChange = function (route) {
+        if (this.element && this.elementId) {
+            var element = $(this.elementId);
+            if (element.length) {
+                this.element = element;
+            }
+        }
     }
-    this.onRouteChange = function (route) {}
-    var self = this;
-    init(methods);
+    this._bindTo = function (selector) {
+        var selected = $(selector);
+        if (selected.length) {
+            this.element = selected;
+            this.elementId = selector;
+            return this.element;
+        }
+        return false;
+    }
 }
 
 flare.TabbedPane = function (methods) {
-    flare.ViewComponent.call(this, methods);
+    flare.ViewComponent.call(this);
     this.tabs = "> li > a";
     this.activeClassName = "active";
     this.setActive = function (uri) {
@@ -89,17 +102,98 @@ flare.TabbedPane = function (methods) {
     this.onRouteChange = function (route) {
         this.setActive(route.URI);
     }
+    this.bindTo = function (selector) {
+        this._bindTo(selector);
+    }
+    this.init(methods);
 }
 
 flare.Form = function (methods) {
-    flare.ViewComponent.call(this, methods);
+    flare.ViewComponent.call(this);
+    this._props = {};
     this.async = false;
-    this.onSubmit = function (evt) {
-
+    this.onError = function (error) {}
+    this.onSubmit = function (evt) {}
+    this.onSuccess = function (data) {}
+    this._onSubmit = function (evt) {
+        var hasError = false;
+        self.onSubmit(evt);
+        self.element.find("input, textarea, select")
+            .each( function (key, elem) {
+                var rule = elem.getAttribute("data-rule");
+                if ((elem.getAttribute("data-strict") == "required" && !elem.value)
+                    || (rule && typeof self.ON_SUBMIT_VALIDATION[rule] != "undefined" 
+                        && !self.ON_SUBMIT_VALIDATION[rule].test(elem.value)))
+                {
+                    self.onError($(elem), rule);
+                    hasError = true;
+                }
+            });
+        if (hasError) return false;
+        if (self.async && !hasError) {
+            self.onSuccess(self.element.serializeArray());
+            return false;
+        }
+        return true;
     }
-    this.submit = function () {
-        this.onSubmit(evt);
+    this.bindTo = function (selector) {
+        if (!this._bindTo(selector)) return;
+        this.name = this.element.prop("name");
+        this._props.action = this.element.prop("action");
+        this._props.method = this.element.prop("method");
+        flare.$body.on("submit", this.elementId, this._onSubmit);
+        for (rule in this.RULES) {
+            flare.$body.on(
+                "keydown",
+                this.elementId + " input[data-rule='" + rule + "'], " + this.elementId + " textarea[data-rule='" + rule + "']",
+                this.RULES[rule]
+            );
+        }
     }
+    this.RULE_ATTR_NAME = "rule";
+    this.ON_SUBMIT_VALIDATION = {
+        letter : /^[a-z]+$/i,
+        numeric : /^[0-9]+$/,
+        email : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/
+    }
+    this.RULES = {
+        letter : function (e) {
+            var code = (e.which) ? e.which : e.keyCode;
+            if (code == 46 || code == 8 || code == 9 || code == 27 || code == 32 || code == 13 ||
+                (code == 65 && e.ctrlKey === true) ||
+                (code >= 35 && code <= 39))
+            {
+                return;
+            } else if (code < 65 || code > 90) {
+                e.preventDefault();
+            }
+        },
+        numeric : function (e) {
+            var code = (e.which) ? e.which : e.keyCode;
+            if (code == 46 || code == 8 || code == 9 || code == 27 || code == 13 ||
+                (code == 65 && e.ctrlKey === true) ||
+                (code >= 35 && code <= 39))
+            {
+                return;
+            } else if (e.shiftKey === true || code < 48 || (code > 90 && code < 96) || code > 105) {
+                e.preventDefault();
+            }
+        },
+        email : function (e) {
+            var code = (e.which) ? e.which : e.keyCode;
+            if (code == 46 || code == 8 || code == 9 || code == 27 || code == 13 ||
+                (code == 65 && e.ctrlKey === true) || code == 189 || code == 190 || code == 110 || code == 109 ||
+                (code == 50 && e.shiftKey === true) ||
+                (code >= 35 && code <= 39))
+            {
+                return;
+            } else if (e.shiftKey === true || code < 48 || (code > 90 && code < 96) || code > 105) {
+                e.preventDefault();
+            }
+        }
+    }
+    this.init(methods);
+    var self = this;
 }
 
 flare.Ajax = new function () {
@@ -287,10 +381,10 @@ flare.Application = function () {
 
     this.Service = new function () {
         this.post = function (url, data, done) {
-            flare.Ajax.post(url, data, done);
+            flare.Ajax.post(self.Config.baseUrl + url.ltrim("/"), data, done);
         }
         this.get = function (url, data, done) {
-            flare.Ajax.get(url, data, done);
+            flare.Ajax.get(self.Config.baseUrl + url.ltrim("/"), data, done);
         }
     }
 
@@ -326,7 +420,7 @@ flare.Application = function () {
                 for (method in methods) {
                     var methodSuffixed = method + self.Config.controller.actionSuffix;
                     var type = typeof this.actions[methodSuffixed];
-                    if (type != "undefined" && type == "object") {
+                    if (type == "object") {
                         view = this.actions[methodSuffixed].view;
                     }
                     this.actions[methodSuffixed] = methods[method];
@@ -334,7 +428,7 @@ flare.Application = function () {
                 }
             } else {
                 var type = typeof this.actions[name + self.Config.controller.actionSuffix];
-                if (type != "undefined" && type == "object") {
+                if (type == "object") {
                     view = this.actions[name + self.Config.controller.actionSuffix].view;
                 }                
                 this.actions[name + self.Config.controller.actionSuffix] = methods;
@@ -354,10 +448,7 @@ flare.Application = function () {
             return this;
         }
         this.has = function (key) {
-            if (typeof controllerStorage[key] == "undefined") {
-                return false;
-            }
-            return true;
+            return (typeof controllerStorage[key] == "undefined") ? false : true;
         }
     }
 
@@ -369,18 +460,18 @@ flare.Application = function () {
         this.layout = null;
         function Layout(element, id) {
             this.name = id;
-            var templateObj = $(element);
+            flare.$body = $(element);
             var layoutContentRendered = false;
             var layoutContentStart = null;
             var layoutContentEnd = null;
             var layoutContentInner = null;
             this.render = function () {
-                templateObj.replaceWith(
+                flare.$body.replaceWith(
                     "<" + self.Config.view.tagLayoutReplacement + " id=\"" + this.name + 
-                    "\" data-" + self.Config.view.viewTypeAttribute + "=\"" + templateObj.data(self.Config.view.viewTypeAttribute) + "\">" + templateObj.html() 
+                    "\" data-" + self.Config.view.viewTypeAttribute + "=\"" + flare.$body.data(self.Config.view.viewTypeAttribute) + "\">" + flare.$body.html() 
                     + "</" + self.Config.view.tagLayoutReplacement + ">"
                 );
-                templateObj = $(document.getElementById(this.name));
+                flare.$body = $(document.getElementById(this.name));
             }
             this.setContent = function (content) {
                 if (!layoutContentRendered) {
@@ -492,10 +583,17 @@ flare.Application = function () {
     }
 
     this.Router = new function () {
+
+        this.EVENT_ROUTER_FOUND = 'found';
+        this.EVENT_ROUTER_NOTFOUND = 'notfound';
+
         this.route = null;
         this.previous = null;
         this._routes = function () {}
-        this._hook = { found : function (route, evt) {} , notfound : function (evt) {} };
+        this._hook = {};
+        this._hook[this.EVENT_ROUTER_NOTFOUND] = function (evt) {}
+        this._hook[this.EVENT_ROUTER_FOUND] = function (route, evt) {}
+
         function Route(controller, action) {
             this.controller = controller;
             this.action = controller.actions[action];
@@ -527,18 +625,18 @@ flare.Application = function () {
                 && typeof self.Controller[capsController].actions[action] != "undefined")
             {
                 this.route = new Route(self.Controller[capsController], action);
-                this._hook['found'](this.route, evt);
+                this._hook[this.EVENT_ROUTER_FOUND](this.route, evt);
                 self.Controller[capsController].execute(action, evt);
             } else {
                 this.route = null;
-                this._hook['notfound'](evt);
+                this._hook[this.EVENT_ROUTER_NOTFOUND](evt);
             }
         }
-        this.found = function (found) {
-            this._hook['found'] = found;
+        this[this.EVENT_ROUTER_FOUND] = function (found) {
+            this._hook[this.EVENT_ROUTER_FOUND] = found;
         }
-        this.notfound = function (notfound) {
-            this._hook['notfound'] = notfound;
+        this[this.EVENT_ROUTER_NOTFOUND] = function (notfound) {
+            this._hook[this.EVENT_ROUTER_NOTFOUND] = notfound;
         }
     }
 
@@ -556,7 +654,6 @@ flare.Application = function () {
 
     this.run = function () {
         if (this.get(this.Config.controller.appRunningKey)) {
-            console.log("Application is already running");
             return;
         }
         this.set(this.Config.controller.appRunningKey, true);

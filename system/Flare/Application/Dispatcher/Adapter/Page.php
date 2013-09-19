@@ -4,6 +4,7 @@ namespace Flare\Application\Dispatcher\Adapter;
 
 use Flare\Application\Dispatcher\Adapter;
 use Flare\Application\Window;
+use Flare\View\Response\Html;
 use Flare\View\Response;
 
 /**
@@ -52,7 +53,7 @@ class Page extends Adapter
             );
         }
 
-        if ($this->_controller instanceof Window) {
+        if ($view instanceof Html && $this->_controller instanceof Window) {
             $scripts = $this->_controller->assets();
             $jsfile = $this->_controller->request->getModule()
                     .'/js/'
