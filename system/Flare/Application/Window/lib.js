@@ -76,6 +76,9 @@ flare.ViewComponent = function () {
                 this.element = element;
             }
         }
+        if (typeof this._onRouteChange == "function") {
+            this._onRouteChange(route);
+        }
     }
     this._bindTo = function (selector) {
         var selected = $(selector);
@@ -112,23 +115,23 @@ flare.Form = function (methods) {
     flare.ViewComponent.call(this);
     this._props = {};
     this.async = false;
+    this.form = null;
     this.onError = function (error) {}
     this.onSubmit = function (evt) {}
     this.onSuccess = function (data) {}
     this._onSubmit = function (evt) {
         var hasError = false;
         self.onSubmit(evt);
-        self.element.find("input, textarea, select")
-            .each( function (key, elem) {
-                var rule = elem.getAttribute("data-rule");
-                if ((elem.getAttribute("data-strict") == "required" && !elem.value)
-                    || (rule && typeof self.ON_SUBMIT_VALIDATION[rule] != "undefined" 
-                        && !self.ON_SUBMIT_VALIDATION[rule].test(elem.value)))
-                {
-                    self.onError($(elem), rule);
-                    hasError = true;
-                }
-            });
+        self.form.each( function (key, elem) {
+            var rule = elem.getAttribute("data-rule");
+            if ((elem.getAttribute("data-strict") == "required" && !elem.value)
+                || (rule && typeof self.ON_SUBMIT_VALIDATION[rule] != "undefined" 
+                    && !self.ON_SUBMIT_VALIDATION[rule].test(elem.value)))
+            {
+                self.onError($(elem), rule);
+                hasError = true;
+            }
+        });
         if (hasError) return false;
         if (self.async && !hasError) {
             var jsonFormData = {};
@@ -153,6 +156,11 @@ flare.Form = function (methods) {
                 this.elementId + " input[data-rule='" + rule + "'], " + this.elementId + " textarea[data-rule='" + rule + "']",
                 this.RULES[rule]
             );
+        }
+    }
+    this._onRouteChange = function () {
+        if (this.element && this.element.length) {
+            this.form = this.element.find("input, textarea, select");
         }
     }
     this.RULE_ATTR_NAME = "rule";
@@ -201,6 +209,20 @@ flare.Form = function (methods) {
     var self = this;
 }
 
+flare.jsonize = function (jsonString) {
+    var responseData = {};
+    if (typeof JSON.parse != "undefined") {
+        try {
+            responseData = JSON.parse(jsonString);
+        } catch (e) {
+            return;
+        }
+    } else {
+        responseData = eval('( ' + jsonString + ' )');
+    }
+    return responseData;
+}
+
 flare.Ajax = new function () {
 
     function createRequest() {
@@ -235,7 +257,7 @@ flare.Ajax = new function () {
         var request = createRequest();
         request.onreadystatechange = function () {
             if (request.readyState == self.COMPLETE && request.status == self.COMPLETE_CODE){
-                done(request.responseText);
+                done(flare.jsonize(request.responseText));
             }
         }
         request.open(self.METHOD_GET, url.rtrim("?") + "?" + params.join("&"), true);
@@ -255,7 +277,7 @@ flare.Ajax = new function () {
         var request = createRequest();
         request.onreadystatechange = function () {
             if (request.readyState == self.COMPLETE && request.status == self.COMPLETE_CODE){
-                done(request.responseText);
+                done(flare.jsonize(request.responseText));
             }
         }
         request.open(self.METHOD_POST, url, true);
@@ -365,12 +387,7 @@ flare.Application = function () {
                 params = [];
             }
             var request = flare.Ajax.request(function (response, status) {
-                try {
-                    response = JSON.parse(response);
-                } catch (e) {
-                    return;
-                }
-                callback(new flare.Data(response), status);
+                callback(new flare.Data(flare.jsonize(response)), status);
             });
             var url = self.Config.baseUrl + self.Config.pageId + "/" + (this.name + "/" + method).bin2hex() + self.Config.model.ApiExtension;
             request.open(flare.Ajax.METHOD_POST, url, true);

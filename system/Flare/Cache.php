@@ -36,7 +36,7 @@ abstract class Cache
     public static function instance(array $params = array())
     {
         if (empty(static::$engine)) {
-            show_error('Service name must be defined');
+            show_error('Engine name must be defined');
         }
         $registry = Registry::get(Registry::CACHE_ENGINES_NAMESPACE);
         if (!$registry->has(static::$engine)) {
