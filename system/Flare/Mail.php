@@ -2,6 +2,10 @@
 
 namespace Flare;
 
+use Flare\Mail\PHPMailerException;
+use Flare\Mail\PHPMailer;
+use Flare\Flare as F;
+
 /**
  * 
  * @author anthony
@@ -13,146 +17,147 @@ class Mail
      * 
      * @var string
      */
-    const MAIL_PROTOCOL = 'mail';
+    const DEFAULT_SMTP_SECURITY = 'ssl';
 
     /**
      * 
-     * @var string
+     * @var int
      */
-    const SMTP_PROTOCOL = 'smtp';
+    const DEFAULT_SMTP_PORT = 25;
 
     /**
      * 
-     * @var string
+     * @var \Flare\Mail\PHPMailer
      */
-    const SENDMAIL_PROTOCOL = 'sendmail';
+    private $mail;
 
     /**
      * 
-     * @var string
+     * @var array|boolean
      */
-    private $message;
+    private static $smtpConfig = array();
 
     /**
      * 
-     * @var array
-     */
-    private $headers;
-
-    /**
-     * 
-     * @var array
-     */
-    private $cc;
-
-    /**
-     * 
-     * @var array
-     */
-    private $bcc;
-
-    /**
-     * 
-     * @var string
-     */
-    private $from;
-
-    /**
-     * 
-     * @var string
-     */
-    private $protocol = self::MAIL_PROTOCOL;
-
-    /**
-     * 
-     * @var array
-     */
-    private $to;
-
-    /**
-     * 
-     * @var boolean
-     */
-    private $valid = true;
-
-    /**
-     * 
-     * @var string
+     * @var \Flare\Mail\PHPMailerException
      */
     private $error;
 
-    /**
-     * 
-     * @var string
-     */
-    private $subject;
-
-    /**
-     * 
-     * @var array
-     */
-    private $smtp = array();
-
-    /**
-     * 
-     * @param string $from
-     * @param string $to
-     * @param string $body
-     * @param array $headers
-     */
-    public function __construct($from = null, $to = null, $body = null, $headers = array())
+    public function __construct()
     {
-        if ($from) $this->setFrom($from);
-        if ($to) $this->addTo($to);
-        if ($body) $this->setBody($body);
-        if ($headers) $this->setHeaders($headers);
+        $this->mail = new PHPMailer();
+        if (self::$smtpConfig !== false) {
+            if (!self::$smtpConfig) {
+                self::smtp(F::$config->mail);
+            }
+            if (!empty(self::$smtpConfig['host'])) {
+                $this->setSmtp(
+                    self::$smtpConfig['host'],
+                    self::$smtpConfig['port'],
+                    isset(self::$smtpConfig['username']) ? self::$smtpConfig['username'] : '',
+                    isset(self::$smtpConfig['password']) ? self::$smtpConfig['password'] : '',
+                    self::$smtpConfig['security']
+                );
+            }
+        }
     }
 
     /**
      * 
-     * @param string $header
-     * @param string $value
+     * @param array|boolean $config
+     * @return void
+     */
+    public static function smtp($config)
+    {
+        if ($config === false) {
+            self::$smtpConfig = false;
+            return;
+        }
+        $default = array(
+            'port' => self::DEFAULT_SMTP_PORT,
+            'security' => self::DEFAULT_SMTP_SECURITY
+        );
+        self::$smtpConfig = array_merge($default, (array) $config);
+    }
+
+    /**
+     * 
+     * @param string $host
+     * @param int $port
+     * @param string $username
+     * @param string $password
+     * @param string $security
      * @return \Flare\Mail
      */
-    public function addHeader($header, $value)
+    public function setSmtp($host, $port = self::DEFAULT_SMTP_PORT, $username = '', $password = '', $security = self::DEFAULT_SMTP_SECURITY)
     {
-        $this->headers[$header] = $value;
+        $this->mail->isSMTP();
+        $this->mail->Host = implode(';', (array) $host);
+        $this->mail->Port = $port;
+        if ($username) {
+            $this->mail->Username = $username;
+            $this->mail->Password = $password;
+            $this->mail->SMTPAuth = true;
+        }
+        $this->mail->SMTPSecure = $security;
         return $this;
     }
 
     /**
      * 
-     * @param array $headers
+     * @param array $emails
      * @return \Flare\Mail
      */
-    public function setHeaders(array $headers)
+    public function setCc(array $emails)
     {
-        $this->headers = array();
-        foreach ($headers as $header) {
-            if (isset($header['name'], $header['value'])) {
-                $this->addHeader($header['name'], $header['value']);
-            }
+        foreach ($emails as $email => $name) {
+            $this->addCc($email, $name);
         }
         return $this;
     }
 
     /**
      * 
-     * @return array
+     * @param string $email
+     * @param string $name
+     * @return \Flare\Mail
      */
-    public function getHeaders()
+    public function addCc($email, $name = '')
     {
-        return $this->headers;
+        try {
+            $this->mail->addCc($email, $name);
+        } catch (PHPMailerException $ex) {
+            $this->error = $ex;
+        }
+        return $this;
     }
 
     /**
      * 
-     * @param string $message
+     * @param array $emails
      * @return \Flare\Mail
      */
-    public function setBody($message)
+    public function setBcc(array $emails)
     {
-        $this->message = (string) $message;
+        foreach ($emails as $email => $name) {
+            $this->addBcc($email, $name);
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $email
+     * @param string $name
+     * @return \Flare\Mail
+     */
+    public function addBcc($email, $name = '')
+    {
+        try {
+            $this->mail->addBcc($email, $name);
+        } catch (PHPMailerException $ex) {
+            $this->error = $ex;
+        }
         return $this;
     }
 
@@ -160,9 +165,12 @@ class Mail
      * 
      * @return string
      */
-    public function getBody()
+    public function error()
     {
-        return $this->message;
+        if ($this->error) {
+            return $this->error->getMessage();
+        }
+        return $this->mail->ErrorInfo;
     }
 
     /**
@@ -172,7 +180,7 @@ class Mail
      */
     public function setSubject($subject)
     {
-        $this->subject = (string) $subject;
+        $this->mail->Subject = (string) $subject;
         return $this;
     }
 
@@ -182,7 +190,7 @@ class Mail
      */
     public function getSubject()
     {
-        return $this->subject;
+        return $this->mail->Subject;
     }
 
     /**
@@ -191,145 +199,13 @@ class Mail
      * @param string $name
      * @return \Flare\Mail
      */
-    public function addCc($email, $name = null)
+    public function setFrom($email, $name = '')
     {
-        $this->validateEmail($email);
-        $this->cc[] = $name ? $name.' <'.$email.'>' : $email;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string|array $emails
-     * @param string $name
-     * @return \Flare\Mail
-     */
-    public function setCc($emails, $name = null)
-    {
-        $this->cc = array();
-        if (is_array($emails)) {
-            foreach ($emails as $email) {
-                if (is_array($email)) {
-                    $this->addCc($email['email'], $email['name']);
-                } else {
-                    $this->addCc($email);
-                }
-            }
-        } else {
-            $this->addCc($emails, $name);
+        try {
+            $this->mail->setFrom($email, $name);
+        } catch (PHPMailerException $ex) {
+            $this->error = $ex;
         }
-        return $this;
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public function getCc()
-    {
-        return $this->cc;
-    }
-
-    /**
-     * 
-     * @param string $email
-     * @param string $name
-     * @return \Flare\Mail
-     */
-    public function addBcc($email, $name = null)
-    {
-        $this->validateEmail($email);
-        $this->bcc[] = $name ? $name.' <'.$email.'>' : $email;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string|array $emails
-     * @param string $name
-     * @return \Flare\Mail
-     */
-    public function setBcc($emails, $name = null)
-    {
-        $this->bcc = array();
-        if (is_array($emails)) {
-            foreach ($emails as $email) {
-                if (is_array($email)) {
-                    $this->addBcc($email['email'], $email['name']);
-                } else {
-                    $this->addBcc($email);
-                }
-            }
-        } else {
-            $this->addBcc($emails, $name);
-        }
-        return $this;
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public function getBcc()
-    {
-        return $this->bcc;
-    }
-
-    /**
-     * 
-     * @param string $email
-     * @param string $name
-     * @return \Flare\Mail
-     */
-    public function addTo($email, $name = null)
-    {
-        $this->validateEmail($email);
-        $this->to[] = $name ? $name.' <'.$email.'>' : $email;
-        return $this;
-    }
-
-    /**
-     * 
-     * @param string|array $emails
-     * @param string $name
-     * @return \Flare\Mail
-     */
-    public function setTo($emails, $name = null)
-    {
-        $this->to = array();
-        if (is_array($emails)) {
-            foreach ($emails as $email) {
-                if (is_array($email)) {
-                    $this->addTo($email['email'], $email['name']);
-                } else {
-                    $this->addTo($email);
-                }
-            }
-        } else {
-            $this->addTo($emails, $name);
-        }
-        return $this;
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    public function getTo()
-    {
-        return $this->to;
-    }
-
-    /**
-     * 
-     * @param string $email
-     * @param string $name
-     * @return \Flare\Mail
-     */
-    public function setFrom($email, $name = null)
-    {
-        $this->validateEmail($email);
-        $this->from = $name ? $name.' <'.$email.'>' : $email;
         return $this;
     }
 
@@ -339,24 +215,85 @@ class Mail
      */
     public function getFrom()
     {
-        return $this->from;
+        return $this->mail->From;
     }
 
     /**
      * 
-     * @param string $hostname
-     * @param string $port
-     * @param string $username
-     * @param string $password
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->mail->Body;
+    }
+
+    /**
+     * 
+     * @param string $email
+     * @param string $name
      * @return \Flare\Mail
      */
-    public function setSmtp($hostname, $port, $username = null, $password = null)
+    public function addTo($email, $name = '')
     {
-        $this->smtp['port'] = $port;
-        $this->smtp['hostname'] = $hostname;
-        $this->smtp['username'] = $username;
-        $this->smtp['password'] = $password;
-        $this->protocol = self::SMTP_PROTOCOL;
+        try {
+            $this->mail->addAddress($email, $name);
+        } catch (PHPMailerException $ex) {
+            $this->error = $ex;
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $email
+     * @param string $name
+     * @return \Flare\Mail
+     */
+    public function addReplyTo($email, $name = '')
+    {
+        try {
+            $this->mail->addReplyTo($email, $name);
+        } catch (PHPMailerException $ex) {
+            $this->error = $ex;
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param array $emails
+     * @return \Flare\Mail
+     */
+    public function setReplyTo(array $emails)
+    {
+        foreach ($emails as $email => $name) {
+            $this->addReplyTo($email, $name);
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param array $emails
+     * @return \Flare\Mail
+     */
+    public function setTo(array $emails)
+    {
+        foreach ($emails as $email => $name) {
+            $this->addTo($email, $name);
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $location
+     * @param string $filename
+     * @return \Flare\Mail
+     */
+    public function attach($location, $filename = '')
+    {
+        $this->mail->addAttachment($location, $filename);
         return $this;
     }
 
@@ -366,98 +303,44 @@ class Mail
      */
     public function send()
     {
-        $success = false;
-        if ($this->validate()) {
-            switch ($this->protocol) {
-                case self::SMTP_PROTOCOL:
-                    $success = $this->sendWithSmtp();
-                    break;
-                case self::SENDMAIL_PROTOCOL:
-                    $success = $this->sendWithSendMail();
-                    break;
-                default:
-                    $success = $this->sendWithMail();
-                    break;
-            }
-        }
-        return $success;
+        if ($this->error) return false;
+        return $this->mail->send();
     }
 
     /**
      * 
-     * @return boolean
-     */
-    private function sendWithSmtp()
-    {
-        return true;
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    private function sendWithMail()
-    {
-        return true;
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    private function sendWithSendMail()
-    {
-        return true;
-    }
-
-    /**
-     * 
+     * @param string $message
+     * @param boolean $isHtml
      * @return \Flare\Mail
      */
-    public function clear()
+    public function setMessage($message, $isHtml = false)
     {
-        $this->cc = array();
-        $this->bcc = array();
-        $this->from = null;
-        $this->to = array();
-        $this->message = null;
-        $this->headers = array();
-        $this->valid = true;
-        $this->subject = null;
-        $this->protocol = self::MAIL_PROTOCOL;
-        $this->smtp = array();
+        $message = (string) $message;
+        if (!$isHtml) {
+            $this->mail->Body = $message;
+        } else {
+            $this->mail->msgHTML($message, F::$uri->baseUrl);
+        }
         return $this;
     }
 
     /**
      * 
-     * @return boolean
+     * @param string $message
+     * @return \Flare\Mail
      */
-    private function validate()
+    public function setAltMessage($message)
     {
-        if (!$this->valid) return false;
+        $this->mail->AltBody = (string) $message;
+        return $this;
     }
 
     /**
      * 
      * @return string
      */
-    public function error()
+    public function getAltMessage()
     {
-        return $this->error;
-    }
-
-    /**
-     * 
-     * @param string $email
-     * @return boolean
-     */
-    private function validateEmail($email)
-    {
-        if (!($valid = filter_var($email, FILTER_VALIDATE_EMAIL))) {
-            $this->error = "Invalid email address '{$email}'";
-            $this->valid = false;
-        }
-        return $valid;
+        return $this->mail->AltBody;
     }
 }

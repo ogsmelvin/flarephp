@@ -94,6 +94,11 @@ $config['services'] = require 'services.php';
 $config['cache_engines'] = require 'cache_engines.php';
 
 /**
+ * Mail Configuration
+ */
+$config['mail'] = require 'mail.php';
+
+/**
  *
  * @return array
  */

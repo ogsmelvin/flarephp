@@ -410,9 +410,9 @@ class Application
             if (!$route) {
                 $this->error(404);
             } elseif ($route->getController() instanceof ErrorController
-                && $route->getController()->response->getCode() === Response::DEFAULT_CODE)
+                && $route->getController()->response->getStatusCode() === Response::DEFAULT_CODE)
             {
-                $route->getController()->response->setCode(404);
+                $route->getController()->response->setStatusCode(404);
             }
         } else {
             $this->error(400);
@@ -491,7 +491,7 @@ class Application
             $html = '<pre>'.Response::$messages[$code].'</pre>';
         }
         
-        F::$response->setCode($code)
+        F::$response->setStatusCode($code)
             ->setBody($html)
             ->send();
         $this->shutdown(true);

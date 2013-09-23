@@ -49,7 +49,7 @@ abstract class ErrorController extends AbstractController
         if ($this->_errMessage) {
             return $this->_errMessage;
         }
-        return $this->response->getCodeMessage();
+        return $this->response->getStatusMessage();
     }
     
     /**
@@ -59,7 +59,7 @@ abstract class ErrorController extends AbstractController
      */
     public function setErrorCode($code)
     {
-        $this->response->setCode($code);
+        $this->response->setStatusCode($code);
         return $this;
     }
 
@@ -69,6 +69,6 @@ abstract class ErrorController extends AbstractController
      */
     public function getErrorCode()
     {
-        return $this->response->getCode();
+        return $this->response->getStatusCode();
     }
 }

@@ -11,15 +11,6 @@ class String
 {
     /**
      * 
-     * @param string 
-     */
-    public function __construct($string)
-    {
-        $this->_string = (string) $string;
-    }
-
-    /**
-     * 
      * @param string|array $value
      * @return string|array
      */
@@ -33,5 +24,18 @@ class String
             $value = stripslashes($value);
         }
         return $value;
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @return string
+     */
+    public static function normalizeHeader($name)
+    {
+        $filtered = str_replace(array('-', '_'), ' ', (string) $name);
+        $filtered = ucwords(strtolower($filtered));
+        $filtered = str_replace(' ', '-', $filtered);
+        return $filtered;
     }
 }

@@ -5,6 +5,8 @@ namespace Flare\Application;
 use Flare\Application\Http\Response;
 use Flare\Application\Http\Request;
 use Flare\View\Response\Html;
+use Flare\View\Response\Json;
+use Flare\View\Response\Xml;
 use Flare\Util\Collection;
 use Flare\Application\Db;
 use Flare\Flare as F;
@@ -151,20 +153,9 @@ abstract class AbstractController
      * @param boolean $switch
      * @return \Flare\Application\AbstractController
      */
-    public function enableAutoLayout($switch)
+    public function autoLayout($switch)
     {
         $this->config->set('layout.'.$this->request->getModule().'.auto', $switch);
-        return $this;
-    }
-
-    /**
-     * 
-     * @param boolean $switch
-     * @return \Flare\Application\AbstractController
-     */
-    public function enableAutoXssFilter($switch)
-    {
-        $this->config->set('auto_xss_filter', $switch);
         return $this;
     }
 
@@ -250,6 +241,26 @@ abstract class AbstractController
             $html->setLayout($layout);
         }
         return $html;
+    }
+
+    /**
+     * 
+     * @param \Flare\Object\Json|string|array $json
+     * @return \Flare\View\Response\Json
+     */
+    public function viewAsJson($json)
+    {
+        return new Json($json);
+    }
+
+    /**
+     * 
+     * @param \Flare\Object\Xml|string|array $xml
+     * @return \Flare\View\Response\Xml
+     */
+    public function viewAsXml($xml)
+    {
+        return new Xml($xml);
     }
 
     /**

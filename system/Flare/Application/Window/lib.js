@@ -131,7 +131,12 @@ flare.Form = function (methods) {
             });
         if (hasError) return false;
         if (self.async && !hasError) {
-            self.onSuccess(self.element.serializeArray());
+            var jsonFormData = {};
+            var elementsData = self.element.serializeArray();
+            for (dataKey in elementsData) {
+                jsonFormData[elementsData[dataKey].name] = elementsData[dataKey].value;
+            }
+            self.onSuccess(jsonFormData);
             return false;
         }
         return true;
@@ -152,7 +157,7 @@ flare.Form = function (methods) {
     }
     this.RULE_ATTR_NAME = "rule";
     this.ON_SUBMIT_VALIDATION = {
-        letter : /^[a-z]+$/i,
+        letter : /^[a-z ]+$/i,
         numeric : /^[0-9]+$/,
         email : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/
     }

@@ -2,6 +2,7 @@
 
 namespace Flare\Http\Client\Curl;
 
+use Flare\Http\AbstractResponse;
 use Flare\Object\Json;
 use Flare\Object\Xml;
 
@@ -10,7 +11,7 @@ use Flare\Object\Xml;
  * @author anthony
  * 
  */
-class Response
+class Response extends AbstractResponse
 {
     /**
      * 
@@ -57,6 +58,9 @@ class Response
         $this->headers = $headers;
         $this->errorMsg = $errorMsg;
         $this->errorCode = $errorCode;
+        if (isset($this->info['http_code'])) {
+            $this->setStatusCode($this->info['http_code']);
+        }
     }
 
     /**

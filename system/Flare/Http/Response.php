@@ -2,6 +2,7 @@
 
 namespace Flare\Http;
 
+use Flare\Http\AbstractResponse;
 use Flare\Flare as F;
 
 /**
@@ -9,74 +10,8 @@ use Flare\Flare as F;
  * @author anthony
  *
  */
-class Response
+class Response extends AbstractResponse
 {
-    /**
-     * 
-     * @var int
-     */
-    const DEFAULT_CODE = 200;
-    
-    /**
-     *
-     * @var array
-     */
-    public static $messages = array(
-
-        // Informational 1xx
-        100 => 'Continue',
-        101 => 'Switching Protocols',
-
-        // Success 2xx
-        200 => 'OK',
-        201 => 'Created',
-        202 => 'Accepted',
-        203 => 'Non-Authoritative Information',
-        204 => 'No Content',
-        205 => 'Reset Content',
-        206 => 'Partial Content',
-
-        // Redirection 3xx
-        300 => 'Multiple Choices',
-        301 => 'Moved Permanently',
-        302 => 'Found',  // 1.1
-        303 => 'See Other',
-        304 => 'Not Modified',
-        305 => 'Use Proxy',
-
-        // 306 is deprecated but reserved
-        307 => 'Temporary Redirect',
-
-        // Client Error 4xx
-        400 => 'Bad Request',
-        401 => 'Unauthorized',
-        402 => 'Payment Required',
-        403 => 'Forbidden',
-        404 => 'Not Found',
-        405 => 'Method Not Allowed',
-        406 => 'Not Acceptable',
-        407 => 'Proxy Authentication Required',
-        408 => 'Request Timeout',
-        409 => 'Conflict',
-        410 => 'Gone',
-        411 => 'Length Required',
-        412 => 'Precondition Failed',
-        413 => 'Request Entity Too Large',
-        414 => 'Request-URI Too Long',
-        415 => 'Unsupported Media Type',
-        416 => 'Requested Range Not Satisfiable',
-        417 => 'Expectation Failed',
-
-        // Server Error 5xx
-        500 => 'Internal Server Error',
-        501 => 'Not Implemented',
-        502 => 'Bad Gateway',
-        503 => 'Service Unavailable',
-        504 => 'Gateway Timeout',
-        505 => 'HTTP Version Not Supported',
-        509 => 'Bandwidth Limit Exceeded'
-    );
-
     /**
      *
      * @var array
@@ -88,12 +23,6 @@ class Response
      * @var string
      */
     protected $_body;
-
-    /**
-     *
-     * @var int
-     */
-    protected $_code = 200;
 
     /**
      * 
@@ -180,7 +109,7 @@ class Response
     public function setRedirect($url, $code = 302)
     {
         $this->_headers['Location'] = $url;
-        return $this->setCode($code);
+        return $this->setStatusCode($code);
     }
 
     /**
@@ -203,17 +132,6 @@ class Response
     }
 
     /**
-     *
-     * @param int $code
-     * @return \Flare\Http\Response
-     */
-    public function setCode($code)
-    {
-        $this->_code = $code;
-        return $this;
-    }
-
-    /**
      * 
      * @param string $path
      * @param string $filename
@@ -222,15 +140,6 @@ class Response
     public function download($path, $filename = null)
     {
         //TODO
-    }
-
-    /**
-     *
-     * @return int
-     */
-    public function getCode()
-    {
-        return $this->_code;
     }
 
     /**
@@ -243,14 +152,14 @@ class Response
         if ($this->_sent) {
             show_response(500, "Response::send already executed");
         }
-        if ($this->_code !== self::DEFAULT_CODE && isset(self::$messages[$this->_code])) {
+        if ($this->_statusCode !== self::DEFAULT_CODE && isset(self::$messages[$this->_statusCode])) {
             if (!empty($_SERVER['SERVER_PROTOCOL'])) {
-                header($_SERVER['SERVER_PROTOCOL'].' '.$this->_code.' '.self::$messages[$this->_code]);
+                header($_SERVER['SERVER_PROTOCOL'].' '.$this->_statusCode.' '.self::$messages[$this->_statusCode]);
             } else {
-                header('HTTP/1.1 '.$this->_code.' '.self::$messages[$this->_code]);
+                header('HTTP/1.1 '.$this->_statusCode.' '.self::$messages[$this->_statusCode]);
             }
         }
-        if (isset($this->_headers['Location']) && (300 <= $this->_code) && (307 >= $this->_code)) {
+        if (isset($this->_headers['Location']) && (300 <= $this->_statusCode) && (307 >= $this->_statusCode)) {
             header('Location: '.$this->_headers['Location']);
             exit;
         }

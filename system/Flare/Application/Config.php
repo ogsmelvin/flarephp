@@ -86,7 +86,7 @@ class Config
     public function set($key, $value)
     {
         if (!$this->_config['allow_override']) {
-            return;
+            show_error('Config is not overridable');
         }
         $key = explode('.', $key);
         $tmpConf = $this->_config;
