@@ -19,7 +19,7 @@ class Config
      *
      * @param array $config
      */
-    private function __construct($config)
+    private function __construct(array $config)
     {
         $this->_config = $config;
     }
@@ -33,10 +33,9 @@ class Config
     {
         $content = null;
         if (is_string($config_file)) {
-            $config_file = rtrim($config_file, '.php').'.php';
-            $content = require $config_file;
+            $content = require $config_file.'.php';
             if (!is_array($content)) {
-                show_error("{$config_file} return must be an array");
+                show_error("'{$config_file}' return must be an array");
             }
         } elseif (is_array($config_file)) {
             $content = $config_file;
@@ -174,7 +173,7 @@ class Config
 
     /**
      * 
-     * @param \Flare\Application\Config|array $content
+     * @param \Flare\Application\Config|array $new
      * @return \Flare\Application\Config
      */
     public function merge($new)
