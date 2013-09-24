@@ -107,11 +107,16 @@ class Config
      */
     public function get($key)
     {
-        $key = explode('.', $key);
-        $conf = $this->_config;
-        foreach ($key as $k) {
-            if (isset($conf[$k])) $conf = $conf[$k];
-            else show_response(500, "'{$key}' doesn't exists in config");
+        $conf = null;
+        if (!isset($this->_config[$key])) {
+            $key = explode('.', $key);
+            $conf = $this->_config;
+            foreach ($key as $k) {
+                if (isset($conf[$k])) $conf = $conf[$k];
+                else show_response(500, "'{$key}' doesn't exists in config");
+            }
+        } else {
+            $conf = $this->_config[$key];
         }
         return $conf;
     }
