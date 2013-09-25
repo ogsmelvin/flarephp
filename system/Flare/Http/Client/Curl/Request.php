@@ -2,37 +2,15 @@
 
 namespace Flare\Http\Client\Curl;
 
+use Flare\Http\AbstractRequest;
+
 /**
  * 
  * @author anthony
  * 
  */
-class Request
+class Request extends AbstractRequest
 {
-    /**
-     * 
-     * @var string
-     */
-    const METHOD_GET = 'GET';
-
-    /**
-     * 
-     * @var string
-     */
-    const METHOD_POST = 'POST';
-
-    /**
-     * 
-     * @var string
-     */
-    const METHOD_PUT = 'PUT';
-
-    /**
-     * 
-     * @var string
-     */
-    const METHOD_DELETE = 'DELETE';
-
     /**
      * 
      * @var string

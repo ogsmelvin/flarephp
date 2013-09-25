@@ -7,7 +7,7 @@ namespace Flare\Http;
  * @author anthony
  * 
  */
-class AbstractResponse
+abstract class AbstractResponse
 {
     /**
      * 

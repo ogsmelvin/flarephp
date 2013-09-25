@@ -2,6 +2,7 @@
 
 namespace Flare\Http;
 
+use Flare\Http\AbstractRequest;
 use Flare\Security\Xss;
 use Flare\Flare as F;
 
@@ -10,7 +11,7 @@ use Flare\Flare as F;
  * @author anthony
  *
  */
-class Request
+class Request extends AbstractRequest
 {
     /**
      * 
@@ -28,7 +29,7 @@ class Request
 
     /**
      * 
-     * @param string $key
+     * @param string|null $key
      * @param boolean|null $xss
      * @return mixed
      */
@@ -47,7 +48,7 @@ class Request
 
     /**
      * 
-     * @param string $key
+     * @param string|null $key
      * @param boolean|null $xss
      * @return mixed
      */
@@ -64,7 +65,7 @@ class Request
 
     /**
      * 
-     * @param string $key
+     * @param string|null $key
      * @param boolean|null $xss
      * @return mixed
      */
@@ -81,7 +82,7 @@ class Request
 
     /**
      * 
-     * @param string $key
+     * @param string|null $key
      * @param boolean|null $xss
      * @return mixed
      */
@@ -98,7 +99,7 @@ class Request
 
     /**
      *
-     * @param string $key
+     * @param string|null $key
      * @param boolean|null $xss
      * @return string
      */
@@ -114,12 +115,29 @@ class Request
     }
 
     /**
+     * 
+     * @param string|null $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function put($key = null, $xss = null)
+    {
+        $value = null;
+        if ($key === null) {
+            if (!empty($_PUT)) $value = $_PUT;
+        } elseif (isset($_PUT[$key])) {
+            $value = $_PUT[$key];
+        }
+        return $this->_filter($value, $xss);
+    }
+
+    /**
      *
      * @return boolean
      */
     public function isPost()
     {
-        return ($this->server('REQUEST_METHOD') === 'POST');
+        return ($this->server('REQUEST_METHOD') === self::METHOD_POST);
     }
 
     /**
@@ -128,7 +146,25 @@ class Request
      */
     public function isGet()
     {
-        return ($this->server('REQUEST_METHOD') === 'GET');
+        return ($this->server('REQUEST_METHOD') === self::METHOD_GET);
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isPut()
+    {
+        return ($this->server('REQUEST_METHOD') === self::METHOD_PUT);
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isDelete()
+    {
+        return ($this->server('REQUEST_METHOD') === self::METHOD_DELETE);
     }
 
     /**
