@@ -53,19 +53,32 @@ class Page extends Adapter
             );
         }
 
-        if ($view instanceof Html && $this->_controller instanceof Window) {
-            $scripts = $this->_controller->assets();
-            $jsfile = $this->_controller->request->getModule()
-                    .'/js/'
-                    .$this->_controller->request->getController()
-                    .'.js';
-            $view->addScript($this->_controller->uri->baseUrl.bin2hex($jsfile).'.js', true);
-            if (is_array($scripts)) {
-                foreach ($scripts as $script) {
-                    $view->addScript($this->_controller->uri->baseUrl.$script, true);
+        if ($view instanceof Html) {
+
+            if (!$view->disabledLayout()) {
+                $module = $this->_controller->request->getModule();
+                if (!$view->hasLayout() 
+                    && isset($this->_controller->config->layout[$module]) 
+                    && $this->_controller->config->layout[$module]['auto'])
+                {
+                    $view->withLayout($this->_controller->config->layout[$module]['layout']);
                 }
-            } else {
-                $view->addScript($this->_controller->uri->baseUrl.$scripts, true);
+            }
+
+            if ($this->_controller instanceof Window) {
+                $scripts = $this->_controller->assets();
+                $jsfile = $this->_controller->request->getModule()
+                        .'/js/'
+                        .$this->_controller->request->getController()
+                        .'.js';
+                $view->addScript($this->_controller->uri->baseUrl.bin2hex($jsfile).'.js', true);
+                if (is_array($scripts)) {
+                    foreach ($scripts as $script) {
+                        $view->addScript($this->_controller->uri->baseUrl.$script, true);
+                    }
+                } else {
+                    $view->addScript($this->_controller->uri->baseUrl.$scripts, true);
+                }
             }
         }
         

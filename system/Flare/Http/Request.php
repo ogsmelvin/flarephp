@@ -2,6 +2,9 @@
 
 namespace Flare\Http;
 
+use Flare\Security\Xss;
+use Flare\Flare as F;
+
 /**
  *
  * @author anthony
@@ -10,46 +13,104 @@ namespace Flare\Http;
 class Request
 {
     /**
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return string
+     * 
+     * @param string|array $value
+     * @param boolean|null $xss
+     * @return string|array
      */
-    public function post($key = null, $default = null)
+    protected function _filter($value, $xss = null)
     {
-        if ($key === null) {
-            return !empty($_POST) ? $_POST : $default;
+        if ($value && (($xss === null && F::$config->get('auto_xss_filter')) || $xss === true)) {
+            $value = Xss::filter($value);
         }
-        return isset($_POST[$key]) ? $_POST[$key] : $default;
+        return $value;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function post($key = null, $xss = null)
+    {
+        $value = null;
+        if ($key === null) {
+            if (!empty($_POST)) $value = $_POST;
+        } elseif (isset($_POST[$key])) {
+            $value = $_POST[$key];
+        }
+        return $this->_filter($value, $xss);
+    }
+
+
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function param($key = null, $xss = null)
+    {
+        $value = null;
+        if ($key === null) {
+            if (!empty($_REQUEST)) $value = $_REQUEST;
+        } elseif (isset($_REQUEST[$key])) {
+            $value = $_REQUEST[$key];
+        }
+        return $this->_filter($value, $xss);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function get($key = null, $xss = null)
+    {
+        $value = null;
+        if ($key === null) {
+            if (!empty($_GET)) $value = $_GET;
+        } elseif (isset($_GET[$key])) {
+            $value = $_GET[$key];
+        }
+        return $this->_filter($value, $xss);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param boolean|null $xss
+     * @return mixed
+     */
+    public function cookie($key = null, $xss = null)
+    {
+        $value = null;
+        if ($key === null) {
+            if (!empty($_COOKIE)) $value = $_COOKIE;
+        } elseif (isset($_COOKIE[$key])) {
+            $value = $_COOKIE[$key];
+        }
+        return $this->_filter($value, $xss);
     }
 
     /**
      *
      * @param string $key
-     * @param mixed $default
+     * @param boolean|null $xss
      * @return string
      */
-    public function get($key = null, $default = null)
+    public function server($key = null, $xss = null)
     {
+        $value = null;
         if ($key === null) {
-            return !empty($_GET) ? $_GET : $default;
+            if (!empty($_SERVER)) $value = $_SERVER;
+        } elseif (isset($_SERVER[strtoupper(str_replace('-', '_', $key))])) {
+            $value = $_SERVER[$key];
         }
-        return isset($_GET[$key]) ? $_GET[$key] : $default;
-    }
-
-    /**
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return string
-     */
-    public function server($key = null, $default = null)
-    {
-        if ($key === null) {
-            return !empty($_SERVER) ? $_SERVER : $default;
-        }
-        $key = strtoupper(str_replace('-', '_', $key));
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : $default;
+        return $this->_filter($value, $xss);
     }
 
     /**
@@ -77,48 +138,6 @@ class Request
     public function isAjax()
     {
         return (strtoupper($this->server('HTTP_X_REQUESTED_WITH')) === 'XMLHTTPREQUEST');
-    }
-
-    /**
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return string
-     */
-    public function cookie($key = null, $default = null)
-    {
-        if ($key === null) {
-            return !empty($_COOKIE) ? $_COOKIE : $default;
-        }
-        return isset($_COOKIE[$key]) ? $_COOKIE[$key] : $default;
-    }
-
-    /**
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return string
-     */
-    public function param($key = null, $default = null)
-    {
-        if ($key === null) {
-            return !empty($_REQUEST) ? $_REQUEST : $default;
-        }
-        return isset($_REQUEST[$key]) ? $_REQUEST[$key] : $default;
-    }
-
-    /**
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return array
-     */
-    public function file($key = null, $default = null)
-    {
-        if ($key === null) {
-            return !empty($_FILES) ? $_FILES : $default;
-        }
-        return isset($_FILES[$key]) ? $_FILES[$key] : $default;
     }
 
     /**

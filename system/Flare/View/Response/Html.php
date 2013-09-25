@@ -57,6 +57,12 @@ class Html extends Response
      * 
      * @var string
      */
+    private $_layout;
+
+    /**
+     * 
+     * @var string
+     */
     private $_layoutPath;
     
     /**
@@ -71,9 +77,6 @@ class Html extends Response
      */
     public function __construct($path)
     {
-        if (!file_exists($path.'.'.self::EXTENSION_NAME)) {
-            show_response(500, "{$path} not found");
-        }
         $this->_contentPath = $path.'.'.self::EXTENSION_NAME;
     }
 
@@ -82,9 +85,9 @@ class Html extends Response
      * @param array $data
      * @return \Flare\View\Response\Html
      */
-    public function setData(array $data)
+    public function setData(array &$data)
     {
-        $this->_vars = $data;
+        $this->_vars = & $data;
         return $this;
     }
 
@@ -108,13 +111,16 @@ class Html extends Response
     {
         extract($this->_vars);
         ob_start();
-        if ($this->_layoutPath) {
-            include $this->_contentPath;
+        if (!file_exists($this->_includePath.$this->_contentPath)) {
+            show_response(500, "'{$this->_includePath}{$this->_contentPath}' doesn't exists");
+        }
+        if ($this->_layout) {
+            include $this->_includePath.$this->_contentPath;
             $this->content = (string) ob_get_clean();
             ob_start();
-            include $this->_layoutPath;
+            include $this->_layoutPath.$this->_layout;
         } else {
-            include $this->_contentPath;
+            include $this->_includePath.$this->_contentPath;
         }
         $html = (string) ob_get_clean();
         
@@ -136,13 +142,35 @@ class Html extends Response
 
     /**
      * 
-     * @param string $file
+     * @param string|boolean $file
      * @return \Flare\View\Response\Html
      */
-    public function setLayout($file)
+    public function withLayout($file)
     {
-        $this->_layoutPath = $file.'.'.self::EXTENSION_NAME;
+        if ($file === false) {
+            $this->_layout = false;
+        } else {
+            $this->_layout = $file.'_layout.'.self::EXTENSION_NAME;
+        }
         return $this;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasLayout()
+    {
+        return !empty($this->_layout);
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function disabledLayout()
+    {
+        return ($this->_layout === false);
     }
 
     /**
@@ -164,13 +192,27 @@ class Html extends Response
     /**
      * 
      * @param string $path
-     * @return \Flare\View
+     * @return \Flare\View\Response\Html
      */
     public function setIncludePath($path)
     {
         $folder = realpath($path);
         $folder = $folder !== false ? rtrim(str_replace("\\", '/', $folder), '/').'/' : rtrim($path, '/').'/';
         $this->_includePath = $folder;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @return \Flare\View\Response\Html
+     */
+    public function setLayoutPath($path)
+    {
+        $folder = realpath($path);
+        $folder = $folder !== false ? rtrim(str_replace("\\", '/', $folder), '/').'/' : rtrim($path, '/').'/';
+        $this->_layoutPath = $folder;
+        return $this;
     }
 
     /**

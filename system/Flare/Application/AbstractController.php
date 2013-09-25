@@ -11,6 +11,7 @@ use Flare\Util\Collection;
 use Flare\Application\Db;
 use Flare\Flare as F;
 use Flare\Http\File;
+use \stdClass;
 
 /**
  * 
@@ -81,6 +82,7 @@ abstract class AbstractController
         $this->router = & F::$router;
         $this->request = & $request;
         $this->response = & $response;
+        $this->data = new stdClass();
 
         if ($this->config->autoload['database']) {
             $this->setDatabase($this->config->autoload['database']);
@@ -211,36 +213,22 @@ abstract class AbstractController
     /**
      * 
      * @param string $path
-     * @param array $data
-     * @param string|boolean $layout
+     * @param array|null $data
      * @return \Flare\View\Response\Html
      */
-    public function view($path, $data = array(), $layout = null)
+    public function view($path, $data = null)
     {
-        $module = $this->request->getModule();
-        if ($layout === null 
-            && isset($this->config->layout[$module]) 
-            && $this->config->layout[$module]['auto'])
-        {
-            $layout = F::getApp()->getLayoutsDirectory()
-                .$this->config->layout[$module]['layout'].'_layout';
-        } elseif ($layout !== false && $layout !== null) {
-            $layout = F::getApp()->getLayoutsDirectory().$layout.'_layout';
-        }
-
-        $html = new Html(F::getApp()->getModuleViewsDirectory().$path);
-        $html->setIncludePath(F::getApp()->getModuleViewsDirectory());
+        $html = new Html($path);
+        $html->setIncludePath(F::getApp()->getModuleViewsDirectory())
+            ->setLayoutPath(F::getApp()->getLayoutsDirectory());
+        $data = $data !== null ? $data : (array) $this->data;
         if ($data) {
             $html->setData($data);
         }
-        $html->with('session', $this->session)
+        return $html->with('session', $this->session)
             ->with('uri', $this->uri)
             ->with('config', $this->config)
             ->with('request', $this->request);
-        if ($layout) {
-            $html->setLayout($layout);
-        }
-        return $html;
     }
 
     /**
