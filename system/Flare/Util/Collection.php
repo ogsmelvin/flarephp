@@ -30,11 +30,11 @@ class Collection extends ArrayObject
     {
         if (is_callable($callback)) {
             foreach ($this as $key => &$row) {
-                $callback($key, $row);
+                $callback($row, $key);
             }
         } elseif (is_array($callback) || is_string($callback)) {
             foreach ($this as $key => &$row) {
-                call_user_func_array($callback, array($key, $row));
+                call_user_func_array($callback, array($row, $key));
             }
         } else {
             show_error('Collection::each method parameter must be callable');
