@@ -7,8 +7,8 @@ use Flare\Application\Http\Request;
 use Flare\View\Response\Html;
 use Flare\View\Response\Json;
 use Flare\View\Response\Xml;
+use Flare\Db\Sql\Connection;
 use Flare\Util\Collection;
-use Flare\Application\Db;
 use Flare\Flare as F;
 use Flare\Http\File;
 use \stdClass;
@@ -122,7 +122,7 @@ abstract class AbstractController
      */
     public function setDatabase($key = 'default')
     {
-        $this->db = Db::getConnection($key);
+        $this->db = $this->getDatabase($key);
         return $this;
     }
 
@@ -134,7 +134,10 @@ abstract class AbstractController
     public function getDatabase($key = null)
     {
         if ($key) {
-            return Db::getConnection($key);
+            if (!isset($this->config->database[$key])) {
+                show_error("'{$key}' doesn't exists in database configuration");
+            }
+            return Connection::create($key, $this->config->database[$key]);
         }
         return $this->db ? $this->db : null;
     }

@@ -6,7 +6,7 @@ use Flare\Application\ErrorController;
 use Flare\Application\Dispatcher;
 use Flare\Application\Config;
 use Flare\Application\Router;
-use Flare\Application\Db;
+use Flare\Db\Sql\Connection;
 use Flare\Http\Response;
 use Flare\Http\Request;
 use Flare\Http\Session;
@@ -554,7 +554,7 @@ class Application
      */
     public function shutdown($withExit = false)
     {
-        Db::disconnect();
+        Connection::destroy();
         if ($withExit) {
             exit;
         }
