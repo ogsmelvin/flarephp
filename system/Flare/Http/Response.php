@@ -143,7 +143,7 @@ class Response extends AbstractResponse
     }
 
     /**
-     * This must be the last method executed in \Flare\Application\Mvc::dispatch()
+     * 
      * @param boolean $output_body
      * @return void
      */
