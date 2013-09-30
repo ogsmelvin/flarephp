@@ -106,10 +106,13 @@ class Request extends AbstractRequest
     public function server($key = null, $xss = null)
     {
         $value = null;
-        if ($key === null) {
+        if ($key !== null) {
+            $key = strtoupper(str_replace('-', '_', $key));
+            if (isset($_SERVER[$key])) {
+                $value = $_SERVER[$key];
+            }
+        } else {
             if (!empty($_SERVER)) $value = $_SERVER;
-        } elseif (isset($_SERVER[strtoupper(str_replace('-', '_', $key))])) {
-            $value = $_SERVER[$key];
         }
         return $this->_filter($value, $xss);
     }
