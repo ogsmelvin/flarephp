@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Db\Nosql;
+namespace Flare\Db\NoSql;
 
 use Flare\Db\Connection as ParentConnection;
 
