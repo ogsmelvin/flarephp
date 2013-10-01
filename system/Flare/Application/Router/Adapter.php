@@ -57,32 +57,31 @@ abstract class Adapter
      */
     protected function _route($module, $controller, $action = null, $params = array())
     {
-        $request = new Request();
-        $request->setModule($module)
+        F::$request->setModule($module)
             ->setController($controller);
         if ($action) {
-            $request->setAction($action);
+            F::$request->setAction($action);
         }
         
         $path = F::getApp()->getModulesDirectory()
-            .$request->getModule()
+            .F::$request->getModule()
             .'/'
             .F::getApp()->getControllersDirectory()
-            .strtolower(urldecode($request->getController()))
+            .strtolower(urldecode(F::$request->getController()))
             .'.php';
         if (!file_exists($path)) {
             return null;
         }
 
-        require_once F::getApp()->getModulesDirectory().$request->getModule().'/bootstrap.php';
+        require_once F::getApp()->getModulesDirectory().F::$request->getModule().'/bootstrap.php';
         require_once $path;
         
-        $controller = ucwords($request->getModule())."\\Controllers\\".$request->getControllerClassName();
+        $controller = ucwords(F::$request->getModule())."\\Controllers\\".F::$request->getControllerClassName();
         $route = new Route();
-        $route->setModule($request->getModule());
-        $route->setController(new $controller($request, new Response()));
-        if ($request->getAction()) {
-            $route->setAction(new Action($route->getController(), $request->getActionMethodName()));
+        $route->setModule(F::$request->getModule());
+        $route->setController(new $controller());
+        if (F::$request->getAction()) {
+            $route->setAction(new Action($route->getController(), F::$request->getActionMethodName()));
             if ($params) {
                 $route->setActionParams($params);
             }

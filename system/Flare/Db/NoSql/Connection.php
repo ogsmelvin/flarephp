@@ -15,11 +15,11 @@ class Connection implements ParentConnection
      * 
      * @param string $name
      * @param array $options
-     * @return \PDO
+     * @return \Flare\Db\NoSql\Driver
      */
     public static function create($name, array $options)
     {
-
+        
     }
 
     /**

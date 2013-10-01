@@ -3,12 +3,12 @@
 namespace Flare;
 
 use Flare\Application\ErrorController;
+use Flare\Application\Http\Response;
+use Flare\Application\Http\Request;
 use Flare\Application\Dispatcher;
 use Flare\Application\Config;
 use Flare\Application\Router;
 use Flare\Db\Sql\Connection;
-use Flare\Http\Response;
-use Flare\Http\Request;
 use Flare\Http\Session;
 use Flare\Http\Cookie;
 use Flare\Flare as F;

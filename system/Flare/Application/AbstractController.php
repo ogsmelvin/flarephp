@@ -67,21 +67,16 @@ abstract class AbstractController
      * @var \Flare\Db\Sql\Driver
      */
     protected $db;
-
-    /**
-     * 
-     * @param \Flare\Application\Http\Request $request
-     * @param \Flare\Application\Http\Response $response
-     */
-    public function __construct(Request &$request, Response &$response)
+    
+    public function __construct()
     {
-        $this->session = & F::$session;
+        $this->uri = & F::$uri;
         $this->cookie = & F::$cookie;
         $this->config = & F::$config;
-        $this->uri = & F::$uri;
         $this->router = & F::$router;
-        $this->request = & $request;
-        $this->response = & $response;
+        $this->session = & F::$session;
+        $this->request = & F::$request;
+        $this->response = & F::$response;
         $this->data = new stdClass();
 
         if ($this->config->autoload['database']) {
