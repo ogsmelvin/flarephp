@@ -220,7 +220,7 @@ class Uri
      */
     public function setModuleUrl()
     {
-        $this->moduleUrl = F::getApp()->getController()->request->getModule();
+        $this->moduleUrl = F::$request->getModule();
         if ($this->moduleUrl !== F::$config->router['default_module']) {
             $this->moduleUrl .= '/';
         }

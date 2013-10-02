@@ -41,6 +41,6 @@ return array(
      * Leave blank for default
      * /home.[url_suffix]
      */
-    'url_suffix' => 'jspx'
+    'url_suffix' => ''
     
 );

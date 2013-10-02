@@ -617,7 +617,13 @@ class Application
             F::$router->getAdapter()->addRoutes($router['routes']);
         }
         if (!empty($router['require_https'])) {
-            F::$router->secure();
+            if (!is_array($router['require_https'])) {
+                F::$router->secure();
+            } else {
+                foreach ($router['require_https'] as $secured) {
+                    
+                }
+            }
         }
     }
 

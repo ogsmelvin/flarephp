@@ -126,6 +126,12 @@ class Page extends Adapter
 
         $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
         $action = $action === null ? F::$config->router['default_action'] : $action;
+        if (!empty(F::$config->router['url_suffix']) && $action !== F::$config->router['default_action']) {
+            if (F::$uri->suffix !== F::$config->router['url_suffix']) {
+                return null;
+            }
+            $action = basename($action, '.'.F::$uri->suffix);
+        }
 
         $route = $this->_route($module, $controller, $action);
         if ($route) {
