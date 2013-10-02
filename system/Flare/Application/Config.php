@@ -10,6 +10,47 @@ namespace Flare\Application;
 class Config
 {
     /**
+     * 
+     * @var string
+     */
+    const EXTENSION_NAME = 'php';
+
+    /**
+     * 
+     * @var string
+     */
+    private static $_constantsFile = 'constants';
+
+    /**
+     * 
+     * @var string
+     */
+    private static $_mainConfigFile = 'config';
+
+    /**
+     * 
+     * @var array
+     */
+    private static $_defaultKeyNames = array(
+        'session',
+        'cookie',
+        'layout',
+        'router',
+        'autoload',
+        'database',
+        'nosql',
+        'services',
+        'cache_engines',
+        'mail'
+    );
+
+    /**
+     * 
+     * @var string
+     */
+    private $_sourceDir;
+
+    /**
      *
      * @var array
      */
@@ -18,35 +59,39 @@ class Config
     /**
      *
      * @param array $config
+     * @param string $sourceDir
      */
-    private function __construct(array $config)
+    private function __construct(array $config, $sourceDir)
     {
         $this->_config = $config;
+        $this->_sourceDir = $sourceDir;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getSourceDirectory()
+    {
+        return $this->_sourceDir;
     }
 
     /**
      *
-     * @param string|array $config_file
+     * @param string $config_dir
      * @return \Flare\Application\Config
      */
-    public static function load($config_file)
+    public static function load($config_dir)
     {
-        $content = null;
-        if (is_string($config_file)) {
-            $content = require $config_file.'.php';
-            if (!is_array($content)) {
-                show_error("'{$config_file}' return must be an array");
-            }
-        } elseif (is_array($config_file)) {
-            $content = $config_file;
-            unset($config_file);
-        } else {
-            show_error('Invalid Config file type');
+        if (!is_dir($config_dir)) {
+            show_error("'{$config_dir}' doesn't exists");
         }
-        if (!isset($content['allow_override'])) {
-            $content['allow_override'] = false;
+        require $config_dir.self::$_constantsFile.'.'.self::EXTENSION_NAME;
+        $content = (array) require $config_dir.self::$_mainConfigFile.'.'.self::EXTENSION_NAME;
+        foreach (self::$_defaultKeyNames as $name) {
+            $content[$name] = (array) require $config_dir.$name.'.'.self::EXTENSION_NAME;
         }
-        return new self($content);
+        return new self($content, $config_dir);
     }
 
     /**

@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- * @var array
- */
-$layout = array(
+return array(
 
     /**
      * View Layout settings for main module
@@ -13,10 +9,5 @@ $layout = array(
         'auto' => true,
         'layout' => 'main'
     )
+    
 );
-
-/**
- * 
- * @return array
- */
-return $layout;

@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- * @var array
- */
-$cookie = array(
+return array(
 
     /**
      * Cookie namespace
@@ -25,10 +21,5 @@ $cookie = array(
      * Expiration seconds
      */
     'expiration' => 0
+    
 );
-
-/**
- * 
- * @return
- */
-return $cookie;

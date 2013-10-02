@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- * @var array
- */
-$autoload = array(
+return array(
 
     /**
      * Only one database can be set 
@@ -19,10 +15,5 @@ $autoload = array(
      * These keys are case sensitive
      */
     'helpers' => array()
+    
 );
-
-/**
- * 
- * @return array
- */
-return $autoload;

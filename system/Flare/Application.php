@@ -566,7 +566,7 @@ class Application
      */
     private function _init()
     {
-        F::$config = Config::load(require $this->_appDirectory.'config/config.php');
+        F::$config = Config::load($this->_configDirectory);
         F::$request = new Request();
         F::$response = new Response();
         F::$uri = new Uri();

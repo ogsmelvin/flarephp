@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- * @var array
- */
-$session = array(
+return array(
 
     /**
      * Auto session_start()
@@ -15,10 +11,5 @@ $session = array(
      * Session namespace
      */
     'namespace' => 'flare_framework'
+    
 );
-
-/**
- * 
- * @return array
- */
-return $session;

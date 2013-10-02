@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- * @var array
- */
-$mail = array(
+return array(
 
     /**
      * 
@@ -35,10 +31,5 @@ $mail = array(
      * SMTP Password
      */
     'password' => ''
+    
 );
-
-/**
- * 
- * @return array
- */
-return $mail;

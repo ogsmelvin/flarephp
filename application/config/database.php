@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- * @var array
- */
-$database = array(
+return array(
 
     /**
      * Default selected database
@@ -19,10 +15,5 @@ $database = array(
             PDO::ATTR_PERSISTENT => true
         )
     )
+    
 );
-
-/**
- * 
- * @return array
- */
-return $database;

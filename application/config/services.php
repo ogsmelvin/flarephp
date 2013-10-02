@@ -4,9 +4,8 @@
  * Api Mashups Configuration
  * Keys are the same with the class names
  * These keys are case sensitive
- * @var array
  */
-$services = array(
+return array(
 
     /**
      * Flare\Service\Facebook settings
@@ -33,10 +32,5 @@ $services = array(
     //     'consumer_key' => '',
     //     'consumer_secret' => ''
     // )
-);
 
-/**
- * 
- * @return array
- */
-return $services;
+);

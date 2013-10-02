@@ -1,10 +1,6 @@
 <?php
 
-/**
- *
- * @var array
- */
-$routes = array(
+return array(
 
     /**
      * 
@@ -46,10 +42,5 @@ $routes = array(
      * /home.[url_suffix]
      */
     'url_suffix' => 'jspx'
+    
 );
-
-/**
- * 
- * @return array
- */
-return $routes;

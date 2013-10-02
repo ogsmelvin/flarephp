@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- * @var array
- */
-$cache_engines = array(
+return array(
 
     /**
      * APC Configuration
@@ -23,10 +19,5 @@ $cache_engines = array(
      * Memcached Configuration
      */
     // 'Memcached' => array()
+    
 );
-
-/**
- * 
- * @return array
- */
-return $cache_engines;
