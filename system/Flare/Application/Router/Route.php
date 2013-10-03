@@ -2,8 +2,8 @@
 
 namespace Flare\Application\Router;
 
-use Flare\Application\AbstractController;
 use Flare\Application\Router\Route\Action;
+use Flare\Application\AbstractController;
 
 /**
  * 

@@ -103,6 +103,15 @@ class Page extends Adapter
 
     /**
      * 
+     * @return string
+     */
+    private function _removeUriSuffix($segment)
+    {
+        return basename($segment, '.'.F::$config->router['url_suffix']);
+    }
+
+    /**
+     * 
      * @return \Flare\Application\Router\Route|null
      */
     public function getRoute()
@@ -126,14 +135,8 @@ class Page extends Adapter
 
         $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
         $action = $action === null ? F::$config->router['default_action'] : $action;
-        if (!empty(F::$config->router['url_suffix']) && $action !== F::$config->router['default_action']) {
-            if (F::$uri->suffix !== F::$config->router['url_suffix']) {
-                return null;
-            }
-            $action = basename($action, '.'.F::$uri->suffix);
-        }
 
-        $route = $this->_route($module, $controller, $action);
+        $route = $this->_route($module, $controller, $this->_removeUriSuffix($action));
         if ($route) {
             if (!$customRoute) {
                 $this->_setActionParams($route, $validUriForParams);
@@ -145,6 +148,17 @@ class Page extends Adapter
             }
         }
 
+        if (!empty(F::$config->router['url_suffix'])) {
+
+            $matchActionSuffix = (pathinfo($action, PATHINFO_EXTENSION) === F::$config->router['url_suffix']);
+            $matchUriSuffix = (F::$uri->suffix === F::$config->router['url_suffix']);
+
+            if ((!$route->getActionParams() && $action !== F::$config->router['default_action'] && !$matchActionSuffix)
+                || ($route->getActionParams() && ($matchActionSuffix || !$matchUriSuffix))) {
+                return null;
+            }
+        }
+        
         return $route;
     }
 
@@ -189,6 +203,11 @@ class Page extends Adapter
                         }
                     }
                 }
+
+                if ($actionParams && !empty(F::$config->router['url_suffix'])) {
+                    $lastIndex = count($actionParams) - 1;
+                    $actionParams[$lastIndex] = $this->_removeUriSuffix($actionParams[$lastIndex]);
+                }
                 
                 $segmentParamsCount = ($segmentCount - $indexStart) + 1;
                 $segmentParamsCount = $segmentParamsCount < 0 ? 1 : $segmentParamsCount;
@@ -209,7 +228,7 @@ class Page extends Adapter
             }
             unset($params, $indexStart, $segmentCount, $firstSegment);
         }
-        
+
         $validUriForParams = true;
         $route->setActionParams($actionParams);
     }
