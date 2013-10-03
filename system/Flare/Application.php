@@ -620,9 +620,10 @@ class Application
             if (!is_array($router['require_https'])) {
                 F::$router->secure();
             } else {
-                foreach ($router['require_https'] as $secured) {
+                // TODO
+                // foreach ($router['require_https'] as $secured) {
                     
-                }
+                // }
             }
         }
     }

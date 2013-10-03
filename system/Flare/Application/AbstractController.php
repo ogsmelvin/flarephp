@@ -178,6 +178,9 @@ abstract class AbstractController
     {
         if (parse_url($url, PHP_URL_SCHEME) === null) {
             $url = $this->uri->baseUrl.ltrim($url, '/');
+            if (!empty($this->config->router['url_suffix'])) {
+                // $url .= '.'.$this->uri->suffix;
+            }
         }
         $this->response->setRedirect($url, $code)->send(false);
     }
