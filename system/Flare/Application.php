@@ -662,7 +662,7 @@ class Application
             $module = $module.'/config/';
         }
         
-        $moduleConf = Config::load($module);
+        $moduleConf = Config::load($module, false);
         if ($moduleConf) {
             F::$config->merge($moduleConf->remove('modules'));
         }

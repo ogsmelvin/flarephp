@@ -91,9 +91,10 @@ class Config
     /**
      *
      * @param string $config_dir
+     * @param boolean $requireMainConfig
      * @return \Flare\Application\Config
      */
-    public static function load($config_dir)
+    public static function load($config_dir, $requireMainConfig = true)
     {
         if (!is_dir($config_dir)) {
             return null;
@@ -103,9 +104,10 @@ class Config
             require_once $config_dir.self::$_constantsFile.'.'.self::EXTENSION_NAME;
         }
 
+        $content = array();
         if (file_exists($config_dir.self::$_mainConfigFile.'.'.self::EXTENSION_NAME)) {
             $content = (array) require_once $config_dir.self::$_mainConfigFile.'.'.self::EXTENSION_NAME;
-        } else {
+        } elseif ($requireMainConfig) {
             die("'{$config_dir}config.php' file doesn't exists");
         }
 
@@ -154,7 +156,7 @@ class Config
      */
     public function __set($key, $value)
     {
-        if (!$this->_config['allow_override']) {
+        if (isset($this->_config['allow_override']) && !$this->_config['allow_override']) {
             return;
         }
         $this->_config[$key] = $value;
@@ -168,7 +170,7 @@ class Config
      */
     public function set($key, $value)
     {
-        if (!$this->_config['allow_override']) {
+        if (isset($this->_config['allow_override']) && !$this->_config['allow_override']) {
             show_error('Config is not overridable');
         }
         $key = explode('.', $key);
@@ -222,7 +224,7 @@ class Config
      */
     public function remove($key)
     {
-        if ($this->_config['allow_override']) {
+        if (!empty($this->_config['allow_override'])) {
             if (!isset($this->_config[$key])) {
                 $key = explode('.', $key);
                 $tmpConf = $this->_config;
