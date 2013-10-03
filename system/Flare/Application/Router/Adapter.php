@@ -97,10 +97,21 @@ abstract class Adapter
      */
     public function getErrorRoute($class)
     {
-        $class = explode('.', $class);
-        $module = isset($class[0]) ? $class[0] : F::$config->router['default_module'];
-        $controller = isset($class[1]) ? $class[1] : F::$config->router['default_controller'];
-        $action = isset($class[2]) ? $class[2] : F::$config->router['default_action'];
+        $module = $controller = $action = null;
+        $class = explode('.', $class, 3);
+        $count = count($class);
+        if ($count >= 3) {
+            list($module, $controller, $action) = $class;
+        } elseif ($count === 2) {
+            $module = F::$config->router['default_module'];
+            $controller = $class[0];
+            $action = $class[1];
+        } elseif ($count === 1) {
+            $module = F::$config->router['default_module'];
+            $controller = F::$config->router['default_controller'];
+            $action = $class[0];
+        }
+        unset($count, $class);
         return $this->_route($module, $controller, $action);
     }
 }

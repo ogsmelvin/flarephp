@@ -145,20 +145,18 @@ class Page extends Adapter
                 }
             } elseif (!$route->getAction()->exists()) {
                 return null;
+            } elseif (!empty(F::$config->router['url_suffix'])) {
+
+                $matchActionSuffix = (pathinfo($action, PATHINFO_EXTENSION) === F::$config->router['url_suffix']);
+                $matchUriSuffix = (F::$uri->suffix === F::$config->router['url_suffix']);
+
+                if ((!$route->getActionParams() && $action !== F::$config->router['default_action'] && !$matchActionSuffix)
+                    || ($route->getActionParams() && ($matchActionSuffix || !$matchUriSuffix))) {
+                    return null;
+                }
             }
         }
 
-        if (!empty(F::$config->router['url_suffix'])) {
-
-            $matchActionSuffix = (pathinfo($action, PATHINFO_EXTENSION) === F::$config->router['url_suffix']);
-            $matchUriSuffix = (F::$uri->suffix === F::$config->router['url_suffix']);
-
-            if ((!$route->getActionParams() && $action !== F::$config->router['default_action'] && !$matchActionSuffix)
-                || ($route->getActionParams() && ($matchActionSuffix || !$matchUriSuffix))) {
-                return null;
-            }
-        }
-        
         return $route;
     }
 

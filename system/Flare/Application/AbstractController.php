@@ -174,15 +174,44 @@ abstract class AbstractController
      * @param int $code
      * @return void
      */
-    public function redirect($url, $code = 302)
+    public function redirectUrl($url, $code = 302)
     {
         if (parse_url($url, PHP_URL_SCHEME) === null) {
             $url = $this->uri->baseUrl.ltrim($url, '/');
             if (!empty($this->config->router['url_suffix'])) {
-                // $url .= '.'.$this->uri->suffix;
+                $url .= '.'.$this->config->router['url_suffix'];
             }
         }
         $this->response->setRedirect($url, $code)->send(false);
+    }
+
+    /**
+     * 
+     * @param string|array $class
+     * @param int $code
+     * @return void
+     */
+    public function redirect($class, $code = 302)
+    {
+        if (!$class) return;
+
+        $strClass = '';
+        if (is_string($class)) {
+            $class = explode('.', trim($class), 3);
+        }
+
+        $count = count($class);
+        if ($count === 2) {
+            $strClass = $this->request->getModule().'.'.implode('.', $class);
+        } elseif ($count === 1) {
+            $strClass = $this->request->getModule()
+                .'.'.$this->request->getController()
+                .'.'.implode('.', $class);
+        }
+
+        foreach ($this->config->router['routes'] as $url => $route) {
+            
+        }
     }
 
     /**
