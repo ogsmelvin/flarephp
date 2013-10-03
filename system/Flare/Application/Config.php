@@ -31,18 +31,24 @@ class Config
      * 
      * @var array
      */
-    private static $_defaultKeyNames = array(
-        'session',
-        'cookie',
-        'layout',
-        'router',
-        'autoload',
-        'database',
-        'nosql',
-        'services',
-        'cache_engines',
-        'mail'
+    private $_defaultKeyNames = array(
+        'session' => false,
+        'cookie' => false,
+        'layout' => false,
+        'router' => false,
+        'autoload' => false,
+        'database' => false,
+        'nosql' => false,
+        'services' => false,
+        'cache_engines' => false,
+        'mail' => false
     );
+
+    /**
+     * 
+     * @var array
+     */
+    private $_loadedConfigNames = array();
 
     /**
      * 
@@ -63,6 +69,12 @@ class Config
      */
     private function __construct(array $config, $sourceDir)
     {
+        foreach ($this->_defaultKeyNames as $name => $loaded) {
+            if (file_exists($sourceDir.$name.'.'.self::EXTENSION_NAME)) {
+                $config[$name] = (array) require $sourceDir.$name.'.'.self::EXTENSION_NAME;
+                $this->_defaultKeyNames[$name] = true;
+            }
+        }
         $this->_config = $config;
         $this->_sourceDir = $sourceDir;
     }
@@ -84,14 +96,41 @@ class Config
     public static function load($config_dir)
     {
         if (!is_dir($config_dir)) {
-            show_error("'{$config_dir}' doesn't exists");
+            return null;
         }
-        require $config_dir.self::$_constantsFile.'.'.self::EXTENSION_NAME;
-        $content = (array) require $config_dir.self::$_mainConfigFile.'.'.self::EXTENSION_NAME;
-        foreach (self::$_defaultKeyNames as $name) {
-            $content[$name] = (array) require $config_dir.$name.'.'.self::EXTENSION_NAME;
+
+        if (file_exists($config_dir.self::$_constantsFile.'.'.self::EXTENSION_NAME)) {
+            require_once $config_dir.self::$_constantsFile.'.'.self::EXTENSION_NAME;
         }
+
+        if (file_exists($config_dir.self::$_mainConfigFile.'.'.self::EXTENSION_NAME)) {
+            $content = (array) require_once $config_dir.self::$_mainConfigFile.'.'.self::EXTENSION_NAME;
+        } else {
+            die("'{$config_dir}config.php' file doesn't exists");
+        }
+
         return new self($content, $config_dir);
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @return \Flare\Application\Config
+     */
+    public function read($name)
+    {
+        if (isset($this->_defaultKeyNames[$name]) && !$this->_defaultKeyNames[$name]) {
+            if (file_exists($this->_sourceDir.$name.'.'.self::EXTENSION_NAME)) {
+                $this->_config[$name] = (array) require $this->_sourceDir.$name.'.'.self::EXTENSION_NAME;
+                $this->_defaultKeyNames[$name] = true;
+            }
+        } elseif (!in_array($name, $this->_loadedConfigNames)) {
+            if (file_exists($this->_sourceDir.$name.'.'.self::EXTENSION_NAME)) {
+                $this->_config[$name] = (array) require $this->_sourceDir.$name.'.'.self::EXTENSION_NAME;
+                $this->_loadedConfigNames[] = $name;
+            }
+        }
+        return $this;
     }
 
     /**

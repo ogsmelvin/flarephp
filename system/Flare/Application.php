@@ -567,6 +567,9 @@ class Application
     private function _init()
     {
         F::$config = Config::load($this->_configDirectory);
+        if (!F::$config) {
+            die("Config directory doesn't exists or not readable");
+        }
         F::$request = new Request();
         F::$response = new Response();
         F::$uri = new Uri();
@@ -659,15 +662,11 @@ class Application
             $module = $module.'/config/';
         }
         
-        if (file_exists($module.'config.php')) {
-            $moduleConfig = require $module.'config.php';
-            if (!is_array($moduleConfig)) {
-                $this->error(500, 'Module config.php must return an array.');
-            }
-            unset($moduleConfig['modules']);
-            F::$config->merge($moduleConfig);
-            unset($moduleConfig);
+        $moduleConf = Config::load($module);
+        if ($moduleConf) {
+            F::$config->merge($moduleConf->remove('modules'));
         }
+        unset($moduleConf);
         
         if (F::$config->time_limit !== null) {
             set_time_limit(F::$config->time_limit);
