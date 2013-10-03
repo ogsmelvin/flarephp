@@ -92,12 +92,6 @@ class Application
      * @var boolean
      */
     private $_dispatched = false;
-
-    /**
-     * 
-     * @var boolean
-     */
-    private $_configured = false;
     
     /**
      *
@@ -163,26 +157,6 @@ class Application
             .$module
             .'/'
             .$this->_viewsDirectory;
-        return $path;
-    }
-
-    /**
-     * 
-     * @param string $module
-     * @return string
-     */
-    public function getModuleConfigDirectory($module = null)
-    {
-        if (!$module) {
-            if (!F::$router->getRoute()) {
-                $this->error(500, 'No route found. Predispatch must be executed first.');
-            }
-            $module = F::$router->getRoute()->getModule();
-        }
-
-        $path = $this->_modulesDirectory
-            .$module
-            .'/config/';
         return $path;
     }
 
@@ -433,11 +407,6 @@ class Application
         if (!$this->_controller) {
             $this->error(500, 'Controller is not initilized');
         }
-
-        if (!$this->_configured) {
-            $this->_configure();
-            $this->_configured = true;
-        }
         
         $dispatcher = new Dispatcher($this->_controller, F::$router->getAdapterName());
         if ($dispatcher->dispatch()) {
@@ -542,6 +511,7 @@ class Application
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
             ->_init()
             ->setModules(F::$config->modules)
+            ->_configure()
             ->_predispatch()
             ->_dispatch()
             ->shutdown();
@@ -657,17 +627,19 @@ class Application
     private function _configure($module = null, $components = array())
     {
         if (!$module) {
-            $module = $this->getModuleConfigDirectory();
+            $module = $this->_modulesDirectory.F::$router->getAdapter()->getConfigModule().'/config/';
         } else {
             $module = $module.'/config/';
         }
         
         $moduleConf = Config::load($module, false);
         if ($moduleConf) {
-            F::$config->merge($moduleConf->remove('modules'));
+            $moduleConf->remove('modules')
+                ->remove('default_module');
+            F::$config->merge($moduleConf);
         }
         unset($moduleConf);
-        
+
         if (F::$config->time_limit !== null) {
             set_time_limit(F::$config->time_limit);
         }

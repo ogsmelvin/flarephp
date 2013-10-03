@@ -100,6 +100,7 @@ class Config
             return null;
         }
 
+        $config_dir = rtrim($config_dir, '/').'/';
         if (file_exists($config_dir.self::$_constantsFile.'.'.self::EXTENSION_NAME)) {
             require_once $config_dir.self::$_constantsFile.'.'.self::EXTENSION_NAME;
         }

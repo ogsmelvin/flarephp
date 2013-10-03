@@ -15,12 +15,6 @@ class Page extends Adapter
 {
     /**
      * 
-     * @var array
-     */
-    private $_routes = array();
-
-    /**
-     * 
      * @param string $url
      * @param string $method
      * @return \Flare\Application\Router
@@ -65,25 +59,6 @@ class Page extends Adapter
 
     /**
      * 
-     * @return string|null
-     */
-    private function _getMatchedCustomRoute()
-    {
-        $uri = trim((string) F::$uri, '/');
-        if (isset($this->_routes[$uri])) {
-            return $this->_routes[$uri];
-        } else {
-            foreach ($this->_routes as $key => $class) {
-                if (preg_match('#^'.$key.'$#', $uri)) {
-                    return $class;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 
      * @return \Flare\Application\Router\Route|null
      */
     public function getMatchedCustomRoute()
@@ -94,7 +69,7 @@ class Page extends Adapter
             // if ($params) {
             //   $params = explode(',', ltrim(rtrim($params, ')'), '('));
             // }
-            list($module, $controller, $action) = explode('.', $route, 3);
+            list($module, $controller, $action) = $route;
             $route = $this->_route($module, $controller, $action);
         }
 
@@ -122,7 +97,7 @@ class Page extends Adapter
         $action = F::$uri->getSegment(3);
 
         if ($customRoute) {
-            list($module, $controller, $action) = explode('.', $customRoute, 3);
+            list($module, $controller, $action) = $customRoute;
         } elseif ($module === null) {
             $module = F::$config->router['default_module'];
             $action = F::$config->router['default_action'];

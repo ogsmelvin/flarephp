@@ -19,6 +19,12 @@ abstract class Adapter
      * 
      * @var array
      */
+    protected $_routes = array();
+
+    /**
+     * 
+     * @var array
+     */
     protected $_routeModules;
 
     /**
@@ -88,6 +94,46 @@ abstract class Adapter
         }
         
         return $route;
+    }
+
+    /**
+     * 
+     * @return string|null
+     */
+    protected function _getMatchedCustomRoute()
+    {
+        $uri = trim((string) F::$uri, '/');
+        if (isset($this->_routes[$uri])) {
+            return $this->_routes[$uri];
+        } else {
+            foreach ($this->_routes as $key => $class) {
+                if (preg_match('#^'.$key.'$#', $uri)) {
+                    $class = explode('.', trim($customRoute), 3);
+                    if (count($class) < 3) {
+                        die("Invalid Custom Route class.");
+                    }
+                    return $class;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getConfigModule()
+    {
+        $customRoute = $this->_getMatchedCustomRoute();
+        $module = F::$uri->getSegment(1);
+
+        if ($customRoute) {
+            list($module) = $customRoute;
+        } elseif (!in_array($module, $this->_routeModules)) {
+            $module = F::$config->router['default_module'];
+        }
+        return $module;
     }
 
     /**
