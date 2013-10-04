@@ -92,6 +92,20 @@ abstract class AbstractController
 
     /**
      * 
+     * @return \Flare\Application\AbstractController
+     */
+    public function disableCache()
+    {
+        $this->response->setHeader('Expires: Mon, 26 Jul 1997 05:00:00 GMT')
+            ->setHeader('Last-Modified: '.gmdate("D, d M Y H:i:s").' GMT')
+            ->setHeader('Cache-Control: no-store, no-cache, must-revalidate')
+            ->setHeader('Cache-Control: post-check=0, pre-check=0', false)
+            ->setHeader('Pragma: no-cache');
+        return $this;
+    }
+
+    /**
+     * 
      * @param string $key
      * @return \Flare\Http\File|null
      */

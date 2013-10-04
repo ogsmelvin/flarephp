@@ -28,6 +28,12 @@ class Response extends AbstractResponse
      * 
      * @var string
      */
+    protected $_redirectUrl;
+
+    /**
+     * 
+     * @var string
+     */
     protected $_contentType;
 
     /**
@@ -38,16 +44,16 @@ class Response extends AbstractResponse
 
     /**
      *
-     * @param string $key
-     * @param string $value
+     * @param string $header
+     * @param boolean $replace
      * @return \Flare\Http\Response
      */
-    public function setHeader($key, $value, $auto_send = false)
+    public function setHeader($header, $replace = true)
     {
-        $this->_headers[$key] = $value;
-        if ($auto_send) {
-            header("{$key}: {$value}");
-        }
+        $this->_headers[] = array(
+            'header' => $header,
+            'replace' => $replace
+        );
         return $this;
     }
 
@@ -59,7 +65,7 @@ class Response extends AbstractResponse
     public function setContentType($type)
     {
         $this->_contentType = $type;
-        return $this->setHeader('Content-Type', $type);
+        return $this->setHeader('Content-Type: '.$type);
     }
 
     /**
@@ -108,7 +114,7 @@ class Response extends AbstractResponse
      */
     public function setRedirect($url, $code = 302)
     {
-        $this->_headers['Location'] = $url;
+        $this->_redirectUrl = $url;
         return $this->setStatusCode($code);
     }
 
@@ -128,7 +134,7 @@ class Response extends AbstractResponse
         } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
             $url = F::$uri->base.ltrim($url, '/');
         }
-        $this->setHeader('Refresh', '{$seconds};url="{$url}"');
+        $this->setHeader("Refresh: {$seconds};url=\"{$url}\"");
     }
 
     /**
@@ -159,13 +165,13 @@ class Response extends AbstractResponse
                 header('HTTP/1.1 '.$this->_statusCode.' '.self::$messages[$this->_statusCode]);
             }
         }
-        if (isset($this->_headers['Location']) && (300 <= $this->_statusCode) && (307 >= $this->_statusCode)) {
-            header('Location: '.$this->_headers['Location']);
+        if (!empty($this->_redirectUrl) && (300 <= $this->_statusCode) && (307 >= $this->_statusCode)) {
+            header('Location: '.$this->_redirectUrl);
             exit;
         }
 
-        foreach ($this->_headers as $key => $header) {
-            header("{$key}: {$header}");
+        foreach ($this->_headers as $header) {
+            header($header['header'], $header['replace']);
         }
 
         if ($output_body) {
