@@ -117,18 +117,16 @@ class Page extends Adapter
                 $this->_setActionParams($route, $validUriForParams);
                 if (!$validUriForParams) {
                     return null;
+                } elseif (!empty(F::$config->router['url_suffix'])) {
+                    $matchActionSuffix = (pathinfo($action, PATHINFO_EXTENSION) === F::$config->router['url_suffix']);
+                    $matchUriSuffix = (F::$uri->suffix === F::$config->router['url_suffix']);
+                    if ((!$route->getActionParams() && $action !== F::$config->router['default_action'] && !$matchActionSuffix)
+                        || ($route->getActionParams() && ($matchActionSuffix || !$matchUriSuffix))) {
+                        return null;
+                    }
                 }
             } elseif (!$route->getAction()->exists()) {
                 return null;
-            } elseif (!empty(F::$config->router['url_suffix'])) {
-
-                $matchActionSuffix = (pathinfo($action, PATHINFO_EXTENSION) === F::$config->router['url_suffix']);
-                $matchUriSuffix = (F::$uri->suffix === F::$config->router['url_suffix']);
-
-                if ((!$route->getActionParams() && $action !== F::$config->router['default_action'] && !$matchActionSuffix)
-                    || ($route->getActionParams() && ($matchActionSuffix || !$matchUriSuffix))) {
-                    return null;
-                }
             }
         }
 
