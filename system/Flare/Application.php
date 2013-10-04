@@ -634,8 +634,6 @@ class Application
         
         $moduleConf = Config::load($module, false);
         if ($moduleConf) {
-            $moduleConf->remove('modules')
-                ->remove('default_module');
             F::$config->merge($moduleConf);
         }
         unset($moduleConf);

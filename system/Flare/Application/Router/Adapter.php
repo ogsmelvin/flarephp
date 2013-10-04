@@ -3,8 +3,6 @@
 namespace Flare\Application\Router;
 
 use Flare\Application\Router\Route\Action;
-use Flare\Application\Http\Response;
-use Flare\Application\Http\Request;
 use Flare\Application\Router\Route;
 use Flare\Flare as F;
 

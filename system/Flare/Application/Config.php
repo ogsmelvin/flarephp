@@ -52,6 +52,14 @@ class Config
 
     /**
      * 
+     * @var array
+     */
+    private static $_notAllowedInModuleConfig = array(
+        'router.default_module', 'modules'
+    );
+
+    /**
+     * 
      * @var string
      */
     private $_sourceDir;
@@ -74,6 +82,9 @@ class Config
                 $config[$name] = (array) require $sourceDir.$name.'.'.self::EXTENSION_NAME;
                 $this->_defaultKeyNames[$name] = true;
             }
+        }
+        if (!isset($config['allow_override'])) {
+            $config['allow_override'] = false;
         }
         $this->_config = $config;
         $this->_sourceDir = $sourceDir;
@@ -150,20 +161,6 @@ class Config
     }
 
     /**
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function __set($key, $value)
-    {
-        if (isset($this->_config['allow_override']) && !$this->_config['allow_override']) {
-            return;
-        }
-        $this->_config[$key] = $value;
-    }
-
-    /**
      * 
      * @param string $key
      * @param mixed $value
@@ -177,13 +174,14 @@ class Config
         $key = explode('.', $key);
         $tmpConf = $this->_config;
         $conf = & $tmpConf;
+        $last = array_pop($key);
         foreach ($key as $k) {
             if (isset($conf[$k])) $conf = & $conf[$k];
             else show_response(500, "'{$key}' doesn't exists in config");
         }
-        $conf = $value;
+        $conf[$last] = $value;
         $this->_config = $tmpConf;
-        unset($tmpConf, $conf);
+        unset($tmpConf, $conf, $last);
         return $this;
     }
 
@@ -211,16 +209,6 @@ class Config
     /**
      * 
      * @param string $key
-     * @return void
-     */
-    public function __unset($key)
-    {
-        $this->remove($key);
-    }
-
-    /**
-     * 
-     * @param string $key
      * @return \Flare\Application\Config
      */
     public function remove($key)
@@ -230,13 +218,14 @@ class Config
                 $key = explode('.', $key);
                 $tmpConf = $this->_config;
                 $conf = & $tmpConf;
+                $last = array_pop($key);
                 foreach ($key as $k) {
                     if (isset($conf[$k])) $conf = & $conf[$k];
                     else show_error("'{$key}' doesn't exists in config");
                 }
-                $conf = null;
+                unset($conf[$last]);
                 $this->_config = $tmpConf;
-                unset($tmpConf, $conf);
+                unset($tmpConf, $conf, $last);
             } else {
                 unset($this->_config[$key]);
             }
@@ -275,7 +264,17 @@ class Config
         }
 
         foreach ($this->_config as $key => &$config) {
-            if (isset($new[$key])) $config = array_merge($config, $new[$key]);
+            if (isset($new[$key])) {
+                if (is_array($new[$key])) {
+                    foreach ($new[$key] as $k => $val) {
+                        if (!in_array($key.'.'.$k, self::$_notAllowedInModuleConfig)) {
+                            $config[$k] = $val;
+                        }
+                    }
+                } elseif (!in_array($key, self::$_notAllowedInModuleConfig)) {
+                    $config = $new[$key];
+                }
+            }
         }
         return $this;
     }
