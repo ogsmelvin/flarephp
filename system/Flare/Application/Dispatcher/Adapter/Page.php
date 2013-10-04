@@ -71,13 +71,13 @@ class Page extends Adapter
                         .'/js/'
                         .$this->_controller->request->getController()
                         .'.js';
-                $view->addScript($this->_controller->uri->baseUrl.bin2hex($jsfile).'.js', true);
+                $view->addScript($this->_controller->uri->base.bin2hex($jsfile).'.js', true);
                 if (is_array($scripts)) {
                     foreach ($scripts as $script) {
-                        $view->addScript($this->_controller->uri->baseUrl.$script, true);
+                        $view->addScript($this->_controller->uri->base.$script, true);
                     }
                 } else {
-                    $view->addScript($this->_controller->uri->baseUrl.$scripts, true);
+                    $view->addScript($this->_controller->uri->base.$scripts, true);
                 }
             }
         }

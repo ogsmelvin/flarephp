@@ -22,13 +22,13 @@ class Uri
      *
      * @var string
      */
-    private $baseUrl;
+    private $base;
 
     /**
      *
      * @var string
      */
-    private $indexPage;
+    private $index;
 
     /**
      *
@@ -58,19 +58,19 @@ class Uri
      * 
      * @var string
      */
-    private $currentUrl;
+    private $current;
 
     /**
      * 
      * @var string
      */
-    private $fullUrl;
+    private $full;
 
     /**
      * 
      * @var string
      */
-    private $moduleUrl;
+    private $module;
 
     /**
      * 
@@ -105,18 +105,18 @@ class Uri
             || !isset($_SERVER['SCRIPT_FILENAME'])) {
             show_error("REQUEST_URI / SCRIPT_NAME was not set");
         }
-        $this->indexPage = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_BASENAME);
-        $this->baseUrl = str_replace($this->indexPage, '', $_SERVER['SCRIPT_NAME']);
+        $this->index = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_BASENAME);
+        $this->base = str_replace($this->index, '', $_SERVER['SCRIPT_NAME']);
         $this->port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : self::DEFAULT_PORT;
-        if (strpos($_SERVER['REQUEST_URI'], $this->baseUrl) !== 0) {
-            $this->baseUrl = '/';
+        if (strpos($_SERVER['REQUEST_URI'], $this->base) !== 0) {
+            $this->base = '/';
         }
         $search = array('?'.$_SERVER['QUERY_STRING']);
-        if ($this->baseUrl !== '/') {
-            $search[] = $this->baseUrl;
+        if ($this->base !== '/') {
+            $search[] = $this->base;
         }
-        if ($this->indexPage) {
-            $search[] = $this->indexPage;
+        if ($this->index) {
+            $search[] = $this->index;
         }
         $this->_uri = '/'.ltrim(str_replace($search, '', $_SERVER['REQUEST_URI']), '/');
         $valid = UriSec::validate($this->_uri, $this->_segments);
@@ -133,16 +133,16 @@ class Uri
 
         $this->host = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
         if ($this->port == self::DEFAULT_PORT || $this->protocol == 'https://') {
-            $this->baseUrl = $this->protocol.$this->host.$this->baseUrl;
+            $this->base = $this->protocol.$this->host.$this->base;
         } else {
-            $this->baseUrl = $this->protocol.$this->host.':'.$this->port.$this->baseUrl;
+            $this->base = $this->protocol.$this->host.':'.$this->port.$this->base;
         }
 
-        $this->currentUrl = $this->baseUrl.ltrim($this->_uri, '/');
+        $this->current = $this->base.ltrim($this->_uri, '/');
         if (!empty($_SERVER['QUERY_STRING'])) {
-            $this->fullUrl = $this->currentUrl.'?'.$_SERVER['QUERY_STRING'];
+            $this->full = $this->current.'?'.$_SERVER['QUERY_STRING'];
         } else {
-            $this->fullUrl = $this->currentUrl;
+            $this->full = $this->current;
         }
 
         unset($uri, $search);
@@ -220,11 +220,11 @@ class Uri
      */
     public function setModuleUrl()
     {
-        $this->moduleUrl = F::$request->getModule();
-        if ($this->moduleUrl !== F::$config->router['default_module']) {
-            $this->moduleUrl .= '/';
+        $this->module = F::$request->getModule();
+        if ($this->module !== F::$config->router['default_module']) {
+            $this->module .= '/';
         }
-        $this->moduleUrl = $this->baseUrl.$this->moduleUrl;
+        $this->module = $this->base.$this->module;
         return $this;
     }
 

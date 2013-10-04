@@ -32,7 +32,7 @@ class Javascript extends Adapter
         $js->merge(FLARE_DIR.'Flare/Application/Window/lib.js');
         $js->write(
             "\nwindow.App = new flare.Application();\n".
-            "App.Config.baseUrl = \"".$this->_controller->uri->baseUrl."\";\n".
+            "App.Config.baseUrl = \"".$this->_controller->uri->base."\";\n".
             "App.Config.token = \"".$this->_controller->session->get(self::FLARE_JS_HEADER)."\";\n".
             "App.Config.header = \"".self::FLARE_JS_HEADER."\";\n".
             "App.Config.pageId = \"".bin2hex($this->_controller->request->getModule().'/'.$this->_controller->request->getController())."\";\n".

@@ -124,9 +124,9 @@ class Response extends AbstractResponse
             $seconds = (int) $seconds;
         }
         if (!$url) {
-            $url = F::$uri->currentUrl;
+            $url = F::$uri->current;
         } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
-            $url = F::$uri->baseUrl.ltrim($url, '/');
+            $url = F::$uri->base.ltrim($url, '/');
         }
         $this->setHeader('Refresh', '{$seconds};url="{$url}"');
     }

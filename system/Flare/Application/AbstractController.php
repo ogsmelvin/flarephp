@@ -196,7 +196,7 @@ abstract class AbstractController
             if (!empty($this->config->router['routes'])) {
                 foreach ($this->config->router['routes'] as $urlRoute => $route) {
                     if ($route === $strClass) {
-                        $urlRedirect = $this->uri->baseUrl.ltrim($urlRoute, '/');
+                        $urlRedirect = $this->uri->base.ltrim($urlRoute, '/');
                         break;
                     }
                 }
@@ -218,12 +218,12 @@ abstract class AbstractController
                 if (!empty($this->config->router['url_suffix']) && $urlRedirect && isset($strClass[2])) {
                     $urlRedirect .= '.'.$this->config->router['url_suffix'];
                 }
-                $urlRedirect = $this->uri->baseUrl.$urlRedirect;
+                $urlRedirect = $this->uri->base.$urlRedirect;
 
             }
 
         } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
-            $urlRedirect = $this->uri->baseUrl.trim($url, '/');
+            $urlRedirect = $this->uri->base.trim($url, '/');
             if (!empty($this->config->router['url_suffix'])) {
                 $urlRedirect .= '.'.$this->config->router['url_suffix'];
             }
