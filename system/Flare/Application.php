@@ -589,12 +589,12 @@ class Application
         if (isset($router['routes']) && F::$router->getAdapterName() == Router::DEFAULT_ADAPTER) {
             F::$router->getAdapter()->addRoutes($router['routes']);
         }
-        if (!empty($router['require_https'])) {
-            if (!is_array($router['require_https'])) {
+        if (!empty($router['force_https'])) {
+            if (!is_array($router['force_https'])) {
                 F::$router->secure();
             } else {
                 // TODO
-                // foreach ($router['require_https'] as $secured) {
+                // foreach ($router['force_https'] as $secured) {
                     
                 // }
             }

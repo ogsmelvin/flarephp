@@ -6,7 +6,7 @@ return array(
      * 
      * Force HTTPS
      */
-    'require_https' => false,
+    'force_https' => false,
 
     /**
      * Custom url using the following format
