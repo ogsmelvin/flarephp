@@ -184,63 +184,66 @@ abstract class AbstractController
 
     /**
      *
-     * @param string|array $url
+     * @param string $url
      * @param int $code
      * @return void
      */
-    public function redirect($url, $code = 302)
+    public function gotoUrl($url, $code = 302)
     {
-        if (!$url) return;
+        if (parse_url($url, PHP_URL_SCHEME) === null) {
+            $url = $this->uri->base.trim($url, '/');
+            if (!empty($this->config->router['url_suffix'])) {
+                $url .= '.'.$this->config->router['url_suffix'];
+            }
+        }
+
+        $this->response->setRedirect($url, $code)->send(false);
+    }
+
+    /**
+     * 
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param int $code
+     * @return void
+     */
+    public function gotoAction($action, $controller = null, $module = null, $code = 302)
+    {
+        if (!$action) return;
 
         $urlRedirect = '';
-        if (is_array($url)) {
+        $strClass = ($module ? $module : $this->request->getModule())
+            .'.'.($controller ? $controller : $this->request->getController())
+            .'.'.$action;
 
-            $strClass = '';
-            $count = count($url);
-            if ($count >= 3) {
-                $strClass = implode('.', array_slice($url, 0, 3));
-            } elseif ($count === 2) {
-                $strClass = $this->request->getModule().'.'.implode('.', $url);
-            } elseif ($count === 1) {
-                $strClass = $this->request->getModule()
-                    .'.'.$this->request->getController()
-                    .'.'.implode('.', $url);
-            }
-
-            if (!empty($this->config->router['routes'])) {
-                foreach ($this->config->router['routes'] as $urlRoute => $route) {
-                    if ($route === $strClass) {
-                        $urlRedirect = $this->uri->base.ltrim($urlRoute, '/');
-                        break;
-                    }
+        if (!empty($this->config->router['routes'])) {
+            foreach ($this->config->router['routes'] as $urlRoute => $route) {
+                if ($route === $strClass) {
+                    $urlRedirect = $this->uri->base.ltrim($urlRoute, '/');
+                    break;
                 }
             }
+        }
 
-            if (!$urlRedirect) {
+        if (!$urlRedirect) {
 
-                $strClass = explode('.', $strClass);
-                if ($strClass[0] === $this->config->router['default_module']) unset($strClass[0]);
+            $strClass = explode('.', $strClass);
+            if ($strClass[0] === $this->config->router['default_module']) unset($strClass[0]);
 
-                $isDefaultCtrl = ($strClass[1] === $this->config->router['default_controller']);
-                $isDefaultAction = ($strClass[2] === $this->config->router['default_action']);
+            $isDefaultCtrl = ($strClass[1] === $this->config->router['default_controller']);
+            $isDefaultAction = ($strClass[2] === $this->config->router['default_action']);
 
-                if (!$isDefaultCtrl && $isDefaultAction) unset($strClass[2]);
-                elseif ($isDefaultCtrl && $isDefaultAction) unset($strClass[1], $strClass[2]);
+            if (!$isDefaultCtrl && $isDefaultAction) unset($strClass[2]);
+            elseif ($isDefaultCtrl && $isDefaultAction) unset($strClass[1], $strClass[2]);
 
-                $urlRedirect = trim(implode('/', $strClass), '/');
+            $urlRedirect = trim(implode('/', $strClass), '/');
 
-                if (!empty($this->config->router['url_suffix']) && $urlRedirect && isset($strClass[2])) {
-                    $urlRedirect .= '.'.$this->config->router['url_suffix'];
-                }
-                $urlRedirect = $this->uri->base.$urlRedirect;
-
-            }
-
-        } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
-            $urlRedirect = $this->uri->base.trim($url, '/');
-            if (!empty($this->config->router['url_suffix'])) {
+            if (!empty($this->config->router['url_suffix']) && $urlRedirect && isset($strClass[2])) {
                 $urlRedirect .= '.'.$this->config->router['url_suffix'];
             }
+            $urlRedirect = $this->uri->base.$urlRedirect;
+
         }
 
         if ($urlRedirect) $this->response->setRedirect($urlRedirect, $code)->send(false);
@@ -251,7 +254,7 @@ abstract class AbstractController
      * @param array $params
      * @return void|boolean
      */
-    public function redirectBack(array $params = array())
+    public function back(array $params = array())
     {
         $url = $this->request->server('HTTP_REFERER', false);
         if ($url) {
