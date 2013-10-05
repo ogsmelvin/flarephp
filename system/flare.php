@@ -83,6 +83,26 @@ if (!function_exists('http_build_url')) {
     }
 }
 
+if (!function_exists('url')) {
+
+    /**
+     * 
+     * @author anthony
+     * @param string $url
+     * @return string
+     */
+    function url($url)
+    {
+        if (parse_url($url, PHP_URL_SCHEME) === null) {
+            $url = Flare\Flare::$uri->base.trim($url, '/');
+            if (!empty(Flare\Flare::$config->router['url_suffix'])) {
+                $url .= '.'.Flare\Flare::$config->router['url_suffix'];
+            }
+        }
+        return $url;
+    }
+}
+
 if (!function_exists('get_image_types')) {
 
     /**

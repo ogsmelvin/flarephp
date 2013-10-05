@@ -198,6 +198,42 @@ class Model extends ParentModel
 
     /**
      * 
+     * @param array $search
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    private static function _find(array $search)
+    {
+        $sql = self::query()->select()
+            ->from(static::$table);
+        foreach ($search as $col => $val) {
+            $sql->where($col, (string) $val);
+        }
+
+        return $sql;
+    }
+
+    /**
+     * 
+     * @param array $search
+     * @return \Flare\Db\Sql\Result\Collection
+     */
+    public static function findCollection(array $search)
+    {
+        return self::_find($search)->getCollection();
+    }
+
+    /**
+     * 
+     * @param array $search
+     * @return array
+     */
+    public static function findArray(array $search)
+    {
+        return self::_find($search)->get();
+    }
+
+    /**
+     * 
      * @param array $data
      * @return string
      */
