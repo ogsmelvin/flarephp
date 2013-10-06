@@ -277,6 +277,18 @@ abstract class AbstractController
 
     /**
      * 
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @return void
+     */
+    public function forward($action, $controller, $module)
+    {
+        
+    }
+
+    /**
+     * 
      * @param string $path
      * @param array|null $data
      * @return \Flare\View\Response\Html
