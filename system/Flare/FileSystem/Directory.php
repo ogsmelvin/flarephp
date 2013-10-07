@@ -5,14 +5,15 @@ namespace Flare\FileSystem;
 use \UnexpectedValueException;
 use Flare\Util\Collection;
 use Flare\FileSystem\File;
-use \FilesystemIterator;
+use \DirectoryIterator;
+use \RuntimeException;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Directory extends FilesystemIterator
+class Directory extends DirectoryIterator
 {
     /**
      * 
@@ -22,38 +23,44 @@ class Directory extends FilesystemIterator
 
     /**
      * 
+     * @var boolean
+     */
+    private $_skipDots = false;
+
+    /**
+     * 
      * @param string $path
      * @param int $flags
      */
     public function __construct($path)
     {
         try {
-            parent::__construct($path, self::KEY_AS_PATHNAME | self::CURRENT_AS_SELF);
+            parent::__construct($path);
         } catch (UnexpectedValueException $ex) {
+            $this->_isValid = false;
+        } catch (RuntimeException $ex) {
             $this->_isValid = false;
         }
     }
 
     /**
      * 
-     * @param boolean $switch
+     * @param boolean 
      * @return \Flare\FileSystem\Directory
      */
     public function skipDots($switch = true)
     {
-        if ($switch) $this->setFlags(self::SKIP_DOTS);
+        $this->_skipDots = $switch;
         return $this;
     }
 
     /**
      * 
-     * @param boolean $switch
-     * @return \Flare\FileSystem\Directory
+     * @return string
      */
-    public function followSymlinks($switch = true)
+    public function getPerms()
     {
-        if ($switch) $this->setFlags(self::FOLLOW_SYMLINKS);
-        return $this;
+        return substr(sprintf('%o', parent::getPerms()), -4);
     }
 
     /**
@@ -63,6 +70,20 @@ class Directory extends FilesystemIterator
     public function exists()
     {
         return $this->_isValid;
+    }
+
+    /**
+     * 
+     * @return \Flare\FileSystem\Directory
+     */
+    public function current()
+    {
+        $current = parent::current();
+        if ($this->_skipDots && $current->isDot()) {
+            $this->next();
+            return parent::current();
+        }
+        return $current;
     }
 
     /**
