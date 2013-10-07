@@ -1,6 +1,6 @@
 <?php
 
-namespace Flare\Util;
+namespace Flare\FileSystem;
 
 use \RuntimeException;
 use \SplFileObject;
