@@ -53,17 +53,23 @@ class Directory extends FileSystemIterator
      * 
      * @return \Flare\FileSystem\Directory|null
      */
-    public function getParentDirectory()
+    public function getParentDir()
     {
-        $dir = dirname($this->getPath());
-        if ($dir == $this->getPath()) {
-            return null;
-        }
-        $parent = new Directory($dir);
-        if (!$parent->exists()) {
-            return null;
-        }
+        if (!$this->hasParentDir()) return null;
+
+        $parent = new Directory(dirname($this->getPath()));
+        if (!$parent->exists()) return null;
+
         return $parent;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasParentDir()
+    {
+        return (dirname($this->getPath()) !== $this->getPath());
     }
 
     /**
