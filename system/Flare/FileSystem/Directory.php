@@ -3,17 +3,14 @@
 namespace Flare\FileSystem;
 
 use \UnexpectedValueException;
-use Flare\Util\Collection;
-use Flare\FileSystem\File;
-use \DirectoryIterator;
-use \RuntimeException;
+use \FileSystemIterator;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Directory extends DirectoryIterator
+class Directory extends FileSystemIterator
 {
     /**
      * 
@@ -23,35 +20,15 @@ class Directory extends DirectoryIterator
 
     /**
      * 
-     * @var boolean
-     */
-    private $_skipDots = false;
-
-    /**
-     * 
      * @param string $path
-     * @param int $flags
      */
     public function __construct($path)
     {
         try {
-            parent::__construct($path);
+            parent::__construct($path, self::CURRENT_AS_SELF);
         } catch (UnexpectedValueException $ex) {
             $this->_isValid = false;
-        } catch (RuntimeException $ex) {
-            $this->_isValid = false;
         }
-    }
-
-    /**
-     * 
-     * @param boolean 
-     * @return \Flare\FileSystem\Directory
-     */
-    public function skipDots($switch = true)
-    {
-        $this->_skipDots = $switch;
-        return $this;
     }
 
     /**
@@ -74,25 +51,15 @@ class Directory extends DirectoryIterator
 
     /**
      * 
-     * @return \Flare\FileSystem\Directory
-     */
-    public function current()
-    {
-        $current = parent::current();
-        if ($this->_skipDots && $current->isDot()) {
-            $this->next();
-            return parent::current();
-        }
-        return $current;
-    }
-
-    /**
-     * 
-     * @return \Flare\FileSystem\Directory
+     * @return \Flare\FileSystem\Directory|null
      */
     public function getParentDirectory()
     {
-        $parent = new Directory(dirname($this->getPath()));
+        $dir = dirname($this->getPath());
+        if ($dir == $this->getPath()) {
+            return null;
+        }
+        $parent = new Directory($dir);
         if (!$parent->exists()) {
             return null;
         }
@@ -143,35 +110,5 @@ class Directory extends DirectoryIterator
     public function getATime($dateFormat = 'Y-m-d H:i:s')
     {
         return date($dateFormat, parent::getATime());
-    }
-
-    /**
-     * 
-     * @return \Flare\Util\Collection
-     */
-    public function getFiles()
-    {
-        $collection = new Collection();
-        foreach ($this as $file) {
-            if ($file->isFile()) {
-                $collection[] = new File($file->getPathname());
-            }
-        }
-        return $collection;
-    }
-
-    /**
-     * 
-     * @return \Flare\Util\Collection
-     */
-    public function getDirectories()
-    {
-        $collection = new Collection();
-        foreach ($this as $file) {
-            if ($file->isDir()) {
-                $collection[] = new Directory($file->getPathname());
-            }
-        }
-        return $collection;
     }
 }
