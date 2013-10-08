@@ -3,6 +3,7 @@
 namespace Flare\FileSystem;
 
 use \UnexpectedValueException;
+use Flare\FileSystem\File;
 use \FileSystemIterator;
 
 /**
@@ -14,9 +15,15 @@ class Directory extends FileSystemIterator
 {
     /**
      * 
+     * @var string
+     */
+    private $_origPath;
+
+    /**
+     * 
      * @var boolean
      */
-    private $_isValid = true;
+    private $_isValid = false;
 
     /**
      * 
@@ -24,11 +31,14 @@ class Directory extends FileSystemIterator
      */
     public function __construct($path)
     {
-        try {
-            parent::__construct($path, self::CURRENT_AS_SELF);
-        } catch (UnexpectedValueException $ex) {
-            $this->_isValid = false;
+        $this->_origPath = realpath($path);
+        if ($this->_origPath) {
+            $this->_origPath = str_replace("\\", '/', $this->_origPath);
+            $this->_isValid = true;
         }
+        try {
+            parent::__construct($this->_origPath, self::UNIX_PATHS);
+        } catch (UnexpectedValueException $ex) {}
     }
 
     /**
@@ -42,39 +52,7 @@ class Directory extends FileSystemIterator
 
     /**
      * 
-     * @return boolean
-     */
-    public function exists()
-    {
-        return $this->_isValid;
-    }
-
-    /**
-     * 
-     * @return \Flare\FileSystem\Directory|null
-     */
-    public function getParentDir()
-    {
-        if (!$this->hasParentDir()) return null;
-
-        $parent = new Directory(dirname($this->getPath()));
-        if (!$parent->exists()) return null;
-
-        return $parent;
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    public function hasParentDir()
-    {
-        return (dirname($this->getPath()) !== $this->getPath());
-    }
-
-    /**
-     * 
-     * @param boolean $switch
+     * @param boolean $convert
      * @return string|int
      */
     public function getSize($convert = false)
@@ -116,5 +94,89 @@ class Directory extends FileSystemIterator
     public function getATime($dateFormat = 'Y-m-d H:i:s')
     {
         return date($dateFormat, parent::getATime());
+    }
+
+    /**
+     * 
+     * @return \Flare\FileSystem\File
+     */
+    public function current()
+    {
+        return new File(parent::current());
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function exists()
+    {
+        return $this->_isValid;
+    }
+
+    /**
+     * 
+     * @return \Flare\FileSystem\Directory|null
+     */
+    public function getParent()
+    {
+        if (!$this->hasParent()) {
+            return null;
+        }
+        $dir = new Directory($this->getPath());
+        if (!$dir->exists()) {
+            return null;
+        }
+
+        return $dir;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getPath()
+    {
+        $path = parent::getPath();
+        if ($this->_origPath === $path) {
+            return str_replace("\\", '/', dirname($this->_origPath));
+        }
+        return $path;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getPathname()
+    {
+        $pathname = parent::getPathname();
+        if ($this->_origPath !== $pathname) {
+            return $this->_origPath;
+        }
+        return $pathname;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getFilename()
+    {
+        $filename = parent::getFilename();
+        $origFilename = basename($this->_origPath);
+        if ($origFilename !== $filename) {
+            return $origFilename;
+        }
+        return $filename;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasParent()
+    {
+        return (dirname($this->getPath()) !== $this->getPath());
     }
 }
