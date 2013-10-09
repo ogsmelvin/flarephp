@@ -114,6 +114,15 @@ class Application
      * 
      * @return string
      */
+    public function getBaseDirectory()
+    {
+        return dirname($this->_appDirectory);
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function getControllersDirectory()
     {
         return $this->_controllersDirectory;
@@ -280,7 +289,11 @@ class Application
      */
     public function setAppDirectory($directory)
     {
-        $this->_appDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
+        $path = realpath($directory);
+        if (!$path) {
+            die("'{$directory}' is not readable");
+        }
+        $this->_appDirectory = rtrim(str_replace("\\", '/', $path), '/').'/';
         return $this;
     }
 

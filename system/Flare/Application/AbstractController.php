@@ -183,6 +183,15 @@ abstract class AbstractController
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function getBaseDirectory()
+    {
+        return F::getApp()->getBaseDirectory();
+    }
+
+    /**
      *
      * @param string $url
      * @param int $code
@@ -282,7 +291,7 @@ abstract class AbstractController
      * @param string $module
      * @return void
      */
-    public function forward($action, $controller, $module)
+    public function forward($action, $controller = null, $module = null)
     {
         
     }
