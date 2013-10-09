@@ -28,7 +28,7 @@ class Action extends ReflectionMethod
     {
         try {
             parent::__construct($controller, $actionMethodName);
-        } catch(ReflectionException $ex) {
+        } catch (ReflectionException $ex) {
             $this->_isValid = false;
         }
     }

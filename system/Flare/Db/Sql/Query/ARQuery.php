@@ -8,7 +8,6 @@ use Flare\View\Util\Pagination;
 use Flare\Object\Json;
 use \PDOException;
 use \PDOStatement;
-use \Exception;
 use \PDO;
 
 /**
@@ -655,7 +654,7 @@ class ARQuery
             }
             unset($newRow);
             $stmt = null;
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             show_error($ex->getMessage());
         }
         return $result;
@@ -711,7 +710,7 @@ class ARQuery
             }
             $stmt = null;
             unset($row);
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             show_error($ex->getMessage());
         }
         return $result;
@@ -756,7 +755,7 @@ class ARQuery
             $this->_conn->printError($stmt);
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt = null;
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             show_error($ex->getMessage());
         }
         return $result;
@@ -775,7 +774,7 @@ class ARQuery
             $this->_conn->printError($stmt);
             $result = $stmt->fetchAll(PDO::FETCH_OBJ);
             $stmt = null;
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             show_error($ex->getMessage());
         }
         return $result;
@@ -798,7 +797,7 @@ class ARQuery
             }
             $stmt = null;
             unset($row);
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             show_error($ex->getMessage());
         }
         return $result;
@@ -936,7 +935,7 @@ class ARQuery
                 $return = $stmt->rowCount();
             }
             $stmt = null;
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             show_error($ex->getMessage());
         }
         return $return;
@@ -963,7 +962,7 @@ class ARQuery
             $object = new Row($this, $table, $this->_conn->getPrimaryKey($table), $id);
             $object->setData($this->_set);
         } else {
-            throw new Exception("Cannot use pull for this query");
+            show_error("Cannot use pull for this query");
         }
         return $object;
     }

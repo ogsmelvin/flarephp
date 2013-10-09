@@ -197,9 +197,8 @@ class Query
             $this->_conn->printError($stmt);
             $return = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt = null;
-        } catch(PDOException $ex) {
-            debug($ex->getMessage());
-            exit;
+        } catch (PDOException $ex) {
+            show_error($ex->getMessage());
         }
         return $return;
     }
@@ -217,9 +216,8 @@ class Query
             $this->_conn->printError($stmt);
             $return = $stmt->rowCount();
             $stmt = null;
-        } catch(PDOException $ex) {
-            debug($ex->getMessage());
-            exit;
+        } catch (PDOException $ex) {
+            show_error($ex->getMessage());
         }
         return $return;
     }
@@ -237,9 +235,8 @@ class Query
             $this->_conn->printError($stmt);
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt = null;
-        } catch(PDOException $ex) {
-            debug($ex->getMessage());
-            exit;
+        } catch (PDOException $ex) {
+            show_error($ex->getMessage());
         }
         return $result;
     }
