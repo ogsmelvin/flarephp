@@ -3,8 +3,8 @@
 namespace Flare\Db\Sql\Query;
 
 use Flare\Db\Sql\Result\Collection;
-use Flare\Db\Sql\Result\Row;
 use Flare\View\Util\Pagination;
+use Flare\Db\Sql\Result\Row;
 use Flare\Object\Json;
 use \PDOException;
 use \PDOStatement;
@@ -132,6 +132,12 @@ class ARQuery
     private $_having = array();
 
     /**
+     * 
+     * @var array
+     */
+    private $_havingLike = array();
+
+    /**
      *
      * @param \PDO $conn
      */
@@ -209,6 +215,422 @@ class ARQuery
     }
 
     /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @param string $type
+     * @param string $cond
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    protected function _havingBetween($field, $first, $second, $type, $cond)
+    {
+        $type = PDO::PARAM_STR;
+        if (is_float($first) || is_int($first)) {
+            $type = PDO::PARAM_INT;
+        }
+        $first = $this->_conn->quote($first, $type);
+
+        $type = PDO::PARAM_STR;
+        if (is_float($second) || is_int($second)) {
+            $type = PDO::PARAM_INT;
+        }
+        $second = $this->_conn->quote($second, $type);
+
+        $this->_having[$cond][] = $this->_conn->quoteColumn($field)
+            ." {$type} {$first} AND {$second}";
+            
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function havingBetween($field, $first, $second)
+    {
+        return $this->_havingBetween($field, $first, $second, 'BETWEEN', 'AND');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function notHavingBetween($field, $first, $second)
+    {
+        return $this->_havingBetween($field, $first, $second, 'NOT BETWEEN', 'AND');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orHavingBetween($field, $first, $second)
+    {
+        return $this->_havingBetween($field, $first, $second, 'BETWEEN', 'OR');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orNotHavingBetween($field, $first, $second)
+    {
+        return $this->_havingBetween($field, $first, $second, 'NOT BETWEEN', 'OR');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @param string $type
+     * @param string $cond
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    protected function _between($field, $first, $second, $type, $cond)
+    {
+        $type = PDO::PARAM_STR;
+        if (is_float($first) || is_int($first)) {
+            $type = PDO::PARAM_INT;
+        }
+        $first = $this->_conn->quote($first, $type);
+
+        $type = PDO::PARAM_STR;
+        if (is_float($second) || is_int($second)) {
+            $type = PDO::PARAM_INT;
+        }
+        $second = $this->_conn->quote($second, $type);
+
+        $this->_where[$cond][] = $this->_conn->quoteColumn($field)
+            ." {$type} {$first} AND {$second}";
+
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function between($field, $first, $second)
+    {
+        return $this->_between($field, $first, $second, 'BETWEEN', 'AND');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function notBetween($field, $first, $second)
+    {
+        return $this->_between($field, $first, $second, 'NOT BETWEEN', 'AND');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orBetween($field, $first, $second)
+    {
+        return $this->_between($field, $first, $second, 'BETWEEN', 'OR');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $first
+     * @param string|int $second
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orNotBetween($field, $first, $second)
+    {
+        return $this->_between($field, $first, $second, 'NOT BETWEEN', 'OR');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string|int $value
+     * @param string $comparison
+     * @param string $condition
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    protected function _having($field, $value, $comparison, $condition)
+    {
+        $type = PDO::PARAM_STR;
+        if (is_float($value) || is_int($value)) {
+            $type = PDO::PARAM_INT;
+        }
+        if ($value instanceof Json || $value instanceof Xml) {
+            $value = (array) $value;
+        }
+        if (is_array($value)) {
+            foreach ($value as &$val) {
+                $type = PDO::PARAM_STR;
+                if (is_float($value) || is_int($val)) {
+                    $type = PDO::PARAM_INT;
+                }
+                $val = $this->_conn->quote($val, $type);
+            }
+            $this->_having[$condition][] = $this->_conn->quoteColumn($field)
+                ." {$comparison} "
+                ."(".implode(',', $value).")";
+        } else {
+            $this->_having[$condition][] = $this->_conn->quoteColumn($field)
+                ." {$comparison} "
+                .$this->_conn->quote($value, $type);
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string $value
+     * @param string $comparison
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function having($field, $value, $comparison = '=')
+    {
+        return $this->_having($field, $value, $comparison, 'AND');
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string $value
+     * @param string $comparison
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orHaving($field, $value, $comparison = '=')
+    {
+        return $this->_having($field, $value, $comparison, 'OR');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function havingIn($field, $value)
+    {
+        return $this->_having($field, $values, 'IN', 'AND');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orHavingIn($field, $value)
+    {
+        return $this->_having($field, $values, 'IN', 'OR');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function notHavingIn($field, $value)
+    {
+        return $this->_having($field, $values, 'NOT IN', 'AND');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orNotHavingIn($field, $value)
+    {
+        return $this->_having($field, $values, 'NOT IN', 'OR');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function havingLike($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'LIKE', 'AND');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orHavingLike($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'LIKE', 'OR');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function notHavingLike($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'NOT LIKE', 'AND');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orNotHavingLike($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'NOT LIKE', 'OR');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function havingLikeBefore($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'LIKE', 'AND', 'BEFORE');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orHavingLikeBefore($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'LIKE', 'OR', 'BEFORE');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function notHavingLikeBefore($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'NOT LIKE', 'AND', 'BEFORE');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orNotHavingLikeBefore($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'NOT LIKE', 'OR', 'BEFORE');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function havingLikeAfter($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'LIKE', 'AND', 'AFTER');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orHavingLikeAfter($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'LIKE', 'OR', 'AFTER');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function notHavingLikeAfter($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'NOT LIKE', 'AND', 'AFTER');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param array $values
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function orNotHavingLikeAfter($field, $value)
+    {
+        return $this->_havingLike($field, $value, 'NOT LIKE', 'OR', 'AFTER');
+    }
+
+    /**
+     *
+     * @param string $field
+     * @param string $value
+     * @param string $comparison
+     * @param string $condition
+     * @param string $place
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    protected function _havinglike($field, $value, $comparison, $condition, $place = null)
+    {
+        if ($place) {
+            if ($place === 'BEFORE') {
+                $value = '%'.$value;
+            } elseif ($place === 'AFTER') {
+                $value = $value.'%';
+            }
+        } else {
+            $value = '%'.$value.'%';
+        }
+        $this->_havingLike[$condition][] = $this->_conn->quoteColumn($field).
+            " {$comparison} ".
+            $this->_conn->quote($value);
+        return $this;
+    }
+
+    /**
      *
      * @param string $field
      * @param string|int|array $value
@@ -242,46 +664,6 @@ class ARQuery
                 .$this->_conn->quote($value, $type);
         }
         return $this;
-    }
-
-    /**
-     * 
-     * //TODO
-     * @param string $field
-     * @param string|int $value
-     * @param string $comparison
-     * @param string $condition
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    protected function _having($field, $value, $comparison, $condition)
-    {
-        $this->_having[] = array();
-        return $this;
-    }
-
-    /**
-     * 
-     * //TODO
-     * @param string $field
-     * @param string $value
-     * @param string $comparison
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public function having($field, $value, $comparison = '=')
-    {
-        return $this->_having($field, $value, $comparison, 'AND');
-    }
-
-    /**
-     * //TODO
-     * @param string $field
-     * @param string $value
-     * @param string $comparison
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public function orHaving($field, $value, $comparison = '=')
-    {
-        return $this->_having($field, $value, $comparison, 'OR');
     }
 
     /**
@@ -360,7 +742,9 @@ class ARQuery
     {
         $sql = '';
         $hasWhere = false;
+        $hasHaving = false;
         $hasAndOr = false;
+        $hasHavingAndOr = false;
         $quote = $this->_conn->getQuote();
         if ($this->_select) {
             $sql .= 'SELECT ';
@@ -424,7 +808,30 @@ class ARQuery
             $sql .= ' GROUP BY '.implode(', ', $this->_groups);
         }
         if ($this->_having) {
-
+            $sql .= ' HAVING ';
+            $hasHaving = true;
+            foreach ($this->_where as $condition => $conds) {
+                if (!$hasHavingAndOr) {
+                    $hasHavingAndOr = true;
+                } else {
+                    $sql .= $condition.' ';
+                }
+                $sql .= implode(" {$condition} ", $conds).' ';
+            }
+        }
+        if ($this->_havingLike) {
+            if (!$hasHaving) {
+                $sql .= ' HAVING ';
+                $hasHaving = true;
+            }
+            foreach ($this->_like as $condition => $conds) {
+                if (!$hasHavingAndOr) {
+                    $hasHavingAndOr = true;
+                } else {
+                    $sql .= $condition.' ';
+                }
+                $sql .= implode(" {$condition} ", $conds).' ';
+            }
         }
         if ($this->_orders) {
             $sql .= ' ORDER BY '.implode(', ', $this->_orders);
@@ -739,6 +1146,7 @@ class ARQuery
         $this->_having = array();
         $this->_page = false;
         $this->_checkTable = false;
+        $this->_havingLike = array();
         return $this;
     }
 
