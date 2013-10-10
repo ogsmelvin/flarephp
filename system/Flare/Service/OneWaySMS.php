@@ -36,7 +36,13 @@ class OneWaySMS extends Service
      * 
      * @var string
      */
-    private $_host = 'http://gateway.onewaysms.ph:10001/';
+    private $_host = 'gateway.onewaysms.ph';
+
+    /**
+     * 
+     * @var string
+     */
+    private $_port = '10001';
 
     /**
      * 
@@ -49,7 +55,10 @@ class OneWaySMS extends Service
             $this->_username = $config['username'];
             $this->_password = $config['password'];
             if (isset($config['host'])) {
-                $this->_host = rtrim($host, '/').'/';
+                $this->_host = rtrim($config['host'], '/');
+            }
+            if (isset($config['port'])) {
+                $this->_port = ltrim((string) $config['port'], ':');
             }
         } else {
             show_error('Username and password is required for OneWaySMS service');
@@ -66,7 +75,7 @@ class OneWaySMS extends Service
      */
     public function send($from, $to, $message, $languagetype = 1)
     {
-        $request = new Request($this->_host.'api.aspx');
+        $request = new Request($this->_getApiHost().'api.aspx');
         $request->setParam('senderid', $from)
             ->setParam('mobileno', $to)
             ->setParam('message', $message)
@@ -96,7 +105,7 @@ class OneWaySMS extends Service
      */
     public function getTransaction($mtid)
     {
-        $request = new Request($this->_host.'bulktrx.aspx');
+        $request = new Request($this->_getApiHost().'bulktrx.aspx');
         $request->setParam('mtid', $mtid);
 
         $errorCode = null;
@@ -120,7 +129,7 @@ class OneWaySMS extends Service
      */
     public function getCreditBalance()
     {
-        $request = new Request($this->_host.'bulkcredit.aspx');
+        $request = new Request($this->_getApiHost().'bulkcredit.aspx');
         $request->setParam('apiusername', $this->_username)
             ->setParam('apipassword', $this->_password);
 
@@ -143,6 +152,15 @@ class OneWaySMS extends Service
      * 
      * @return string
      */
+    private function _getApiHost()
+    {
+        return 'http://'.$this->_host.':'.$this->_port.'/';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function getUsername()
     {
         return $this->_username;
@@ -155,5 +173,14 @@ class OneWaySMS extends Service
     public function getHost()
     {
         return $this->_host;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getPort()
+    {
+        return $this->_port;
     }
 }
