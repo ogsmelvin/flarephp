@@ -86,7 +86,7 @@ class OneWaySMS extends Service
         $errorCode = null;
         $errorMessage = null;
         $response = Curl::execute($request);
-
+        debug($response->getBody());
         if ($response->hasError()) {
             $errorCode = $response->getErrorCode();
             $errorMessage = $response->getError();
@@ -97,6 +97,12 @@ class OneWaySMS extends Service
 
         return new Result($response->getBody(), Result::SEND_SMS, $errorCode, $errorMessage);
     }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getCertificatePath() {}
 
     /**
      * 
