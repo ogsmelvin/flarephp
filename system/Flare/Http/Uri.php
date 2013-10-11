@@ -220,11 +220,11 @@ class Uri
      */
     public function setModuleUrl()
     {
-        $this->module = F::$request->getModule();
-        if ($this->module !== F::$config->router['default_module']) {
-            $this->module .= '/';
+        if (F::$request->getModule() === F::$config->router['default_module']) {
+            $this->module = $this->base;
+        } else {
+            $this->module = $this->base.F::$request->getModule();
         }
-        $this->module = $this->base.$this->module;
         return $this;
     }
 

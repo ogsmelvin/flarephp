@@ -86,7 +86,7 @@ class OneWaySMS extends Service
         $errorCode = null;
         $errorMessage = null;
         $response = Curl::execute($request);
-        debug($response->getBody());
+        
         if ($response->hasError()) {
             $errorCode = $response->getErrorCode();
             $errorMessage = $response->getError();
