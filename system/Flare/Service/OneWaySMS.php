@@ -54,10 +54,10 @@ class OneWaySMS extends Service
         if (isset($config['username'], $config['password'])) {
             $this->_username = $config['username'];
             $this->_password = $config['password'];
-            if (isset($config['host'])) {
+            if (!empty($config['host'])) {
                 $this->_host = rtrim($config['host'], '/');
             }
-            if (isset($config['port'])) {
+            if (!empty($config['port'])) {
                 $this->_port = ltrim((string) $config['port'], ':');
             }
         } else {

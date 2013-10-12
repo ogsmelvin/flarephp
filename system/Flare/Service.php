@@ -34,7 +34,7 @@ abstract class Service
         $registry = Registry::get(Registry::SERVICES_NAMESPACE);
         if (!$registry->has(static::$service)) {
             if (!$params) {
-                $key = basename(static::$service);
+                $key = basename(str_replace("\\", '/', static::$service));
                 if (isset(F::$config->services[$key])) {
                     $params = F::$config->services[$key];
                 }

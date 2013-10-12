@@ -41,7 +41,7 @@ abstract class Cache
         $registry = Registry::get(Registry::CACHE_ENGINES_NAMESPACE);
         if (!$registry->has(static::$engine)) {
             if (!$params) {
-                $key = basename(static::$engine);
+                $key = basename(str_replace("\\", '/', static::$engine));
                 if (isset(F::$config->cache_engines[$key])) {
                     $params = F::$config->cache_engines[$key];
                 }
