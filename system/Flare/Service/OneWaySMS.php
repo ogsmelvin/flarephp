@@ -100,12 +100,6 @@ class OneWaySMS extends Service
 
     /**
      * 
-     * @return string
-     */
-    public function getCertificatePath() {}
-
-    /**
-     * 
      * @param string $mtid
      * @return \Flare\Service\OneWaySMS\Result
      */

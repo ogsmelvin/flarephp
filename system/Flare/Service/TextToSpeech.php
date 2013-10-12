@@ -27,6 +27,16 @@ class TextToSpeech extends Service
 
     /**
      * 
+     * @param array $params
+     * @return void
+     */
+    protected function init(array $params)
+    {
+
+    }
+
+    /**
+     * 
      * @param string $text
      * @return string
      */

@@ -3,6 +3,7 @@
 namespace Flare\Service;
 
 use Flare\Service\GitHub\User;
+use Flare\Service\Certificate;
 use Flare\Service;
 
 /**
@@ -10,7 +11,7 @@ use Flare\Service;
  * @author anthony
  * 
  */
-class GitHub extends Service
+class GitHub extends Service implements Certificate
 {
     /**
      * 

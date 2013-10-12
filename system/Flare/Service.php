@@ -50,10 +50,4 @@ abstract class Service
      * @return void
      */
     abstract protected function init(array $params);
-
-    /**
-     * 
-     * @return string
-     */
-    abstract public function getCertificatePath();
 }
