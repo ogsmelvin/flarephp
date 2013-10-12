@@ -319,22 +319,22 @@ abstract class AbstractController
 
     /**
      * 
-     * @param \Flare\Object\Json|string|array $json
+     * @param \Flare\Object\Json|\Flare\Util\Collection\|\ArrayObject|string|arraystring|array $json
      * @return \Flare\View\Response\Json
      */
     public function viewAsJson($json)
     {
-        return new Json($json);
+        return !($json instanceof Json) ? new Json($json) : $json;
     }
 
     /**
      * 
-     * @param \Flare\Object\Xml|string|array $xml
+     * @param \Flare\Object\Xml|\Flare\Util\Collection\|\ArrayObject|string|array $xml
      * @return \Flare\View\Response\Xml
      */
     public function viewAsXml($xml)
     {
-        return new Xml($xml);
+        return !($xml instanceof Xml) ? new Xml($xml) : $xml;
     }
 
     /**

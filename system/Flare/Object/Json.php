@@ -2,6 +2,8 @@
 
 namespace Flare\Object;
 
+use Flare\Util\Collection;
+use \ArrayObject;
 use Flare\Object;
 use \ArrayAccess;
 use \Iterator;
@@ -31,6 +33,10 @@ class Json extends Object implements ArrayAccess, Iterator
             if (!is_array($data)) {
                 show_error("Invalid JSON Format");
             }
+        } elseif ($data instanceof Collection) {
+            $data = $data->toArray();
+        } elseif ($data instanceof ArrayObject) {
+            $data = $data->getArrayCopy();
         }
 
         $this->_data = $data;

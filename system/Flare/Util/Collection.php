@@ -94,6 +94,15 @@ class Collection extends ArrayObject
 
     /**
      * 
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->getArrayCopy();
+    }
+
+    /**
+     * 
      * @return \Flare\Object\Json
      */
     public function toJSONObject()
