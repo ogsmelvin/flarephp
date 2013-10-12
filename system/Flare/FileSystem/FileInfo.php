@@ -13,6 +13,43 @@ abstract class FileInfo extends SplFileInfo
 {
     /**
      * 
+     * @var string
+     */
+    private $_origPath;
+
+    /**
+     * 
+     * @var boolean
+     */
+    private $_isValid = false;
+
+    /**
+     * 
+     * @param string $path
+     */
+    public function __construct($path)
+    {
+        $this->_origPath = realpath($path);
+        if ($this->_origPath) {
+            $this->_origPath = str_replace("\\", '/', $this->_origPath);
+            $this->_isValid = true;
+        } else {
+            $this->_origPath = $path;
+        }
+        parent::__construct($this->_origPath);
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function exists()
+    {
+        return $this->_isValid;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function getPerms()

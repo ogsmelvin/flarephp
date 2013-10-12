@@ -3,6 +3,7 @@
 namespace Flare\FileSystem;
 
 use \UnexpectedValueException;
+use Flare\FileSystem\Action;
 use Flare\FileSystem\File;
 use \FilesystemIterator;
 
@@ -11,7 +12,7 @@ use \FilesystemIterator;
  * @author anthony
  * 
  */
-class Directory extends FilesystemIterator
+class Directory extends FilesystemIterator implements Action
 {
     /**
      * 
@@ -169,6 +170,34 @@ class Directory extends FilesystemIterator
             return $origFilename;
         }
         return $filename;
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @return boolean
+     */
+    public function move($path)
+    {
+        if (!$this->exists()) {
+            show_error("Directory '{$this->getPathname()}' doesn't exists");
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @return boolean
+     */
+    public function copy($path)
+    {
+        if (!$this->exists()) {
+            show_error("Directory '{$this->getPathname()}' doesn't exists");
+        }
+        
+        return false;
     }
 
     /**
