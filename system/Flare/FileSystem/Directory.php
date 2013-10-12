@@ -4,14 +4,14 @@ namespace Flare\FileSystem;
 
 use \UnexpectedValueException;
 use Flare\FileSystem\File;
-use \FileSystemIterator;
+use \FilesystemIterator;
 
 /**
  * 
  * @author anthony
  * 
  */
-class Directory extends FileSystemIterator
+class Directory extends FilesystemIterator
 {
     /**
      * 
@@ -169,6 +169,15 @@ class Directory extends FileSystemIterator
             return $origFilename;
         }
         return $filename;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isHidden()
+    {
+        return (strpos($this->getFilename(), '.') === 0);
     }
 
     /**

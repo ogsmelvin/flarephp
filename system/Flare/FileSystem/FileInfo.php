@@ -65,4 +65,13 @@ abstract class FileInfo extends SplFileInfo
     {
         return date($dateFormat, parent::getATime());
     }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isHidden()
+    {
+        return (strpos($this->getFilename(), '.') === 0);
+    }
 }
