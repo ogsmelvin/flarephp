@@ -102,7 +102,7 @@ abstract class Adapter
     {
         $uri = trim((string) F::$uri, '/');
         if (isset($this->_routes[$uri])) {
-            return $this->_routes[$uri];
+            return explode('.', trim($this->_routes[$uri]), 3);
         } else {
             foreach ($this->_routes as $key => $class) {
                 if (preg_match('#^'.$key.'$#', $uri)) {
