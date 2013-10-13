@@ -2,6 +2,7 @@
 
 namespace Flare\FileSystem;
 
+use Flare\Security\File as FileSec;
 use \UnexpectedValueException;
 use Flare\FileSystem\Action;
 use Flare\FileSystem\File;
@@ -34,7 +35,7 @@ class Directory extends FilesystemIterator implements Action
     {
         $this->_origPath = realpath($path);
         if ($this->_origPath) {
-            $this->_origPath = str_replace("\\", '/', $this->_origPath);
+            $this->_origPath = rtrim(str_replace("\\", '/', $this->_origPath), '/');
             $this->_isValid = true;
         }
         try {
@@ -175,29 +176,87 @@ class Directory extends FilesystemIterator implements Action
     /**
      * 
      * @param string $path
+     * @param string $filename
+     * @param boolean $autoAppendExtension
      * @return boolean
      */
-    public function move($path)
+    public function move($path, $filename = null, $autoAppendExtension = true)
     {
         if (!$this->exists()) {
             show_error("Directory '{$this->getPathname()}' doesn't exists");
         }
 
+        if (!is_dir($path)) return false;
+
+        $path = rtrim(str_replace("\\", '/', $path), '/').'/';
+        if (!$filename) {
+            $filename = $this->getFilename();
+        }
+        $path .= FileSec::sanitizeFilename($filename);
+        if ($autoAppendExtension && $this->getExtension()) {
+            $path .= '.'.$this->getExtension();
+        }        
+
+        if (rename($this->getPathname(), $path)) {
+            $path = realpath($path);
+            if ($path) {
+                parent::__construct(rtrim(str_replace("\\", '/', $path), '/'));
+                return true;
+            }
+        }
         return false;
     }
 
     /**
      * 
      * @param string $path
+     * @param string $filename
+     * @param boolean $autoAppendExtension
      * @return boolean
      */
-    public function copy($path)
+    public function copy($path, $filename = null, $autoAppendExtension = true)
     {
         if (!$this->exists()) {
             show_error("Directory '{$this->getPathname()}' doesn't exists");
         }
-        
-        return false;
+
+        if (!is_dir($path)) return false;
+
+        $path = rtrim(str_replace("\\", '/', $path), '/').'/';
+        if (!$filename) {
+            $filename = $this->getFilename();
+        }
+        $path .= FileSec::sanitizeFilename($filename);
+
+        return $this->_copy($this->getPathname(), $path);
+    }
+
+    /**
+     * 
+     * @param string $src
+     * @param string $dst
+     * @return void
+     */
+    private function _copy($src, $dst)
+    {
+        $dir = opendir($src);
+        @mkdir($dst);
+        if (!file_exists($dst)) {
+            return false;
+        }
+        while (false !== ($file = readdir($dir))) {
+            if (($file != '.') && ($file != '..')) {
+                if (is_dir($src.'/'.$file)) {
+                    $this->_copy($src.'/'.$file, $dst.'/'.$file);
+                } else {
+                    if (!copy($src.'/'.$file, $dst.'/'.$file)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        closedir($dir);
+        return true;
     }
 
     /**

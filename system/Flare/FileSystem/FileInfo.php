@@ -15,7 +15,7 @@ abstract class FileInfo extends SplFileInfo
      * 
      * @var string
      */
-    private $_origPath;
+    protected $_origPath;
 
     /**
      * 
@@ -91,6 +91,20 @@ abstract class FileInfo extends SplFileInfo
     public function getCTime($dateFormat = 'Y-m-d H:i:s')
     {
         return date($dateFormat, parent::getCTime());
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getExtension()
+    {
+        $ext = parent::getExtension();
+        $extOrig = pathinfo($this->_origPath, PATHINFO_EXTENSION);
+        if ($ext !== $extOrig) {
+            return $extOrig;
+        }
+        return $ext;
     }
 
     /**

@@ -10,6 +10,14 @@ return array(
     /**
      * Flare\Service\Facebook settings
      */
+    // 'Instagram'  => array(
+    //     'client_id' => '',
+    //     'client_secret' => ''
+    // )
+
+    /**
+     * Flare\Service\Facebook settings
+     */
     // 'Facebook'  => array(
     //     'app_id' => '',
     //     'app_secret' => '',
