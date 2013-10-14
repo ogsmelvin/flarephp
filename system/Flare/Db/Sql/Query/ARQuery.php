@@ -1154,7 +1154,7 @@ class ARQuery
      *
      * @return array
      */
-    public function getArray()
+    public function getAsArray()
     {
         $result = null;
         try {
@@ -1217,7 +1217,7 @@ class ARQuery
      */
     public function getJSON()
     {
-        return json_encode($this->getArray());
+        return json_encode($this->getAsArray());
     }
 
     /**
@@ -1226,7 +1226,7 @@ class ARQuery
      */
     public function getJSONObject()
     {
-        return new Json($this->getArray());
+        return new Json($this->getAsArray());
     }
 
     /**
@@ -1507,7 +1507,6 @@ class ARQuery
         if ($limit) {
             $this->limit($limit);
         }
-        // $this->offset(($this->_page - 1) * (int) $this->_limit);
         return $this;
     }
 

@@ -109,7 +109,7 @@ class Session
         if (!isset($_SESSION[$this->_name][$key]) || $key === self::SETTINGS_KEY) {
             return null;
         } elseif (isset($_SESSION[$this->_name][self::SETTINGS_KEY][$key])
-            && (time() - $_SESSION[$this->_name][self::SETTINGS_KEY][$key]['create_time'] 
+            && ((time() - $_SESSION[$this->_name][self::SETTINGS_KEY][$key]['create_time'])
                 > $_SESSION[$this->_name][self::SETTINGS_KEY][$key]['expiration']))
         {
             unset($_SESSION[$this->_name][$key], $_SESSION[$this->_name][self::SETTINGS_KEY][$key]);
