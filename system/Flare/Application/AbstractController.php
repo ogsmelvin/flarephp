@@ -293,7 +293,7 @@ abstract class AbstractController
      */
     public function forward($action, $controller = null, $module = null)
     {
-        
+        if (!$action) return;
     }
 
     /**
