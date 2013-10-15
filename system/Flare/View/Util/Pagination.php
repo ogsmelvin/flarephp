@@ -11,6 +11,18 @@ class Pagination
 {
     /**
      * 
+     * @var string
+     */
+    private $_id;
+
+    /**
+     * 
+     * @var boolean
+     */
+    private $_includeQueryString = false;
+
+    /**
+     * 
      * @var int
      */
     private $_page;
@@ -54,7 +66,7 @@ class Pagination
     /**
      * 
      * @param int $page
-     * @return \Flare\View\Pagination
+     * @return \Flare\View\Util\Pagination
      */
     public function setCurrentPage($page)
     {
@@ -65,7 +77,7 @@ class Pagination
     /**
      * 
      * @param int $limit
-     * @return \Flare\View\Pagination
+     * @return \Flare\View\Util\Pagination
      */
     public function setLimitPerPage($limit)
     {
@@ -85,7 +97,7 @@ class Pagination
     /**
      * 
      * @param int $count
-     * @return \Flare\View\Pagination
+     * @return \Flare\View\Util\Pagination
      */
     public function setTotalCount($count)
     {
@@ -114,7 +126,7 @@ class Pagination
     /**
      * 
      * @param int $offset
-     * @return \Flare\View\Pagination
+     * @return \Flare\View\Util\Pagination
      */
     public function setOffset($offset)
     {
@@ -134,7 +146,7 @@ class Pagination
     /**
      * 
      * @param string $url
-     * @return \Flare\View\Pagination
+     * @return \Flare\View\Util\Pagination
      */
     public function setBaseUrl($url)
     {
@@ -154,7 +166,7 @@ class Pagination
     /**
      * 
      * @param string $alignment
-     * @return \Flare\View\Pagination
+     * @return \Flare\View\Util\Pagination
      */
     public function setAlignment($alignment)
     {
@@ -165,7 +177,7 @@ class Pagination
     /**
      * 
      * @param string $size
-     * @return \Flare\View\Pagination
+     * @return \Flare\View\Util\Pagination
      */
     public function setSize($size)
     {
@@ -193,6 +205,37 @@ class Pagination
 
     /**
      * 
+     * @param boolean $switch
+     * @return \Flare\View\Util\Pagination
+     */
+    public function includeQueryString($switch = true)
+    {
+        $this->_includeQueryString = (boolean) $switch;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @return \Flare\View\Util\Pagination
+     */
+    public function setId($id)
+    {
+        $this->_id = (string) $id;
+        return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function createLinks()
@@ -209,14 +252,18 @@ class Pagination
         $end = (($this->_page + 4) < $num_pages) ? $this->_page + 4 : $num_pages;
         $url = parse_url($this->_url);
 
+        $vars = array();
         if (isset($url['query'])) {
             parse_str($url['query'], $vars);
-            unset($vars['page']);
-            $vars['page'] = '';
-            $url['query'] = http_build_query($vars);
-        } else {
-            $url['query'] = 'page=';
         }
+
+        if ($this->_includeQueryString && $_GET) {
+            $vars = array_merge($vars, $_GET);
+        }
+
+        unset($vars['page']);
+        $vars['page'] = '';
+        $url['query'] = http_build_query($vars);
         $url = http_build_url($url);
 
         $list = '<ul>';
@@ -249,7 +296,11 @@ class Pagination
         $wrapper = "<div class=\"pagination";
         $wrapper .= $this->_size ? ' pagination-'.$this->_size : '';
         $wrapper .= $this->_alignment ? ' pagination-'.$this->_alignment : '';
-        $wrapper .= "\">{$list}</div>";
+        $wrapper .= "\"";
+        if ($this->_id) {
+            $wrapper .= " id=\"{$this->_id}\"";
+        }
+        $wrapper .= ">{$list}</div>";
         return $wrapper;
     }
 

@@ -3,6 +3,7 @@
 namespace Flare\View\Response;
 
 use Flare\View\Response;
+use Flare\Security\Xss;
 
 /**
  * 
@@ -231,6 +232,32 @@ class Html extends Response
             include $path.'.'.self::EXTENSION_NAME;
         }
         return (string) ob_get_clean();
+    }
+
+    /**
+     * 
+     * @param string $url
+     * @return string
+     */
+    public function url($url)
+    {
+        if (parse_url($url, PHP_URL_SCHEME) === null) {
+            $url = $this->uri->base.trim($url, '/');
+            if (!empty($this->config->router['url_suffix'])) {
+                $url .= '.'.$this->config->router['url_suffix'];
+            }
+        }
+        return $url;
+    }
+
+    /**
+     * 
+     * @param string $data
+     * @return string
+     */
+    public function xss($data)
+    {
+        return Xss::filter($data);
     }
 
     /**

@@ -312,6 +312,7 @@ abstract class AbstractController
             $html->setData($data);
         }
         return $html->with('session', $this->session)
+            ->with('cookie', $this->cookie)
             ->with('uri', $this->uri)
             ->with('config', $this->config)
             ->with('request', $this->request);
