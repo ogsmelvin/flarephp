@@ -153,7 +153,7 @@ class Application
      * @param string $module
      * @return string
      */
-    public function getModuleViewsDirectory($module = null)
+    private function _getCurrentModule($module = null)
     {
         if (!$module) {
             if (!F::$router->getRoute()) {
@@ -161,12 +161,27 @@ class Application
             }
             $module = F::$router->getRoute()->getModule();
         }
+        return $module;
+    }
 
-        $path = $this->_modulesDirectory
-            .$module
-            .'/'
-            .$this->_viewsDirectory;
-        return $path;
+    /**
+     * 
+     * @param string $module
+     * @return string
+     */
+    public function getModuleViewsDirectory($module = null)
+    {
+        return $this->_modulesDirectory.$this->_getCurrentModule().'/'.$this->_viewsDirectory;
+    }
+
+    /**
+     * 
+     * @param string $module
+     * @return string
+     */
+    public function getModuleHelpersDirectory($module = null)
+    {
+        return $this->_modulesDirectory.$this->_getCurrentModule().'/'.$this->_helpersDirectory;
     }
 
     /**
@@ -176,18 +191,7 @@ class Application
      */
     public function getModuleLayoutsDirectory($module = null)
     {
-        if (!$module) {
-            if (!F::$router->getRoute()) {
-                $this->error(500, 'No route found. Predispatch must be executed first.');
-            }
-            $module = F::$router->getRoute()->getModule();
-        }
-
-        $path = $this->_modulesDirectory
-            .$module
-            .'/'
-            .$this->_layoutsDirectory;
-        return $path;
+        return $this->_modulesDirectory.$this->_getCurrentModule().'/'.$this->_layoutsDirectory;
     }
 
     /**
@@ -255,7 +259,7 @@ class Application
      * @param string $directory
      * @return \Flare\Application
      */
-    public function setHelpersDirectory($directory)
+    public function setHelpersDirectoryName($directory)
     {
         $this->_helpersDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
@@ -265,7 +269,7 @@ class Application
      * 
      * @return string
      */
-    public function getHelpersDirectory()
+    public function getHelpersDirectoryName()
     {
         return $this->_helpersDirectory;
     }
@@ -501,21 +505,6 @@ class Application
     }
 
     /**
-     *
-     * @param string $helper
-     * @return void
-     */
-    public function helper($helper)
-    {
-        $helper = ucwords(strtolower($helper));
-        if (file_exists(FLARE_DIR.'Flare/Helper/'.$helper.'.php')) {
-            require_once FLARE_DIR.'Flare/Helper/'.$helper.'.php';
-        } elseif (file_exists($this->_helpersDirectory.$helper.'.php')) {
-            require_once $this->_helpersDirectory.$helper.'.php';
-        }
-    }
-
-    /**
      * 
      * @return \Flare\Application\AbstractController
      */
@@ -537,7 +526,7 @@ class Application
         }
         $this->setConfigDirectory($this->_appDirectory.'config')
             ->setModulesDirectory($this->_appDirectory.'modules')
-            ->setHelpersDirectory($this->_appDirectory.'helpers')
+            ->setHelpersDirectoryName('helpers')
             ->setLayoutsDirectoryName('layouts')
             ->setControllersDirectoryName('controllers')
             ->setModelsDirectoryName('models')

@@ -158,7 +158,12 @@ abstract class AbstractController
      */
     public function setHelper($helper)
     {
-        F::getApp()->helper($helper);
+        $helper = ucwords(strtolower($helper));
+        if (file_exists(FLARE_DIR.'Flare/Helper/'.$helper.'.php')) {
+            require_once FLARE_DIR.'Flare/Helper/'.$helper.'.php';
+        } elseif (file_exists(F::getApp()->getModuleHelpersDirectory().$helper.'.php')) {
+            require_once F::getApp()->getModuleHelpersDirectory().$helper.'.php';
+        }
         return $this;
     }
 
