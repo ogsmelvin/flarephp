@@ -104,7 +104,7 @@ class Application
      * @param string $directory
      * @return \Flare\Application
      */
-    public function setControllersDirectory($directory)
+    public function setControllersDirectoryName($directory)
     {
         $this->_controllersDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
@@ -123,7 +123,7 @@ class Application
      * 
      * @return string
      */
-    public function getControllersDirectory()
+    public function getControllersDirectoryName()
     {
         return $this->_controllersDirectory;
     }
@@ -133,7 +133,7 @@ class Application
      * @param string $directory
      * @return \Flare\Application
      */
-    public function setViewsDirectory($directory)
+    public function setViewsDirectoryName($directory)
     {
         $this->_viewsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
@@ -143,7 +143,7 @@ class Application
      * 
      * @return string
      */
-    public function getViewsDirectory()
+    public function getViewsDirectoryName()
     {
         return $this->_viewsDirectory;
     }
@@ -166,6 +166,27 @@ class Application
             .$module
             .'/'
             .$this->_viewsDirectory;
+        return $path;
+    }
+
+    /**
+     * 
+     * @param string $module
+     * @return string
+     */
+    public function getModuleLayoutsDirectory($module = null)
+    {
+        if (!$module) {
+            if (!F::$router->getRoute()) {
+                $this->error(500, 'No route found. Predispatch must be executed first.');
+            }
+            $module = F::$router->getRoute()->getModule();
+        }
+
+        $path = $this->_modulesDirectory
+            .$module
+            .'/'
+            .$this->_layoutsDirectory;
         return $path;
     }
 
@@ -214,7 +235,7 @@ class Application
      * @param string $directory
      * @return \Flare\Application
      */
-    public function setLayoutsDirectory($directory)
+    public function setLayoutsDirectoryName($directory)
     {
         $this->_layoutsDirectory = rtrim(str_replace("\\", '/', $directory), '/').'/';
         return $this;
@@ -224,7 +245,7 @@ class Application
      * 
      * @return string
      */
-    public function getLayoutsDirectory()
+    public function getLayoutsDirectoryName()
     {
         return $this->_layoutsDirectory;
     }
@@ -354,7 +375,7 @@ class Application
      * @param string $directory
      * @return \Flare\Application
      */
-    public function setModelsDirectory($directory)
+    public function setModelsDirectoryName($directory)
     {
         if (!$this->_modelsDirectory) {
             spl_autoload_register(array($this, 'autoloadModel'));
@@ -367,7 +388,7 @@ class Application
      * 
      * @return string
      */
-    public function getModelsDirectory()
+    public function getModelsDirectoryName()
     {
         return $this->_modelsDirectory;
     }
@@ -517,10 +538,10 @@ class Application
         $this->setConfigDirectory($this->_appDirectory.'config')
             ->setModulesDirectory($this->_appDirectory.'modules')
             ->setHelpersDirectory($this->_appDirectory.'helpers')
-            ->setLayoutsDirectory($this->_appDirectory.'layouts')
-            ->setControllersDirectory('controllers')
-            ->setModelsDirectory('models')
-            ->setViewsDirectory('views')
+            ->setLayoutsDirectoryName('layouts')
+            ->setControllersDirectoryName('controllers')
+            ->setModelsDirectoryName('models')
+            ->setViewsDirectoryName('views')
             ->setLibrariesDirectory($this->_appDirectory.'libraries')
             ->_init()
             ->setModules(F::$config->modules)

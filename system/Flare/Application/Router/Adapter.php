@@ -70,7 +70,7 @@ abstract class Adapter
         $path = F::getApp()->getModulesDirectory()
             .F::$request->getModule()
             .'/'
-            .F::getApp()->getControllersDirectory()
+            .F::getApp()->getControllersDirectoryName()
             .strtolower(urldecode(F::$request->getController()))
             .'.php';
         if (!file_exists($path)) {

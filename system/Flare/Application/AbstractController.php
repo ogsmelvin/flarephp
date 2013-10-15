@@ -306,7 +306,7 @@ abstract class AbstractController
     {
         $html = new Html($path);
         $html->setIncludePath(F::getApp()->getModuleViewsDirectory())
-            ->setLayoutPath(F::getApp()->getLayoutsDirectory());
+            ->setLayoutPath(F::getApp()->getModuleLayoutsDirectory());
         $data = $data !== null ? $data : (array) $this->data;
         if ($data) {
             $html->setData($data);

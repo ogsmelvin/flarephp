@@ -3,7 +3,6 @@
 namespace Flare\Application\Dispatcher\Adapter;
 
 use Flare\Application\Dispatcher\Adapter;
-// use Flare\Application\Window;
 use Flare\View\Response\Html;
 use Flare\View\Response;
 
@@ -53,33 +52,14 @@ class Page extends Adapter
             );
         }
 
-        if ($view instanceof Html) {
-
-            if (!$view->disabledLayout()) {
-                $module = $this->_controller->request->getModule();
-                if (!$view->hasLayout() 
-                    && isset($this->_controller->config->layout[$module]) 
-                    && $this->_controller->config->layout[$module]['auto'])
-                {
-                    $view->withLayout($this->_controller->config->layout[$module]['layout']);
-                }
+        if ($view instanceof Html && !$view->disabledLayout()) {
+            $module = $this->_controller->request->getModule();
+            if (!$view->hasLayout() 
+                && isset($this->_controller->config->layout[$module]) 
+                && $this->_controller->config->layout[$module]['auto'])
+            {
+                $view->withLayout($this->_controller->config->layout[$module]['layout']);
             }
-
-            // if ($this->_controller instanceof Window) {
-            //     $scripts = $this->_controller->assets();
-            //     $jsfile = $this->_controller->request->getModule()
-            //             .'/js/'
-            //             .$this->_controller->request->getController()
-            //             .'.js';
-            //     $view->addScript($this->_controller->uri->base.bin2hex($jsfile).'.js', true);
-            //     if (is_array($scripts)) {
-            //         foreach ($scripts as $script) {
-            //             $view->addScript($this->_controller->uri->base.$script, true);
-            //         }
-            //     } else {
-            //         $view->addScript($this->_controller->uri->base.$scripts, true);
-            //     }
-            // }
         }
         
         $this->_controller->response->setBody($view)->send();
