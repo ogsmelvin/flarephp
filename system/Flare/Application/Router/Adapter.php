@@ -102,12 +102,12 @@ abstract class Adapter
     {
         $uri = trim((string) F::$uri, '/');
         if (isset($this->_routes[$uri])) {
-            return explode('.', trim($this->_routes[$uri]), 3);
+            return explode('.', trim($this->_routes[$uri]), 4);
         } else {
             foreach ($this->_routes as $key => $class) {
                 if (preg_match('#^'.$key.'$#', $uri)) {
-                    $class = explode('.', trim($customRoute), 3);
-                    if (count($class) < 3) {
+                    $class = explode('.', trim($customRoute), 4);
+                    if (count($class) < 4) {
                         die("Invalid Custom Route class.");
                     }
                     return $class;
@@ -142,10 +142,14 @@ abstract class Adapter
     public function getErrorRoute($class)
     {
         $module = $controller = $action = null;
-        $class = explode('.', $class, 3);
+        $class = explode('.', $class, 4);
         $count = count($class);
         if ($count >= 3) {
             list($module, $controller, $action) = $class;
+            if (isset($class[3])) {
+                $controller = $controller.'/'.$action;
+                $action = $class[3] ? $class[3] : F::$config->router['default_action'];
+            }
         } elseif ($count === 2) {
             $module = F::$config->router['default_module'];
             $controller = $class[0];

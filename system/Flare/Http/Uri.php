@@ -80,6 +80,12 @@ class Uri
 
     /**
      * 
+     * @var string
+     */
+    private $submodule;
+
+    /**
+     * 
      * @var boolean
      */
     private $_valid = true;
@@ -223,7 +229,10 @@ class Uri
         if (F::$request->getModule() === F::$config->router['default_module']) {
             $this->module = $this->base;
         } else {
-            $this->module = $this->base.F::$request->getModule();
+            $this->module = $this->base.F::$request->getModule().'/';
+        }
+        if (F::$request->hasSubmodule()) {
+            $this->submodule = $this->module.F::$request->getSubmodule().'/';
         }
         return $this;
     }

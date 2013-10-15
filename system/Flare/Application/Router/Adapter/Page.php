@@ -70,6 +70,10 @@ class Page extends Adapter
             //   $params = explode(',', ltrim(rtrim($params, ')'), '('));
             // }
             list($module, $controller, $action) = $route;
+            if (isset($route[3])) {
+                $controller = $controller.'/'.$action;
+                $action = $route[3] ? $route[3] : F::$config->router['default_action'];
+            }
             $route = $this->_route($module, $controller, $action);
         }
 
@@ -111,6 +115,14 @@ class Page extends Adapter
         $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
         $action = $action === null ? F::$config->router['default_action'] : $action;
 
+        if (!$customRoute && is_dir(F::getApp()->getModulesDirectory().$module.'/controllers/'.$controller)) {
+            $controller = $controller.'/'.$action;
+            $action = F::$uri->getSegment(in_array(F::$uri->getSegment(1), $this->_routeModules) ? 4 : 3);
+            if (!$action) {
+                $action = F::$config->router['default_action'];
+            }
+        }
+
         $route = $this->_route($module, $controller, $this->_removeUriSuffix($action));
         if ($route) {
             if (!$customRoute) {
@@ -146,16 +158,18 @@ class Page extends Adapter
             $validUriForParams = false;
             return;
         } else {
-
             $segmentCount = F::$uri->getSegmentCount();
             $firstSegment = F::$uri->getSegment(1);
             if (!$firstSegment) $firstSegment = F::$config->router['default_module'];
             $params = $route->getAction()->getParameters();
             $indexStart = 3;
+            if (F::$request->hasSubmodule()) {
+                $indexStart = 4;
+            }
             if ($params) {
                 if ($firstSegment) {
                     if (in_array($firstSegment, $this->_routeModules)) {
-                        $indexStart = 4;
+                        $indexStart = 5;
                     }
                 } else {
                     $validUriForParams = false;
@@ -190,7 +204,7 @@ class Page extends Adapter
                 }
             } else {
                 if ($firstSegment && in_array($firstSegment, $this->_routeModules)) {
-                    $indexStart = 4;
+                    $indexStart = 5;
                 }
                 if ($segmentCount >= $indexStart) {
                     $validUriForParams = false;

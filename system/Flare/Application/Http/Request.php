@@ -24,10 +24,22 @@ class Request extends ParentRequest
     private $_controller;
 
     /**
+     * 
+     * @var string
+     */
+    private $_controllerClassName;
+
+    /**
      *
      * @var string
      */
     private $_action;
+
+    /**
+     * 
+     * @var string
+     */
+    private $_submodule;
 
     /**
      *
@@ -41,6 +53,24 @@ class Request extends ParentRequest
     }
 
     /**
+     * 
+     * @return boolean
+     */
+    public function hasSubmodule()
+    {
+        return $this->_submodule ? true : false;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getSubmodule()
+    {
+        return $this->_submodule;
+    }
+
+    /**
      *
      * @param string $controller
      * @return \Flare\Application\Http\Request
@@ -48,6 +78,15 @@ class Request extends ParentRequest
     public function setController($controller)
     {
         $this->_controller = strtolower(urldecode($controller));
+        $controller = explode('/', $this->_controller, 2);
+        if (count($controller) === 2) {
+            $this->_submodule = $controller[0];
+            $controller[0] = ucwords($controller[0]);
+            $controller[1] = str_replace(' ', '_', ucwords(str_replace('_', ' ', $controller[1]))).'_Controller';
+            $this->_controllerClassName = $controller[0]."\\".$controller[1];
+        } else {
+            $this->_controllerClassName = str_replace(' ', '_', ucwords(str_replace('_', ' ', $this->_controller))).'_Controller';
+        }
         return $this;
     }
 
@@ -57,7 +96,7 @@ class Request extends ParentRequest
      */
     public function getControllerClassName()
     {
-        return str_replace(' ', '_', ucwords(str_replace('_', ' ', $this->_controller))).'_Controller';
+        return $this->_controllerClassName;
     }
 
     /**
