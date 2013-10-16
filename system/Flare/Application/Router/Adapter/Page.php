@@ -116,12 +116,24 @@ class Page extends Adapter
         $action = $action === null ? F::$config->router['default_action'] : $action;
 
         if (!$customRoute && is_dir(F::getApp()->getModulesDirectory().$module.'/'.F::getApp()->getControllersDirectoryName().'/'.$controller)) {
-            $controller = $controller.'/'.$action;
+            $tmpController = null;
+            $segmentActionIndex = 3;
             $firstSegment = F::$uri->getSegment(1);
-            $action = F::$uri->getSegment($firstSegment && in_array($firstSegment, $this->_routeModules) ? 4 : 3);
+            if ($firstSegment && in_array($firstSegment, $this->_routeModules)) {
+                $tmpController = F::$uri->getSegment($segmentActionIndex);
+                $segmentActionIndex = 4;
+            } else {
+                $tmpController = F::$uri->getSegment($segmentActionIndex - 1);
+            }
+            if (!$tmpController) {
+                $tmpController = F::$config->router['default_controller'];
+            }
+            $controller = $controller.'/'.$tmpController;
+            $action = F::$uri->getSegment($segmentActionIndex);
             if (!$action) {
                 $action = F::$config->router['default_action'];
             }
+            unset($segmentActionIndex, $firstSegment, $tmpController);
         }
 
         $route = $this->_route($module, $controller, $this->_removeUriSuffix($action));

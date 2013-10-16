@@ -216,20 +216,21 @@ abstract class AbstractController
 
     /**
      * 
-     * @param string $action
+     * @param string|array $params
      * @param string $controller
      * @param string $module
      * @param int $code
      * @return void
      */
-    public function gotoAction($action, $controller = null, $module = null, $code = 302)
+    public function gotoAction($params, $controller = null, $module = null, $code = 302)
     {
-        if (!$action) return;
+        if (!$params) return;
+        elseif (!is_array($params)) $params = (array) $params;
 
         $urlRedirect = '';
         $strClass = ($module ? $module : $this->request->getModule())
-            .'.'.($controller ? $controller : $this->request->getController())
-            .'.'.$action;
+            .'.'.str_replace('/', '.', ($controller ? $controller : $this->request->getController()))
+            .'.'.array_shift($params);
 
         if (!empty($this->config->router['routes'])) {
             foreach ($this->config->router['routes'] as $urlRoute => $route) {
@@ -242,25 +243,34 @@ abstract class AbstractController
 
         if (!$urlRedirect) {
 
+            $controllerPos = 1;
+            $actionPos = 2;
             $strClass = explode('.', $strClass);
+            if (count($strClass) > 3) {
+                $controllerPos++;
+                $actionPos++;
+            }
             if ($strClass[0] === $this->config->router['default_module']) unset($strClass[0]);
 
-            $isDefaultCtrl = ($strClass[1] === $this->config->router['default_controller']);
-            $isDefaultAction = ($strClass[2] === $this->config->router['default_action']);
+            $isDefaultCtrl = ($strClass[$controllerPos] === $this->config->router['default_controller']);
+            $isDefaultAction = ($strClass[$actionPos] === $this->config->router['default_action']);
 
-            if (!$isDefaultCtrl && $isDefaultAction) unset($strClass[2]);
-            elseif ($isDefaultCtrl && $isDefaultAction) unset($strClass[1], $strClass[2]);
+            if (!$params) {
+                if (!$isDefaultCtrl && $isDefaultAction) unset($strClass[$actionPos]);
+                elseif ($isDefaultCtrl && $isDefaultAction) unset($strClass[$controllerPos], $strClass[$actionPos]);
+            } else {
+                $urlRedirect = '/'.implode('/', $params);
+            }
 
-            $urlRedirect = trim(implode('/', $strClass), '/');
-
-            if (!empty($this->config->router['url_suffix']) && $urlRedirect && isset($strClass[2])) {
+            $urlRedirect = trim(implode('/', $strClass).$urlRedirect, '/');
+            if (!empty($this->config->router['url_suffix']) && $urlRedirect && isset($strClass[$actionPos])) {
                 $urlRedirect .= '.'.$this->config->router['url_suffix'];
             }
             $urlRedirect = $this->uri->base.$urlRedirect;
 
         }
 
-        if ($urlRedirect) $this->response->setRedirect($urlRedirect, $code)->send(false);
+        $this->response->setRedirect($urlRedirect, $code)->send(false);
     }
 
     /**
