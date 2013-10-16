@@ -310,13 +310,33 @@ abstract class AbstractController
     {
         if (!$action) return false;
 
+        $path = F::getApp()->getModulesDirectory()
+            .$this->request->getModule().'/'
+            .F::getApp()->getControllersDirectoryName()
+            .($controller ? $controller : $this->request->getController()).'.php';
+        if (!file_exists($path)) {
+            return false;
+        }
+
         $class = ucwords($this->request->getModule())."\\Controllers\\";
         if (!$controller) {
             $class .= $this->request->getControllerClassName();
         } else {
-
+            $controller = explode('/', $controller, 2);
+            if (count($controller) === 2) {
+                $controller[0] = ucwords($controller[0]);
+                $controller[1] = str_replace(' ', '_', ucwords(str_replace('_', ' ', $controller[1]))).'_Controller';
+                $class .= $controller[0]."\\".$controller[1];
+            } else {
+                $class .= str_replace(' ', '_', ucwords(str_replace('_', ' ', $controller[0]))).'_Controller';
+            }
         }
-        debug($class);
+
+        require_once $path;
+        $class = new $class;
+        // $view = call_user_func_array(array($class, $this->request->getActionMethodName()), $params);
+
+        return true;
     }
 
     /**
