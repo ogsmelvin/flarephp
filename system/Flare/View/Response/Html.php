@@ -110,12 +110,16 @@ class Html extends Response
      */
     private function _compile()
     {
+        if (!file_exists($this->_includePath.$this->_contentPath)) {
+            show_response(500, "View '{$this->_contentPath}' doesn't exists");
+        }
+
         extract($this->_vars);
         ob_start();
-        if (!file_exists($this->_includePath.$this->_contentPath)) {
-            show_response(500, "'{$this->_includePath}{$this->_contentPath}' doesn't exists");
-        }
         if ($this->_layout) {
+            if (!file_exists($this->_layoutPath.$this->_layout)) {
+                show_response(500, "Layout '{$this->_layout}' doesn't exists");
+            }
             include $this->_includePath.$this->_contentPath;
             $this->content = (string) ob_get_clean();
             ob_start();

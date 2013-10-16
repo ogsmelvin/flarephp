@@ -149,7 +149,7 @@ class Facebook extends Service
         F::$session->set('fb_'.$this->_appId.'_uri', $data['redirect_uri']);
         $loginUrl = self::HOST.'dialog/oauth?'.http_build_query($data);
         if ($auto_redirect) {
-            F::$response->redirect($loginUrl);
+            F::$response->setRedirect($loginUrl)->send(false);
         }
         return $loginUrl;
     }

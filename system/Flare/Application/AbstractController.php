@@ -284,7 +284,7 @@ abstract class AbstractController
                 }
                 $url = http_build_url($parts);
             }
-            $this->redirect($url);
+            $this->gotoUrl($url);
         }
         return false;
     }
@@ -293,12 +293,12 @@ abstract class AbstractController
      * 
      * @param string $action
      * @param string $controller
-     * @param string $module
-     * @return void
+     * @param array $params
+     * @return boolean
      */
-    public function forward($action, $controller = null, $module = null)
+    public function forward($action, $controller = null, array $params = array())
     {
-        if (!$action) return;
+        if (!$action) return false;
     }
 
     /**
