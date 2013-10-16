@@ -115,7 +115,10 @@ class Page extends Adapter
         $controller = $controller === null ? F::$config->router['default_controller'] : $controller;
         $action = $action === null ? F::$config->router['default_action'] : $action;
 
-        if (!$customRoute && is_dir(F::getApp()->getModulesDirectory().$module.'/'.F::getApp()->getControllersDirectoryName().'/'.$controller)) {
+        if (!$customRoute 
+            && is_dir(F::getApp()->getModulesDirectory().$module
+                .'/'.F::getApp()->getControllersDirectoryName().$controller))
+        {
             $tmpController = null;
             $segmentActionIndex = 3;
             $firstSegment = F::$uri->getSegment(1);

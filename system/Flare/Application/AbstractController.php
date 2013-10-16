@@ -309,6 +309,14 @@ abstract class AbstractController
     public function forward($action, $controller = null, array $params = array())
     {
         if (!$action) return false;
+
+        $class = ucwords($this->request->getModule())."\\Controllers\\";
+        if (!$controller) {
+            $class .= $this->request->getControllerClassName();
+        } else {
+
+        }
+        debug($class);
     }
 
     /**
