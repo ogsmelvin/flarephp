@@ -2,8 +2,6 @@
 
 namespace Flare\Application;
 
-use Flare\Application\Http\Response;
-use Flare\Application\Http\Request;
 use Flare\View\Response\Html;
 use Flare\View\Response\Json;
 use Flare\View\Response\Xml;
@@ -242,32 +240,7 @@ abstract class AbstractController
         }
 
         if (!$urlRedirect) {
-
-            $controllerPos = 1;
-            $actionPos = 2;
-            $strClass = explode('.', $strClass);
-            if (count($strClass) > 3) {
-                $controllerPos++;
-                $actionPos++;
-            }
-            if ($strClass[0] === $this->config->router['default_module']) unset($strClass[0]);
-
-            $isDefaultCtrl = ($strClass[$controllerPos] === $this->config->router['default_controller']);
-            $isDefaultAction = ($strClass[$actionPos] === $this->config->router['default_action']);
-
-            if (!$params) {
-                if (!$isDefaultCtrl && $isDefaultAction) unset($strClass[$actionPos]);
-                elseif ($isDefaultCtrl && $isDefaultAction) unset($strClass[$controllerPos], $strClass[$actionPos]);
-            } else {
-                $urlRedirect = '/'.implode('/', $params);
-            }
-
-            $urlRedirect = trim(implode('/', $strClass).$urlRedirect, '/');
-            if (!empty($this->config->router['url_suffix']) && $urlRedirect && isset($strClass[$actionPos])) {
-                $urlRedirect .= '.'.$this->config->router['url_suffix'];
-            }
-            $urlRedirect = $this->uri->base.$urlRedirect;
-
+            $urlRedirect = $this->uri->create($strClass, $params);
         }
 
         $this->response->setRedirect($urlRedirect, $code)->send(false);
@@ -377,6 +350,86 @@ abstract class AbstractController
     public function viewAsXml($xml)
     {
         return !($xml instanceof Xml) ? new Xml($xml) : $xml;
+    }
+
+    /**
+     * 
+     * @param int|callback $response
+     * @return \Flare\Application\AbstractController
+     */
+    private function _requireMethod($response)
+    {
+        if (is_int($response)) {
+            show_response($response);
+        } elseif (is_callable($response)) {
+            $response($this);
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param int|callback $response
+     * @return \Flare\Application\AbstractController
+     */
+    public function requirePostMethod($response = 404)
+    {
+        if ($this->request->isPost()) {
+            return $this;
+        }
+        return $this->_requireMethod($response);
+    }
+
+    /**
+     * 
+     * @param int|callback $response
+     * @return \Flare\Application\AbstractController
+     */
+    public function requireGetMethod($response = 404)
+    {
+        if ($this->request->isGet()) {
+            return $this;
+        }
+        return $this->_requireMethod($response);
+    }
+
+    /**
+     * 
+     * @param int|callback $response
+     * @return \Flare\Application\AbstractController
+     */
+    public function requirePutMethod($response = 404)
+    {
+        if ($this->request->isPut()) {
+            return $this;
+        }
+        return $this->_requireMethod($response);
+    }
+
+    /**
+     * 
+     * @param int|callback $response
+     * @return \Flare\Application\AbstractController
+     */
+    public function requireDeleteMethod($response = 404)
+    {
+        if ($this->request->isDelete()) {
+            return $this;
+        }
+        return $this->_requireMethod($response);
+    }
+
+    /**
+     * 
+     * @param int|callback $response
+     * @return \Flare\Application\AbstractController
+     */
+    public function requireAjax($response = 404)
+    {
+        if ($this->request->isAjax()) {
+            return $this;
+        }
+        return $this->_requireMethod($response);
     }
 
     /**

@@ -10,7 +10,7 @@ use Flare\Registry;
  * @author anthony
  * 
  */
-class Model extends ParentModel
+abstract class Model extends ParentModel
 {
     /**
      * 

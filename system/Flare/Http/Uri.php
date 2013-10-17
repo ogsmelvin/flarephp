@@ -194,6 +194,15 @@ class Uri
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function getLastSegment()
+    {
+        return $this->getSegment($this->getSegmentCount());
+    }
+
+    /**
      *
      * @return string
      */
@@ -244,6 +253,41 @@ class Uri
     public function __toString()
     {
         return $this->getURIString();
+    }
+
+    /**
+     * 
+     * @param string $strClass
+     * @param array $params
+     * @return string
+     */
+    public function create($strClass, array $params = array())
+    {
+        $urlRedirect = '';
+        $controllerPos = 1;
+        $actionPos = 2;
+        $strClass = explode('.', $strClass);
+        if (count($strClass) > 3) {
+            $controllerPos++;
+            $actionPos++;
+        }
+        if ($strClass[0] === F::$config->router['default_module']) unset($strClass[0]);
+
+        $isDefaultCtrl = ($strClass[$controllerPos] === F::$config->router['default_controller']);
+        $isDefaultAction = ($strClass[$actionPos] === F::$config->router['default_action']);
+
+        if (!$params) {
+            if (!$isDefaultCtrl && $isDefaultAction) unset($strClass[$actionPos]);
+            elseif ($isDefaultCtrl && $isDefaultAction) unset($strClass[$controllerPos], $strClass[$actionPos]);
+        } else {
+            $urlRedirect = '/'.implode('/', $params);
+        }
+
+        $urlRedirect = trim(implode('/', $strClass).$urlRedirect, '/');
+        if (!empty(F::$config->router['url_suffix']) && $urlRedirect && isset($strClass[$actionPos])) {
+            $urlRedirect .= '.'.F::$config->router['url_suffix'];
+        }
+        return $this->base.$urlRedirect;
     }
 
     /**

@@ -18,12 +18,12 @@ class Json extends Object implements ArrayAccess, Iterator
     /**
      * 
      * @param string|array $data
-     * @param boolean $is_url
+     * @param boolean $isPathOrUrl
      */
-    public function __construct($data = array(), $is_url = false)
+    public function __construct($data = array(), $isPathOrUrl = false)
     {
         if (is_string($data)) {
-            if ($is_url) {
+            if ($isPathOrUrl) {
                 $data = @file_get_contents($data);
                 if ($data === false) {
                     show_error("Error encountered accessing JSON URL");

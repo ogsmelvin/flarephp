@@ -13,6 +13,12 @@ class Xml extends Response
 {
     /**
      * 
+     * @var string
+     */
+    protected $contentType = 'text/xml';
+
+    /**
+     * 
      * @return string
      */
     public function render()

@@ -243,15 +243,103 @@ class Html extends Response
      * @param string $url
      * @return string
      */
-    public function url($url)
+    public function url($url = null)
     {
-        if (parse_url($url, PHP_URL_SCHEME) === null) {
+        if (!$url) {
+            $url = rtrim($this->uri->base, '/');
+        } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
             $url = $this->uri->base.trim($url, '/');
-            if (!empty($this->config->router['url_suffix'])) {
-                $url .= '.'.$this->config->router['url_suffix'];
-            }
         }
         return $url;
+    }
+
+    /**
+     * 
+     * @param string $url
+     * @return string
+     */
+    public function moduleUrl($url = null)
+    {
+        if (!$url) {
+            $url = rtrim($this->uri->module, '/');
+        } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
+            $url = $this->uri->module.trim($url, '/');
+        }
+        return $url;
+    }
+
+    /**
+     * 
+     * @param string $url
+     * @return string
+     */
+    public function submoduleUrl($url = null)
+    {
+        if (!$url) {
+            $url = rtrim($this->uri->submodule, '/');
+        } elseif (parse_url($url, PHP_URL_SCHEME) === null) {
+            $url = $this->uri->submodule.trim($url, '/');
+        }
+        return $url;
+    }
+
+    /**
+     * 
+     * @param string $module
+     * @param string $controller
+     * @param string $action
+     * @return string
+     */
+    private function _createUrl($module, $controller, $action)
+    {
+        $params = array();
+        if ($action) {
+            $params = explode('/', trim($action, '/'));
+            $action = array_shift($params);
+        } else {
+            $action = $this->config->router['default_action'];
+        }
+
+        if (!$controller) {
+            $controller = $this->request->getController();
+        } else {
+            $controller = trim($controller, '/');
+            if (count(explode('/', $controller)) === 1) {
+                $controller = $this->request->getSubmodule().'/'.$controller;
+            }
+        }
+        
+        if (!$module) {
+            $module = $this->request->getModule();
+        } else {
+            $module = trim($module, '/');
+        }
+        
+        return $this->uri->create($module.'.'.str_replace('/', '.', $controller).'.'.$action, $params);
+    }
+
+    /**
+     * 
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @return string
+     */
+    public function actionUrl($action, $controller = null, $module = null)
+    {
+        return $this->_createUrl($module, $controller, $action);
+    }
+
+    /**
+     * 
+     * @param string $controller
+     * @param string $action
+     * @param string $module
+     * @return string
+     */
+    public function controllerUrl($controller, $action = null, $module = null)
+    {
+        return $this->_createUrl($module, $controller, $action);
     }
 
     /**
