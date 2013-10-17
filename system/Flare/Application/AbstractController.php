@@ -304,11 +304,12 @@ abstract class AbstractController
      * @param string $action
      * @param string $controller
      * @param array $params
-     * @return boolean
+     * @return \Flare\View\Response|string|boolean|null
      */
     public function forward($action, $controller = null, array $params = array())
     {
-        if (!$action) return false;
+        $action = $action.'_action';
+        if ($action == '_action' || $action == $this->request->getActionMethodName()) return false;
 
         $path = F::getApp()->getModulesDirectory()
             .$this->request->getModule().'/'
@@ -333,10 +334,7 @@ abstract class AbstractController
         }
 
         require_once $path;
-        $class = new $class;
-        // $view = call_user_func_array(array($class, $this->request->getActionMethodName()), $params);
-
-        return true;
+        return call_user_func_array(array(new $class, $action), $params);
     }
 
     /**
