@@ -54,7 +54,7 @@ abstract class Model extends ParentModel
     public function __construct(array $data = array())
     {
         if (!self::$adapter) {
-            self::$adapter = $this->getController()->getDatabase();
+            self::$adapter = self::getController()->getDatabase();
             if (!self::$adapter) {
                 show_error("Doesn't have database connection");
             }
@@ -78,7 +78,7 @@ abstract class Model extends ParentModel
             self::$metaCache[$this->class] = array();
             if (empty(self::$metaCache[$this->class]['primary_key'])) {
                 if (!empty($this->primaryKey)) {
-                self::$metaCache[$this->class]['primary_key'] = $this->primaryKey;
+                    self::$metaCache[$this->class]['primary_key'] = $this->primaryKey;
                 } else {
                     self::$metaCache[$this->class]['primary_key'] = self::$adapter->getPrimaryKey($this->table);
                 }
@@ -117,22 +117,13 @@ abstract class Model extends ParentModel
 
     /**
      * 
-     * @return \Flare\Db\Sql\Model
-     */
-    protected static function newInstance()
-    {
-        return new static;
-    }
-
-    /**
-     * 
      * @param int $limit
      * @param int $page
      * @return \Flare\Db\Sql\Result\Collection
      */
     public static function all($limit = null, $page = null)
     {
-        $sql = self::newInstance()->query();
+        $sql = with(new static)->query();
         if ($limit !== null) {
             $sql->limit($limit);
         }
@@ -144,14 +135,30 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @param string $val
+     * @param string $field
+     * @return \Flare\Db\Sql\Result\Collection
+     */
+    public static function find($val, $field = null)
+    {
+        if (!$field) {
+            $field = self::primaryKey();
+        }
+
+        $sql = with(new static)->query();
+        return $sql->where($field, $value)
+            ->getCollection();
+    }
+
+    /**
+     * 
      * @param string $key
      * @param mixed $value
      * @return \Flare\Db\Sql\Model
      */
     public function setAttribute($key, $value)
     {
-        $key = str_replace(' ', '_', $key);
-        $this->attributes[$key] = $value;
+        $this->attributes[str_replace(' ', '_', $key)] = $value;
         return $this;
     }
 
@@ -163,7 +170,7 @@ abstract class Model extends ParentModel
     public function getAttribute($key)
     {
         if (!isset($this->attributes[$key])) {
-            return null;
+            show_error("No attribute '{$key}'");
         }
         return $this->attributes[$key];
     }
@@ -182,11 +189,49 @@ abstract class Model extends ParentModel
     /**
      * 
      * @param string $key
+     * @return boolean
+     */
+    public function __isset($key)
+    {
+        return isset($this->attributes[$key]);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        unset($this->attributes[$key]);
+    }
+
+    /**
+     * 
+     * @param string $key
      * @return mixed
      */
     public function __get($key)
     {
         return $this->getAttribute($key);
+    }
+
+    /**
+     * 
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public function query()
+    {
+        return self::$adapter->from($this->table);
+    }
+
+    /**
+     * 
+     * @return \Flare\Db\Sql\Query\ARQuery
+     */
+    public static function createQuery()
+    {
+        return with(new static)->query();
     }
 
     /**
@@ -206,24 +251,6 @@ abstract class Model extends ParentModel
             show_error("'{$method}' doesn't exists");   
         }
         return call_user_func_array(array($arQuery, $method), $args);
-    }
-
-    /**
-     * 
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public function query()
-    {
-        return self::$adapter->select()->from($this->table);
-    }
-
-    /**
-     * 
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public static function createQuery()
-    {
-        return self::newInstance()->query();
     }
 
     /**

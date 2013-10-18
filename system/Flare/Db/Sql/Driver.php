@@ -2,6 +2,7 @@
 
 namespace Flare\Db\Sql;
 
+use \PDOStatement;
 use \PDO;
 
 /**
@@ -12,44 +13,18 @@ use \PDO;
 abstract class Driver extends PDO
 {
     /**
-     * 
-     * @param string $query
-     * @param array $bindings
-     * @return void
+     *
+     * @var string
      */
-    abstract public function sql($query = null, $bindings = null);
+    protected $_quote = '`';
 
     /**
      * 
      * @param string $table
-     * @param array $data
-     * @param boolean $check_columns
-     * @return \Flare\Db\Sql\Query\ARQuery
+     * @param boolean $get_from_cache
+     * @return array
      */
-    abstract public function insert($table, $data = array(), $check_columns = true);
-
-    /**
-     * 
-     * @param string|array $select
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    abstract public function select($select);
-
-    /**
-     * 
-     * @param string $table
-     * @param array $data
-     * @param boolean $check_columns
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    abstract public function update($table, $data = array(), $check_columns = true);
-
-    /**
-     * 
-     * @param string $table
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    abstract public function delete($table);
+    abstract public function getColumns($table, $get_from_cache = false);
 
     /**
      * 
@@ -57,4 +32,67 @@ abstract class Driver extends PDO
      * @return string
      */
     abstract public function getPrimaryKey($table);
+
+    /**
+     *
+     * @param string $name
+     * @param string $alias
+     * @return string
+     */
+    abstract public function quoteAs($name, $alias);
+
+    /**
+     *
+     * @param string $name
+     * @return string
+     */
+    abstract public function quoteIdentifier($name);
+
+    /**
+     *
+     * @param string $field
+     * @param string $alias
+     * @return string
+     */
+    abstract public function quoteColumn($field);
+
+    /**
+     *
+     * @return string
+     */
+    abstract public function getQuote();
+
+    /**
+     * 
+     * @param string $query
+     * @param array $bindings
+     * @return \Flare\Db\Sql\Query\Query
+     */
+    abstract public function sql($query = null, $bindings = null);
+
+    /**
+     * 
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    abstract protected function _execute($method, array $args);
+
+    /**
+     * 
+     * @param \PDOStatement $stmt
+     * @return void
+     */
+    abstract public function printError(PDOStatement $stmt);
+
+    /**
+     * 
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        return $this->_execute($method, $args);
+    }
 }

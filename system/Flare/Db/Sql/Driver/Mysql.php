@@ -16,12 +16,6 @@ use \PDO;
 class Mysql extends Driver
 {
     /**
-     *
-     * @var string
-     */
-    private $_quote = '`';
-
-    /**
      * 
      * @var array
      */
@@ -104,61 +98,6 @@ class Mysql extends Driver
     /**
      * 
      * @param string $table
-     * @param array $data
-     * @param boolean $check_columns
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public function insert($table, $data = array(), $check_columns = true)
-    {
-        $query = new ARQuery($this);
-        return $query->insert($table, $data, $check_columns);
-    }
-
-    /**
-     * 
-     * @param string|array $select
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public function select($select = '*')
-    {
-        $query = new ARQuery($this);
-        $args = func_get_args();
-        if (!isset($args[0])) {
-            $args[0] = $select;
-        }
-        return call_user_func_array(array($query, 'select'), $args);
-    }
-
-    /**
-     * 
-     * @param string $table
-     * @param array $data
-     * @param boolean $check_columns
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public function update($table, $data = array(), $check_columns = true)
-    {
-        $query = new ARQuery($this);
-        $query->update($table, $data, $check_columns);
-        return $query;
-    }
-
-    /**
-     * 
-     * @param string $table
-     * @return \Flare\Db\Sql\Query\ARQuery
-     */
-    public function delete($table)
-    {
-        $query = new ARQuery($this);
-        $query->delete()
-            ->from($table);
-        return $query;
-    }
-
-    /**
-     * 
-     * @param string $table
      * @return string
      */
     public function getPrimaryKey($table)
@@ -212,5 +151,20 @@ class Mysql extends Driver
             show_response(500, $error[2]);
         }
         return;
+    }
+
+    /**
+     * 
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    protected function _execute($method, array $args)
+    {
+        $arQuery = new ARQuery($this);
+        if (!method_exists($arQuery, $method)) {
+            show_error("'{$method}' doesn' exists");
+        }
+        return call_user_func_array(array($arQuery, $method), $args);
     }
 }

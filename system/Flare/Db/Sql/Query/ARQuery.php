@@ -148,18 +148,16 @@ class ARQuery
 
     /**
      *
-     * @param string|array $fields
+     * @param string|array $args
      * @return \Flare\Db\Sql\Query\ARQuery
      */
     public function select()
     {
         $args = func_get_args();
-        if (func_num_args() > 1) {
-            foreach (func_get_args() as $field) {
-                $fields[] = $field;
-            }
-            $this->_select = implode(',', $fields);
-        } elseif (is_array($args[0])) {
+        if (!func_num_args()) {
+            $args[0] = '*';
+        }
+        if (is_array($args[0])) {
             foreach ($args[0] as $alias => &$name) {
                 if (is_int($alias)) {
                     $alias = $name;
@@ -167,8 +165,11 @@ class ARQuery
                 $name = $this->_conn->quoteAs($name, $alias);
             }
             $this->_select = implode(',', $args[0]);
-        } elseif (is_string($args[0])) {
-            $this->_select = $args[0];
+        } else {
+            foreach ($args as $field) {
+                $fields[] = $field;
+            }
+            $this->_select = implode(',', $fields);
         }
         return $this;
     }
@@ -1043,6 +1044,7 @@ class ARQuery
     public function getCollection()
     {
         $result = null;
+        if (!$this->_select) $this->select();
         try {
             $pagination = null;
             if ($this->_page) {
@@ -1106,6 +1108,7 @@ class ARQuery
     public function getOne()
     {
         $result = null;
+        if (!$this->_select) $this->select();
         try {
             $this->limit(1);
             $stmt = $this->_conn->prepare($this->_compile());
@@ -1157,6 +1160,7 @@ class ARQuery
     public function getAsArray()
     {
         $result = null;
+        if (!$this->_select) $this->select();
         try {
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
@@ -1176,6 +1180,7 @@ class ARQuery
     public function get()
     {
         $result = null;
+        if (!$this->_select) $this->select();
         try {
             $stmt = $this->_conn->prepare($this->_compile());
             $stmt->execute();
@@ -1195,6 +1200,7 @@ class ARQuery
     public function getOneAsArray()
     {
         $result = null;
+        if (!$this->_select) $this->select();
         try {
             $this->limit(1);
             $stmt = $this->_conn->prepare($this->_compile());
@@ -1222,7 +1228,7 @@ class ARQuery
 
     /**
      *
-     * @return \Lazarus_Json
+     * @return \Flare\Object\Json
      */
     public function getJSONObject()
     {
@@ -1230,13 +1236,17 @@ class ARQuery
     }
 
     /**
-     *
+     * 
+     * @param string $table
      * @return \Flare\Db\Sql\Query\ARQuery
      */
-    public function delete()
+    public function delete($table = null)
     {
         $this->_delete = true;
-        return $this;
+        if ($table) {
+            $this->from($table);
+        }
+        return $this->_execute();
     }
 
     /**
@@ -1256,7 +1266,7 @@ class ARQuery
                 $this->set($key, $value);
             }
         }
-        return $this;
+        return $this->_execute();
     }
 
     /**
@@ -1294,7 +1304,7 @@ class ARQuery
                 $this->set($key, $value);
             }
         }
-        return $this->execute();
+        return $this->_execute();
     }
 
     /**
@@ -1314,7 +1324,7 @@ class ARQuery
      *
      * @return int
      */
-    public function execute()
+    protected function _execute()
     {
         $return = null;
         try {
@@ -1356,23 +1366,6 @@ class ARQuery
     public function lastInsertId()
     {
         return $this->_conn->lastInsertId();
-    }
-
-    /**
-     *
-     * @return \Flare\Db\Sql\Result\Row
-     */
-    public function pull()
-    {
-        $object = null;
-        if ($this->_insert && $id = $this->execute()) {
-            $table = trim(str_replace('INSERT INTO ', '', $this->_insert), $this->_conn->getQuote());
-            $object = new Row($this, $table, $this->_conn->getPrimaryKey($table), $id);
-            $object->setData($this->_set);
-        } else {
-            show_error("Cannot use pull for this query");
-        }
-        return $object;
     }
 
     /**

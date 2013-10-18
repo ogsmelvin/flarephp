@@ -190,6 +190,17 @@ class Row
 
     /**
      * 
+     * @param string $field
+     * @param string $format
+     * @return string
+     */
+    public function date($field, $format = 'Y-m-d H:i:s')
+    {
+        return date($format, strtotime($this->__get($field)));
+    }
+
+    /**
+     * 
      * @param string $key
      * @return boolean
      */
