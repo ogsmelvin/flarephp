@@ -111,8 +111,7 @@ class Mysql extends Driver
     public function insert($table, $data = array(), $check_columns = true)
     {
         $query = new ARQuery($this);
-        $query->insert($table, $data, $check_columns);
-        return $query;
+        return $query->insert($table, $data, $check_columns);
     }
 
     /**

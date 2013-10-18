@@ -1294,7 +1294,7 @@ class ARQuery
                 $this->set($key, $value);
             }
         }
-        return $this;
+        return $this->execute();
     }
 
     /**
