@@ -86,9 +86,7 @@ abstract class Model extends ParentModel
         }
         
         if ($data) {
-            foreach ($data as $key => $value) {
-                $this->setAttribute($key, $value);
-            }
+            $this->setAttributes($data);
         }
     }
 
@@ -173,6 +171,19 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @param array $attributes
+     * @return \Flare\Db\Sql\Model
+     */
+    public function setAttributes(array $attributes)
+    {
+        foreach ($attributes as $field => $attr) {
+            $this->setAttribute($field, $attr);
+        }
+        return $this;
+    }
+
+    /**
+     * 
      * @param string $key
      * @return mixed
      */
@@ -182,6 +193,15 @@ abstract class Model extends ParentModel
             show_error("No attribute '{$key}'");
         }
         return $this->attributes[$key];
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
     /**
