@@ -19,4 +19,10 @@ abstract class Model
     {
         return F::getApp()->getController();
     }
+
+    /**
+     * 
+     * @return string|int
+     */
+    abstract public function save();
 }

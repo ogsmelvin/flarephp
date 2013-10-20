@@ -107,6 +107,15 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @return string|int
+     */
+    public function save()
+    {
+        return self::$adapter->insert($this->table, $this->attributes);
+    }
+
+    /**
+     * 
      * @param array $data
      * @return \Flare\Db\Sql\Model
      */
