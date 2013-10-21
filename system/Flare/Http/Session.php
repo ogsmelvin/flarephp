@@ -231,7 +231,11 @@ class Session
         if (!$this->_started) {
             show_error("Session must be started first");
         }
-        return isset($_SESSION[$this->_name][$key]);
+
+        if ($this->__get($key) !== null) {
+            return true;
+        }
+        return false;
     }
 
     /**

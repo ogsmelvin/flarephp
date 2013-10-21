@@ -6,10 +6,10 @@ use Flare\View\Response\Html;
 use Flare\View\Response\Json;
 use Flare\View\Response\Xml;
 use Flare\Db\Sql\Connection;
+use Flare\Application\Data;
 use Flare\Util\Collection;
 use Flare\Flare as F;
 use Flare\Http\File;
-use \stdClass;
 
 /**
  * 
@@ -75,7 +75,7 @@ abstract class AbstractController
         $this->session = & F::$session;
         $this->request = & F::$request;
         $this->response = & F::$response;
-        $this->data = new stdClass();
+        $this->data = new Data();
     }
 
     /**
@@ -311,7 +311,7 @@ abstract class AbstractController
         $html = new Html($path);
         $html->setIncludePath(F::getApp()->getModuleViewsDirectory())
             ->setLayoutPath(F::getApp()->getModuleLayoutsDirectory());
-        $data = $data !== null ? $data : (array) $this->data;
+        $data = $data !== null ? $data : $this->data->toArray();
         if ($data) {
             $html->setData($data);
         }

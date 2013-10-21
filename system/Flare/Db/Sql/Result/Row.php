@@ -185,7 +185,7 @@ class Row
         if (isset($this->_data[$field])) {
             return Xss::filter($this->_data[$field]);
         }
-        show_error("'{$key}' doesn't exist in the row object");
+        show_error("'{$field}' doesn't exist in the row object");
     }
 
     /**

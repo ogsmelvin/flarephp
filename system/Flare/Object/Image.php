@@ -17,58 +17,62 @@ class Image extends Object
 {
     /**
      * 
+     * @var resource
+     */
+    private $_image;
+
+    /**
+     * 
+     * @var int
+     */
+    private $_type = IMAGETYPE_JPEG;
+
+    /**
+     * 
      * @var string
      */
-    private $_type;
+    private $_path;
 
     /**
      * 
      * @var array
      */
-    private $_fileinfo;
+    private $_fileinfo = array();
 
     /**
      * 
+     * @param resource $resource
+     * @param int $type
      * @param string $path
      */
-    public function __construct($path = null)
+    private function __construct($resource, $type, $path = null)
     {
-        $realpath = realpath($path);
-        $realpath = $realpath !== false ? rtrim(str_replace("\\", "/", $realpath), "/") : rtrim($path, "/");
-        $this->_fileinfo = pathinfo($path);
-        $image = getimagesize($path);
-        if (isset($image[2]) && in_array($image[2], get_image_types())) {
-            $this->_type = $image[2];
-            if ($this->_type == IMAGETYPE_JPEG) {
-                $this->_data = imagecreatefromjpeg($filename);
-            } elseif ($this->_type == IMAGETYPE_GIF) {
-                $this->_data = imagecreatefromgif ($filename);
-            } elseif ($this->_type == IMAGETYPE_PNG) {
-                $this->_data = imagecreatefrompng($filename);
-            } else {
-                show_error("Can't load image, not supported image type");
-            }
-        } else {
-            show_error("Not a valid image type");
+        $this->_type = $type;
+        $this->_image = $resource;
+        if ($path) {
+            $this->setPath($path);
         }
     }
 
     /**
      * 
-     * @return string
+     * @param string $path
+     * @return \Flare\Object\Image
      */
-    public function getType()
+    public function setPath($path)
     {
-        return $this->_type;
+        $this->_path = $path;
+        $this->_fileinfo = pathinfo($path);
+        return $this;
     }
 
     /**
      * 
      * @return string
      */
-    public function getFilename()
+    public function getPath()
     {
-        return $this->_fileinfo['filename'];
+        return $this->_path;
     }
 
     /**
@@ -77,7 +81,43 @@ class Image extends Object
      */
     public function getWidth()
     {
-        return imagesx($this->_data);
+        return imagesx($this->_image);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getBasename()
+    {
+        if (!isset($this->_fileinfo['basename'])) {
+            return null;
+        }
+        return $this->_fileinfo['basename'];
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getExtension()
+    {
+        if (!isset($this->_fileinfo['extension'])) {
+            return null;
+        }
+        return $this->_fileinfo['extension'];
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getFilename()
+    {
+        if (!isset($this->_fileinfo['filename'])) {
+            return null;
+        }
+        return $this->_fileinfo['filename'];
     }
 
     /**
@@ -86,43 +126,144 @@ class Image extends Object
      */
     public function getHeight()
     {
-        return imagesy($this->_data);
-    }
-
-    /**
-     * 
-     * @param int $height
-     * @return \Flare\Object\Image
-     */
-    public function resizeHeight($height)
-    {
-        $width = $this->getWidth() * ($height / $this->getHeight());
-        return $this->_resize($width, $height);
-    }
-
-    /**
-     * 
-     * @param int $width
-     * @return \Flare\Object\Image
-     */
-    public function resizeWidth($width)
-    {
-        $height = $this->getHeight() * ($width / $this->getWidth());
-        return $this->_resize($width, $height);
+        return imagesy($this->_image);
     }
 
     /**
      * 
      * @param int $width
      * @param int $height
+     * @param int $type
+     * @param string $path
      * @return \Flare\Object\Image
      */
-    private function _resize($width = null, $height = null)
+    public static function create($width, $height, $type = IMAGETYPE_JPEG, $path = null)
     {
-        $new_image = imagecreatetruecolor($width, $height);
-        imagecopyresampled($new_image, $this->_data, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
-        $this->_data = $new_image;
-        return $this;
+        return new self(imagecreatetruecolor($width, $height), $type, $path);
+    }
+
+    /**
+     * 
+     * @return resource
+     */
+    public function getResource()
+    {
+        return $this->_image;
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @return \Flare\Object\Image
+     */
+    public static function load($path)
+    {
+        $path = realpath($path);
+        if (!$path) {
+            show_error('Invalid path');
+        }
+
+        $type = null;
+        $resource = null;
+        $image = getimagesize($path);
+        if (isset($image[2]) && in_array($image[2], get_image_types())) {
+            $type = $image[2];
+            if ($type === IMAGETYPE_JPEG) {
+                $resource = imagecreatefromjpeg($path);
+            } elseif ($type === IMAGETYPE_GIF) {
+                $resource = imagecreatefromgif ($path);
+            } elseif ($type === IMAGETYPE_PNG) {
+                $resource = imagecreatefrompng($path);
+            } else {
+                show_error("Can't load image, not supported image type");
+            }
+        } else {
+            show_error("Not a valid image type");
+        }
+        return new self($resource, $type, $path);
+    }
+
+    /**
+     * 
+     * @param resource $resource
+     * @param int $image_type
+     * @return \Flare\Object\Image
+     */
+    public static function loadFromResource($resource, $image_type)
+    {
+        return new self($resource, $image_type);
+    }
+
+    /**
+     * 
+     * @param int $w
+     * @param int $h
+     * @param boolean $crop
+     * @return \Flare\Object\Image
+     */
+    private function _resize($w, $h, $crop = false)
+    {
+        $newwidth = 0;
+        $newheight = 0;
+        $width = $this->getWidth();
+        $height = $this->getHeight();
+        $r = $width / $height;
+        if ($crop) {
+            if ($width > $height) {
+                $width = ceil($width - ($width * abs($r - ($w / $h))));
+            } else {
+                $height = ceil($height - ($height * abs($r - ($w / $h))));
+            }
+            $newwidth = $w;
+            $newheight = $h;
+        } elseif (($w / $h) > $r) {
+            $newwidth = $h * $r;
+            $newheight = $h;
+        } else {
+            $newheight = $w / $r;
+            $newwidth = $w;
+        }
+        
+        $dst = imagecreatetruecolor($newwidth, $newheight);
+        if (!imagecopyresampled($dst, $this->_image, 0, 0, 0, 0, $newwidth, $newheight, $width, $height)) {
+            return null;
+        }
+        return new self($dst, $this->_type, $this->_path);
+    }
+
+    /**
+     * 
+     * @return string $path
+     * @param int $type
+     * @param int $compression
+     * @return boolean
+     */
+    public function save($path, $type = null, $compression = 75)
+    {
+        $success = false;
+        if (!$type) {
+            $type = $this->_type;
+        }
+        if ($type === IMAGETYPE_JPEG) {
+            $success = imagejpeg($this->_image, $path, $compression);
+        } elseif ($type === IMAGETYPE_GIF) {
+            $success = imagegif ($this->_image, $path);      
+        } elseif ($type === IMAGETYPE_PNG) {
+            $success = imagepng($this->_image, $path);
+        }
+        return $success;
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function overwrite()
+    {
+        if (!($path = $this->getPath()) {
+            return false;
+        }
+        return $this->save($path);
     }
 
     /**
@@ -138,59 +279,21 @@ class Image extends Object
 
     /**
      * 
-     * @param string $location
+     * @param int $height
      * @return \Flare\Object\Image
      */
-    public function copy($location)
+    public function resizeHeight($height)
     {
-        $this->saveAs($location);
+        return $this->_resize($this->getWidth(), $height);
     }
 
     /**
      * 
-     * @param int $compression
-     * @param int $permmissions
-     * @return boolean
+     * @param int $width
+     * @return \Flare\Object\Image
      */
-    public function save($compression = 75, $permissions = null)
+    public function resizeWidth($width)
     {
-        return $this->_save();
-    }
-
-    /**
-     * 
-     * @param string $filename
-     * @param int $compression
-     * @return boolean
-     */
-    public function saveAs($filename, $compression = 75)
-    {
-        return $this->_save();
-    }
-
-    /**
-     * 
-     * @param string $filename
-     * @param string $image_type
-     * @param int $compression
-     * @param int $permissions
-     * @return boolean
-     */
-    private function _save($filename = null, $image_type = IMAGETYPE_JPEG, $compression = 75, $permissions = null)
-    {
-        if ($image_type) {
-            $image_type = $this->_type;
-        }
-        if ($image_type == IMAGETYPE_JPEG) {
-            imagejpeg($this->_data, $filename, $compression);
-        } elseif ($image_type == IMAGETYPE_GIF) {
-            imagegif ($this->_data, $filename);      
-        } elseif ($image_type == IMAGETYPE_PNG) {
-            imagepng($this->_data, $filename);
-        }
-
-        if ($permissions != null) {
-            chmod($filename, $permissions);
-        }
+        return $this->_resize($width, $this->getHeight());
     }
 }

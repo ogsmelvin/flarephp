@@ -449,7 +449,7 @@ class File
      * 
      * @param string $destination
      * @param array $options
-     * @return boolean
+     * @return boolean|string
      */
     public function upload($destination, array $options = array())
     {
@@ -473,7 +473,7 @@ class File
         if ($destination) {
             if ($this->validate($options)) {
                 if (@move_uploaded_file($this->_tmpname, $destination.$options['filename'])) {
-                    $success = true;
+                    $success = $options['filename'];
                     $this->_uploaded = true;
                 } else {
                     $this->_setValidationError('Failed to upload');
