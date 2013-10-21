@@ -201,6 +201,19 @@ class Row
 
     /**
      * 
+     * @param string $field
+     * @param int $decimals
+     * @param string $dec_sep
+     * @param string $thousand_sep
+     * @return string
+     */
+    public function number($field, $decimals = 0, $dec_sep = '.', $thousand_sep = ',')
+    {
+        return number_format($this->__get($field), $decimals, $dec_sep, $thousand_sep);
+    }
+
+    /**
+     * 
      * @param string $key
      * @return boolean
      */

@@ -76,16 +76,6 @@ abstract class AbstractController
         $this->request = & F::$request;
         $this->response = & F::$response;
         $this->data = new stdClass();
-
-        if ($this->config->autoload['database']) {
-            $this->setDatabase($this->config->autoload['database']);
-        }
-
-        if (!empty($this->config->autoload['helpers'])) {
-            foreach ($this->config->autoload['helpers'] as $helper) {
-                $this->setHelper($helper);
-            }
-        }
     }
 
     /**
@@ -156,7 +146,7 @@ abstract class AbstractController
      */
     public function setHelper($helper)
     {
-        $helper = ucwords(strtolower($helper));
+        $helper = strtolower($helper);
         if (file_exists(FLARE_DIR.'Flare/Helper/'.$helper.'.php')) {
             require_once FLARE_DIR.'Flare/Helper/'.$helper.'.php';
         } elseif (file_exists(F::getApp()->getModuleHelpersDirectory().$helper.'.php')) {
