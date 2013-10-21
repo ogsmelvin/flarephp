@@ -25,4 +25,10 @@ abstract class Model
      * @return string|int
      */
     abstract public function save();
+
+    /**
+     * 
+     * @return int
+     */
+    abstract public function remove();
 }

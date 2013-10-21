@@ -260,7 +260,7 @@ class Image extends Object
      */
     public function overwrite()
     {
-        if (!($path = $this->getPath()) {
+        if (!($path = $this->getPath())) {
             return false;
         }
         return $this->save($path);

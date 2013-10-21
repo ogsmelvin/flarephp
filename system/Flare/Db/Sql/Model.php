@@ -114,6 +114,15 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @return int
+     */
+    public function remove()
+    {
+
+    }
+
+    /**
+     * 
      * @param array $data
      * @return \Flare\Db\Sql\Model
      */
