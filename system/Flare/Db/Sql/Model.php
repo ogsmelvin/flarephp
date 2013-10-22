@@ -3,6 +3,9 @@
 namespace Flare\Db\Sql;
 
 use Flare\Db\Model as ParentModel;
+use Flare\Db\Sql\Model\Relation;
+use Flare\Db\Sql\Model\Query;
+use Flare\Security\Xss;
 
 /**
  * 
@@ -25,9 +28,27 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @var string
+     */
+    private $namespace;
+
+    /**
+     * 
+     * @var array
+     */
+    protected $foreignKeys = array();
+
+    /**
+     * 
      * @var array
      */
     protected $attributes = array();
+
+    /**
+     * 
+     * @var array
+     */
+    protected $fields = array();
 
     /**
      * 
@@ -45,7 +66,7 @@ abstract class Model extends ParentModel
      * 
      * @var array
      */
-    private static $metaCache = array();
+    protected static $metaCache = array();
 
     /**
      * 
@@ -54,12 +75,21 @@ abstract class Model extends ParentModel
     public function __construct(array $data = array())
     {
         if (!self::$adapter) {
-            self::$adapter = self::getController()->getDatabase();
+            self::$adapter = self::_getController()->getDatabase();
             if (!self::$adapter) {
                 show_error("Doesn't have database connection");
             }
         }
-        $this->init($data);
+        $this->_init($data);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
     }
 
     /**
@@ -67,22 +97,27 @@ abstract class Model extends ParentModel
      * @param array $data
      * @return void
      */
-    private function init(array $data)
+    private function _init(array $data)
     {
         if (empty($this->table)) {
             show_error(get_class($this)." table must be defined");
         }
 
-        $this->class = get_class($this);
+        if (!$this->class) {
+            $this->class = get_class($this);
+            $namespace = explode("\\", $this->class);
+            array_pop($namespace);
+            $this->namespace = implode("\\", $namespace)."\\";
+        }
+       
         if (!isset(self::$metaCache[$this->class])) {
             self::$metaCache[$this->class] = array();
-            if (empty(self::$metaCache[$this->class]['primary_key'])) {
-                if (!empty($this->primaryKey)) {
-                    self::$metaCache[$this->class]['primary_key'] = $this->primaryKey;
-                } else {
-                    self::$metaCache[$this->class]['primary_key'] = self::$adapter->getPrimaryKey($this->table);
-                }
+            if (!empty($this->primaryKey)) {
+                self::$metaCache[$this->class]['primary_key'] = $this->primaryKey;
+            } else {
+                self::$metaCache[$this->class]['primary_key'] = self::$adapter->getPrimaryKey($this->table);
             }
+            self::$metaCache[$this->class]['foreign_keys'] = $this->foreignKeys;
         }
         
         if ($data) {
@@ -92,9 +127,77 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @param string $field
+     * @param string|array
+     */
+    public function xss($field)
+    {
+        return Xss::filter($this->getAttribute($field));
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @return int
+     */
+    public function int($field)
+    {
+        return intval($this->getAttribute($field));
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param boolean $xss
      * @return string
      */
-    public static function primaryKey()
+    public function string($field, $xss = true)
+    {
+        if ($xss) {
+            return $this->xss($field);
+        }
+        return (string) $this->getAttribute($field);
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string $format
+     * @return string
+     */
+    public function date($field, $format = 'Y-m-d H:i:s')
+    {
+        return date($format, strtotime($this->getAttribute($field)));
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param int $decimals
+     * @param string $dec_sep
+     * @param string $thousand_sep
+     * @return string
+     */
+    public function number($field, $decimals = 0, $dec_sep = '.', $thousand_sep = ',')
+    {
+        return number_format($this->getAttribute($field), $decimals, $dec_sep, $thousand_sep);
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @return float
+     */
+    public function float($field)
+    {
+        return floatval($this->getAttribute($field));
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected static function primaryKey()
     {
         $class = get_called_class();
         if (empty(self::$metaCache[$class]['primary_key'])) {
@@ -105,11 +208,24 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @return array
+     */
+    protected static function foreignKeys()
+    {
+        $class = get_called_class();
+        if (empty(self::$metaCache[$class]['foreign_keys'])) {
+            return null;
+        }
+        return self::$metaCache[$class]['foreign_keys'];
+    }
+
+    /**
+     * 
      * @return string|int
      */
     public function save()
     {
-        return self::$adapter->insert($this->table, $this->attributes);
+        return self::$adapter->insert($this->table, $this->attributes, false);
     }
 
     /**
@@ -118,7 +234,7 @@ abstract class Model extends ParentModel
      */
     public function remove()
     {
-
+        return self::$adapter->delete($this->table);
     }
 
     /**
@@ -168,13 +284,46 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @param string|int $val
+     * @param string $field
+     * @return \Flare\Db\Sql\Model
+     */
+    public function findOne($val, $field = null)
+    {
+        if (!$field) {
+            $field = self::primaryKey();
+        }
+
+        $sql = with(new static)->query();
+        return $sql->where($field, $value)
+            ->getOne();
+    }
+
+    /**
+     * 
+     * @param string $foreignClass
+     * @param string $key
+     * @return \Flare\Db\Sql\Result\Collection
+     */
+    public static function with($foreignClass, $key = null)
+    {
+        return new Relation(new static, $foreignClass);
+    }
+
+    /**
+     * 
      * @param string $key
      * @param mixed $value
      * @return \Flare\Db\Sql\Model
      */
     public function setAttribute($key, $value)
     {
-        $this->attributes[str_replace(' ', '_', $key)] = $value;
+        if (!$this->fields || in_array($key, $this->fields)) {
+            $this->attributes[$key] = $value;
+            if (!empty($this->foreignKeys[$key])) {
+
+            }
+        }
         return $this;
     }
 
@@ -199,6 +348,9 @@ abstract class Model extends ParentModel
     public function getAttribute($key)
     {
         if (!isset($this->attributes[$key])) {
+            if (isset($this->foreignKeys[$key])) {
+
+            }
             show_error("No attribute '{$key}'");
         }
         return $this->attributes[$key];
@@ -260,7 +412,7 @@ abstract class Model extends ParentModel
      */
     public function query()
     {
-        return self::$adapter->from($this->table);
+        return with(new Query(self::$adapter, $this->class))->from($this->table);
     }
 
     /**
@@ -280,7 +432,9 @@ abstract class Model extends ParentModel
      */
     public function __call($method, $args)
     {
-        if (method_exists($this, $method)) {
+        if (strpos($method, '_')  === 0) {
+            show_error("Can't call private method");
+        } elseif (method_exists($this, $method)) {
             return call_user_func_array(array($this, $method), $args);
         }
         
@@ -299,6 +453,12 @@ abstract class Model extends ParentModel
      */
     public static function __callStatic($method, $args)
     {
+        if (strpos($method, '_') === 0) {
+            show_error("Can't call private method");
+        } elseif (strpos($method, 'with') === 0) {
+            array_unshift($args, substr($method, 4));
+            $method = 'with';
+        }
         return call_user_func_array(array(new static, $method), $args);
     }
 }

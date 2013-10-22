@@ -3,8 +3,8 @@
 namespace Flare\Db\Sql\Query;
 
 use Flare\Object\Json;
-use \PDOException;
-use \PDO;
+use PDOException;
+use PDO;
 
 /**
  *

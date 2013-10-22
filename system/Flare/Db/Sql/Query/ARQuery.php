@@ -6,9 +6,9 @@ use Flare\Db\Sql\Result\Collection;
 use Flare\View\Util\Pagination;
 use Flare\Db\Sql\Result\Row;
 use Flare\Object\Json;
-use \PDOException;
-use \PDOStatement;
-use \PDO;
+use PDOException;
+use PDOStatement;
+use PDO;
 
 /**
  *
@@ -21,121 +21,121 @@ class ARQuery
      *
      * @var boolean
      */
-    private $_distinct = false;
+    protected $_distinct = false;
 
     /**
      * 
      * @var string
      */
-    private $_table;
+    protected $_table;
 
     /**
      * 
      * @var boolean
      */
-    private $_checkTable = false;
+    protected $_checkTable = false;
 
     /**
      *
      * @var \PDO
      */
-    private $_conn;
+    protected $_conn;
 
     /**
      *
      * @var string
      */
-    private $_select;
+    protected $_select;
 
     /**
      *
      * @var string
      */
-    private $_from;
+    protected $_from;
 
     /**
      *
      * @var array
      */
-    private $_where = array();
+    protected $_where = array();
 
     /**
      *
      * @var array
      */
-    private $_joins = array();
+    protected $_joins = array();
 
     /**
      *
      * @var array
      */
-    private $_like = array();
+    protected $_like = array();
 
     /**
      *
      * @var int
      */
-    private $_limit;
+    protected $_limit;
 
     /**
      *
      * @var int
      */
-    private $_offset;
+    protected $_offset;
 
     /**
      *
      * @var array
      */
-    private $_groups = array();
+    protected $_groups = array();
 
     /**
      *
      * @var array
      */
-    private $_orders = array();
+    protected $_orders = array();
 
     /**
      *
      * @var boolean
      */
-    private $_delete = false;
+    protected $_delete = false;
 
     /**
      *
      * @var string
      */
-    private $_insert;
+    protected $_insert;
 
     /**
      *
      * @var string
      */
-    private $_update;
+    protected $_update;
 
     /**
      *
      * @var array
      */
-    private $_set = array();
+    protected $_set = array();
 
     /**
      *
      * @var int
      */
-    private $_page = false;
+    protected $_page = false;
 
     /**
      *
      * @var array
      */
-    private $_having = array();
+    protected $_having = array();
 
     /**
      * 
      * @var array
      */
-    private $_havingLike = array();
+    protected $_havingLike = array();
 
     /**
      *
@@ -1038,10 +1038,11 @@ class ARQuery
     }
 
     /**
-     *
+     * 
+     * @param string $newRow
      * @return \Flare\Db\Sql\Result\Collection
      */
-    public function getCollection()
+    protected function _getCollection($newRow = null)
     {
         $result = null;
         if (!$this->_select) $this->select();
@@ -1054,12 +1055,16 @@ class ARQuery
             $stmt->execute();
             $this->_conn->printError($stmt);
             $result = new Collection($this->_conn, $stmt->rowCount());
-            $newRow = new Row($this);
+            if (!$newRow) {
+                $newRow = new Row($this->_from);
+            } else {
+                $newRow = new $newRow(array(), $this->_from);
+            }
             if ($pagination) {
                 $result->setPagination($pagination);
             }
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result[] = clone $newRow->setData($row);
+                $result[] = clone $newRow->setAttributes($row);
             }
             unset($newRow);
             $stmt = null;
@@ -1067,6 +1072,15 @@ class ARQuery
             show_error($ex->getMessage());
         }
         return $result;
+    }
+
+    /**
+     * 
+     * @return \Flare\Db\Sql\Result\Collection
+     */
+    public function getCollection()
+    {
+        return $this->_getCollection();
     }
 
     /**

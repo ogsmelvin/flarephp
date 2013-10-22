@@ -3,8 +3,8 @@
 namespace Flare\Application\Router\Route;
 
 use Flare\Application\AbstractController;
-use \ReflectionException;
-use \ReflectionMethod;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * 

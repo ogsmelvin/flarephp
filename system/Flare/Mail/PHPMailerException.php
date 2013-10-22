@@ -2,7 +2,7 @@
 
 namespace Flare\Mail;
 
-use \Exception;
+use Exception;
 
 /**
  * PHPMailer exception handler

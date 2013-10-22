@@ -53,15 +53,9 @@ class Pagination
 
     /**
      * 
-     * @var string
+     * @var array
      */
-    private $_alignment;
-
-    /**
-     * 
-     * @var string
-     */
-    private $_size;
+    private $_classes = array();
 
     /**
      * 
@@ -165,42 +159,15 @@ class Pagination
 
     /**
      * 
-     * @param string $alignment
+     * @param string $class
      * @return \Flare\View\Util\Pagination
      */
-    public function setAlignment($alignment)
+    public function addClass($class)
     {
-        $this->_alignment = strtolower((string) $alignment);
+        if (!in_array($class, $this->_classes)) {
+            $this->_classes[] = strtolower((string) $class);
+        }
         return $this;
-    }
-
-    /**
-     * 
-     * @param string $size
-     * @return \Flare\View\Util\Pagination
-     */
-    public function setSize($size)
-    {
-        $this->_size = strtolower((string) $size);
-        return $this;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getSize()
-    {
-        return $this->_size;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getAlignment()
-    {
-        return $this->_alignment;
     }
 
     /**
@@ -266,7 +233,7 @@ class Pagination
         $url['query'] = http_build_query($vars);
         $url = http_build_url($url);
 
-        $list = '<ul>';
+        $list = '';
         if ($this->_page > 1) {
             $list .= "<li><a data-page=\"1\" href=\"{$url}1\">First</a></li>";
             $list .= "<li><a data-page=\"".($this->_page - 1)."\" href=\"{$url}".($this->_page - 1)."\">Prev</a></li>";
@@ -282,7 +249,6 @@ class Pagination
             $list .= "<li><a data-page=\"".($this->_page + 1)."\" href=\"{$url}".($this->_page + 1)."\">Next</a></li>";
             $list .= "<li><a data-page=\"{$num_pages}\" href=\"{$url}{$num_pages}\">Last</a></li>";
         }
-        $list .= '</ul>';
         return $this->_wrap($list);
     }
 
@@ -291,16 +257,17 @@ class Pagination
      * @param string $list
      * @return string
      */
-    private function _wrap($list = '')
+    private function _wrap($list)
     {
-        $wrapper = "<div class=\"pagination";
-        $wrapper .= $this->_size ? ' pagination-'.$this->_size : '';
-        $wrapper .= $this->_alignment ? ' pagination-'.$this->_alignment : '';
+        $wrapper = "<ul class=\"pagination";
+        if ($this->_classes) {
+            $wrapper .= ' '.implode(' ', $this->_classes);
+        }
         $wrapper .= "\"";
         if ($this->_id) {
             $wrapper .= " id=\"{$this->_id}\"";
         }
-        $wrapper .= ">{$list}</div>";
+        $wrapper .= ">{$list}</ul>";
         return $wrapper;
     }
 

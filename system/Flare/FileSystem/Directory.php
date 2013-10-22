@@ -3,10 +3,10 @@
 namespace Flare\FileSystem;
 
 use Flare\Security\File as FileSec;
-use \UnexpectedValueException;
+use UnexpectedValueException;
 use Flare\FileSystem\Action;
 use Flare\FileSystem\File;
-use \FilesystemIterator;
+use FilesystemIterator;
 
 /**
  * 

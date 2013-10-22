@@ -2,7 +2,7 @@
 
 namespace Flare\Http;
 
-use \ArrayObject;
+use ArrayObject;
 
 /**
  * 

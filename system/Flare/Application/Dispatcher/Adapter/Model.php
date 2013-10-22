@@ -4,7 +4,7 @@ namespace Flare\Application\Dispatcher\Adapter;
 
 use Flare\Application\Dispatcher\Adapter;
 use Flare\Util\Collection;
-use \ReflectionClass;
+use ReflectionClass;
 use Flare\Security;
 use Flare\Object;
 

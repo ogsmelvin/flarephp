@@ -2,8 +2,8 @@
 
 namespace Flare\Db\Sql;
 
-use \PDOStatement;
-use \PDO;
+use PDOStatement;
+use PDO;
 
 /**
  * 

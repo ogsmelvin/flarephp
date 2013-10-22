@@ -15,7 +15,7 @@ abstract class Model
      * 
      * @return \Flare\Application\AbstractController
      */
-    protected static function getController()
+    protected static function _getController()
     {
         return F::getApp()->getController();
     }

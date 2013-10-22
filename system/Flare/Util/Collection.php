@@ -2,7 +2,7 @@
 
 namespace Flare\Util;
 
-use \ArrayObject;
+use ArrayObject;
 
 /**
  * 

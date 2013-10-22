@@ -3,10 +3,10 @@
 namespace Flare\Object;
 
 use Flare\Util\Collection;
-use \ArrayObject;
 use Flare\Object;
-use \ArrayAccess;
-use \Iterator;
+use ArrayObject;
+use ArrayAccess;
+use Iterator;
 
 /**
  * 

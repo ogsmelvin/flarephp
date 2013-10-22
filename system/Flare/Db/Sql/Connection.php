@@ -3,7 +3,7 @@
 namespace Flare\Db\Sql;
 
 use Flare\Db\Connection as ParentConnection;
-use \PDO;
+use PDO;
 
 /**
  * 

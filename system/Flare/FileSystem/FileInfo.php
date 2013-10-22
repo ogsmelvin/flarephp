@@ -2,7 +2,7 @@
 
 namespace Flare\FileSystem;
 
-use \SplFileInfo;
+use SplFileInfo;
 
 /**
  * 

@@ -2,7 +2,7 @@
 
 namespace Flare\Object;
 
-use \SimpleXMLElement;
+use SimpleXMLElement;
 use Flare\Object;
 
 /**
