@@ -13,12 +13,6 @@ class Memcache extends Cache
 {
     /**
      * 
-     * @var string
-     */
-    protected static $engine = __CLASS__;
-
-    /**
-     * 
      * @param array $params
      * @return void
      */

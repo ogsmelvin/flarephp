@@ -17,12 +17,6 @@ class Facebook extends Service
      * 
      * @var string
      */
-    protected static $service = __CLASS__;
-
-    /**
-     * 
-     * @var string
-     */
     const API_HOST = 'https://graph.facebook.com/';
 
     /**

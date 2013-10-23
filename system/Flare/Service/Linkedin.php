@@ -13,12 +13,6 @@ class Linkedin extends Service
 {
     /**
      * 
-     * @var string
-     */
-    protected static $service = __CLASS__;
-    
-    /**
-     * 
      * @param array $config
      * @return void
      */

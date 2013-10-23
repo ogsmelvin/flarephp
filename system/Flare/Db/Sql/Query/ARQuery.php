@@ -5,6 +5,7 @@ namespace Flare\Db\Sql\Query;
 use Flare\Db\Sql\Result\Collection;
 use Flare\View\Util\Pagination;
 use Flare\Db\Sql\Result\Row;
+use Flare\Db\Sql\Model;
 use Flare\Object\Json;
 use PDOException;
 use PDOStatement;
@@ -1039,10 +1040,10 @@ class ARQuery
 
     /**
      * 
-     * @param string $newRow
+     * @param \Flare\Db\Sql\Model $newRow
      * @return \Flare\Db\Sql\Result\Collection
      */
-    protected function _getCollection($newRow = null)
+    protected function _getCollection(Model $newRow = null)
     {
         $result = null;
         if (!$this->_select) $this->select();
@@ -1057,14 +1058,12 @@ class ARQuery
             $result = new Collection($this->_conn, $stmt->rowCount());
             if (!$newRow) {
                 $newRow = new Row($this->_from);
-            } else {
-                $newRow = new $newRow(array(), $this->_from);
             }
             if ($pagination) {
                 $result->setPagination($pagination);
             }
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result[] = clone $newRow->setAttributes($row);
+                $result[] = with(clone $newRow)->setAttributes($row);
             }
             unset($newRow);
             $stmt = null;
@@ -1116,10 +1115,11 @@ class ARQuery
     }
 
     /**
-     *
-     * @return stdClass
+     * 
+     * @param \Flare\Db\Sql\Model $model
+     * @return \Flare\Db\Sql\Result\Row|\Flare\Db\Sql\Model
      */
-    public function getOne()
+    protected function _getOne(Model $model = null)
     {
         $result = null;
         if (!$this->_select) $this->select();
@@ -1129,8 +1129,12 @@ class ARQuery
             $stmt->execute();
             $this->_conn->printError($stmt);
             if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result = new Row($this);
-                $result->setData($row);
+                if (!$model) {
+                    $result = new Row($this->_from);
+                } else {
+                    $result = clone $model;
+                }
+                $result->setAttributes($row);
             }
             $stmt = null;
             unset($row);
@@ -1138,6 +1142,15 @@ class ARQuery
             show_error($ex->getMessage());
         }
         return $result;
+    }
+
+    /**
+     *
+     * @return \Flare\Db\Sql\Result\Row
+     */
+    public function getOne()
+    {
+        return $this->_getOne();
     }
 
     /**

@@ -13,13 +13,7 @@ use Flare\Service;
  * 
  */
 class OneWaySMS extends Service
-{
-    /**
-     * 
-     * @var string
-     */
-    protected static $service = __CLASS__;
-    
+{   
     /**
      * 
      * @var string

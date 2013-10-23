@@ -103,12 +103,10 @@ abstract class Model extends ParentModel
             show_error(get_class($this)." table must be defined");
         }
 
-        if (!$this->class) {
-            $this->class = get_class($this);
-            $namespace = explode("\\", $this->class);
-            array_pop($namespace);
-            $this->namespace = implode("\\", $namespace)."\\";
-        }
+        $this->class = get_class($this);
+        $namespace = explode("\\", $this->class);
+        array_pop($namespace);
+        $this->namespace = implode("\\", $namespace)."\\";
        
         if (!isset(self::$metaCache[$this->class])) {
             self::$metaCache[$this->class] = array();
@@ -208,6 +206,15 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @return string
+     */
+    public function getTableName()
+    {
+        return $this->table;
+    }
+
+    /**
+     * 
      * @return array
      */
     protected static function foreignKeys()
@@ -288,7 +295,7 @@ abstract class Model extends ParentModel
      * @param string $field
      * @return \Flare\Db\Sql\Model
      */
-    public function findOne($val, $field = null)
+    public static function findOne($val, $field = null)
     {
         if (!$field) {
             $field = self::primaryKey();
@@ -297,17 +304,6 @@ abstract class Model extends ParentModel
         $sql = with(new static)->query();
         return $sql->where($field, $value)
             ->getOne();
-    }
-
-    /**
-     * 
-     * @param string $foreignClass
-     * @param string $key
-     * @return \Flare\Db\Sql\Result\Collection
-     */
-    public static function with($foreignClass, $key = null)
-    {
-        return new Relation(new static, $foreignClass);
     }
 
     /**
@@ -408,16 +404,16 @@ abstract class Model extends ParentModel
 
     /**
      * 
-     * @return \Flare\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Model\Query
      */
     public function query()
     {
-        return with(new Query(self::$adapter, $this->class))->from($this->table);
+        return new Query(self::$adapter, $this);
     }
 
     /**
      * 
-     * @return \Flare\Db\Sql\Query\ARQuery
+     * @return \Flare\Db\Sql\Model\Query
      */
     public static function createQuery()
     {
@@ -432,17 +428,7 @@ abstract class Model extends ParentModel
      */
     public function __call($method, $args)
     {
-        if (strpos($method, '_')  === 0) {
-            show_error("Can't call private method");
-        } elseif (method_exists($this, $method)) {
-            return call_user_func_array(array($this, $method), $args);
-        }
-        
-        $arQuery = $this->query();
-        if (!method_exists($arQuery, $method)) {
-            show_error("'{$method}' doesn't exists");   
-        }
-        return call_user_func_array(array($arQuery, $method), $args);
+        return call_user_func_array(array($this->query(), $method), $args);
     }
 
     /**
@@ -455,9 +441,6 @@ abstract class Model extends ParentModel
     {
         if (strpos($method, '_') === 0) {
             show_error("Can't call private method");
-        } elseif (strpos($method, 'with') === 0) {
-            array_unshift($args, substr($method, 4));
-            $method = 'with';
         }
         return call_user_func_array(array(new static, $method), $args);
     }

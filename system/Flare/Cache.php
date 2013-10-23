@@ -3,7 +3,6 @@
 namespace Flare;
 
 use Flare\Flare as F;
-use Flare\Registry;
 
 /**
  * 
@@ -12,6 +11,12 @@ use Flare\Registry;
  */
 abstract class Cache
 {
+    /**
+     * 
+     * @var array
+     */
+    private static $cache_engines;
+
     /**
      * 
      * @param array $params
@@ -35,20 +40,17 @@ abstract class Cache
      */
     public static function instance(array $params = array())
     {
-        if (empty(static::$engine)) {
-            show_error('Engine name must be defined');
-        }
-        $registry = Registry::get(Registry::CACHE_ENGINES_NAMESPACE);
-        if (!$registry->has(static::$engine)) {
+        $key = get_called_class();
+        if (!isset(self::$cache_engines[$key])) {
             if (!$params) {
-                $key = basename(str_replace("\\", '/', static::$engine));
-                if (isset(F::$config->cache_engines[$key])) {
-                    $params = F::$config->cache_engines[$key];
+                $class = basename(str_replace("\\", '/', $key));
+                if (isset(F::$config->cache_engines[$class])) {
+                    $params = F::$config->cache_engines[$class];
                 }
             }
-            $registry->add(static::$engine, new static($params));
+            self::$cache_engines[$key] = new static($params);
         }
-        return $registry->fetch(static::$engine);
+        return self::$cache_engines[$key];
     }
 
     /**

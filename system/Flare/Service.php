@@ -3,7 +3,6 @@
 namespace Flare;
 
 use Flare\Flare as F;
-use Flare\Registry;
 
 /**
  * 
@@ -12,6 +11,12 @@ use Flare\Registry;
  */
 abstract class Service
 {
+    /**
+     * 
+     * @var array
+     */
+    private static $services = array();
+
     /**
      * 
      * @param array $params
@@ -28,20 +33,17 @@ abstract class Service
      */
     public static function instance(array $params = array())
     {
-        if (empty(static::$service)) {
-            show_error('Service name must be defined');
-        }
-        $registry = Registry::get(Registry::SERVICES_NAMESPACE);
-        if (!$registry->has(static::$service)) {
+        $key = get_called_class();
+        if (!isset(self::$services[$key])) {
             if (!$params) {
-                $key = basename(str_replace("\\", '/', static::$service));
-                if (isset(F::$config->services[$key])) {
-                    $params = F::$config->services[$key];
+                $class = basename(str_replace("\\", '/', $key));
+                if (isset(F::$config->services[$class])) {
+                    $params = F::$config->services[$class];
                 }
             }
-            $registry->add(static::$service, new static($params));
+            self::$services[$key] = new static($params);
         }
-        return $registry->fetch(static::$service);
+        return self::$services[$key];
     }
 
     /**

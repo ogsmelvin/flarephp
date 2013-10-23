@@ -17,12 +17,6 @@ class GitHub extends Service implements Certificate
      * 
      * @var string
      */
-    protected static $service = __CLASS__;
-
-    /**
-     * 
-     * @var string
-     */
     const HOST = 'https://api.github.com/';
 
     /**

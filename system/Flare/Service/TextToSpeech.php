@@ -17,12 +17,6 @@ class TextToSpeech extends Service
      * 
      * @var string
      */
-    protected static $service = __CLASS__;
-
-    /**
-     * 
-     * @var string
-     */
     const API_HOST = 'http://tts-api.com/';
 
     /**
