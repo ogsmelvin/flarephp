@@ -46,6 +46,12 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @var string
+     */
+    protected $alias;
+
+    /**
+     * 
      * @var array
      */
     protected $fields = array();
@@ -90,6 +96,30 @@ abstract class Model extends ParentModel
     public function getNamespace()
     {
         return $this->namespace;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param boolean $withQuote
+     * @return string
+     */
+    protected function getFieldAlias($name, $withQuote = false)
+    {
+        $quote = $withQuote ? self::$adapter->getQuote() : '';
+        if (!$this->alias) {
+            return $quote.$this->table.$quote.'.'.$quote.$name.$quote;
+        }
+        return $quote.$this->alias.$quote.'.'.$quote.$name.$quote;
     }
 
     /**
@@ -195,35 +225,39 @@ abstract class Model extends ParentModel
      * 
      * @return string
      */
-    protected static function primaryKey()
+    public function getClass()
     {
-        $class = get_called_class();
-        if (empty(self::$metaCache[$class]['primary_key'])) {
-            return null;
-        }
-        return self::$metaCache[$class]['primary_key'];
+        return $this->class;
     }
 
     /**
      * 
      * @return string
      */
-    public function getTableName()
+    protected function getTableName()
     {
         return $this->table;
     }
 
     /**
      * 
-     * @return array
+     * @return string
      */
-    protected static function foreignKeys()
+    protected function getForeignKeys()
     {
-        $class = get_called_class();
-        if (empty(self::$metaCache[$class]['foreign_keys'])) {
+        return self::$metaCache[$this->class]['foreign_keys'];
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function getPrimaryKey()
+    {
+        if (!isset(self::$metaCache[$this->class]['primary_key'])) {
             return null;
         }
-        return self::$metaCache[$class]['foreign_keys'];
+        return self::$metaCache[$this->class]['primary_key'];
     }
 
     /**
@@ -356,9 +390,18 @@ abstract class Model extends ParentModel
      * 
      * @return array
      */
-    public function getAttributes()
+    public function toArray()
     {
         return $this->attributes;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function toJSON()
+    {
+        return json_encode($this->attributes);
     }
 
     /**
@@ -394,6 +437,15 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @return \Flare\Db\Sql\Driver
+     */
+    public function & getAdapter()
+    {
+        return self::$adapter;
+    }
+
+    /**
+     * 
      * @param string $key
      * @return mixed
      */
@@ -408,8 +460,10 @@ abstract class Model extends ParentModel
      */
     public function query()
     {
-        return new Query(self::$adapter, $this);
+        return new Query($this);
     }
+
+
 
     /**
      * 
@@ -428,6 +482,11 @@ abstract class Model extends ParentModel
      */
     public function __call($method, $args)
     {
+        if (strpos($method, '_') === 0) {
+            show_error("Can't access private method");
+        } elseif (method_exists($this, $method)) {
+            return call_user_func_array(array($this, $method), $args);
+        }
         return call_user_func_array(array($this->query(), $method), $args);
     }
 

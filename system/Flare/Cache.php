@@ -15,7 +15,7 @@ abstract class Cache
      * 
      * @var array
      */
-    private static $cache_engines;
+    private static $cache_engines = array();
 
     /**
      * 

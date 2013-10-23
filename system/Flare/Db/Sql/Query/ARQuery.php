@@ -1427,7 +1427,8 @@ class ARQuery
             $joinStr = $type.' '.$table;
         } elseif (is_array($table)) {
             $quote = $this->_conn->getQuote();
-            $joinStr = $type.' '.$quote.implode("{$quote} AS {$quote}", $table).$quote;
+            $joinStr = $table[0].(!empty($table[1]) ? "{$quote} AS {$quote}{$table[1]}" : '');
+            $joinStr = $type.' '.$quote.$joinStr.$quote;
         }
         $this->_joins[] = $joinStr.' ON '.$condition;
         return $this;

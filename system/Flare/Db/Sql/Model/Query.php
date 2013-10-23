@@ -3,7 +3,6 @@
 namespace Flare\Db\Sql\Model;
 
 use Flare\Db\Sql\Query\ARQuery;
-use Flare\Db\Sql\Driver;
 use Flare\Db\Sql\Model;
 
 /**
@@ -21,13 +20,12 @@ class Query extends ARQuery
 
     /**
      * 
-     * @param \Flare\Db\Sql\Driver $driver
      * @param \Flare\Db\Sql\Model $model
      */
-    public function __construct(Driver &$driver, Model &$model)
+    public function __construct(Model &$model)
     {
-        parent::__construct($driver);
         $this->_model = & $model;
+        parent::__construct($this->_model->getAdapter());
         $this->from($this->_model->getTableName());
     }
 
@@ -58,6 +56,27 @@ class Query extends ARQuery
      */
     public function with($referenceClass, $foreignKey = null, $referenceField = null)
     {
+        if (!$foreignKey) {
+            $foreignKeys = $this->_model->getForeignKeys();
+            if (!$foreignKeys || !in_array($referenceClass, $foreignKeys)) {
+                show_error("'{$this->_model->getClass()}' is not related with '{$referenceClass}'");
+            }
+            $foreignKey = array_search($referenceClass, $foreignKeys);
+        }
+        
+        $referenceClass = $this->_model->getNamespace().$referenceClass;
+        $referenceClass = new $referenceClass;
+        if (!$referenceField) {
+            $referenceField = $referenceClass->getPrimaryKey();
+            if (!$referenceField) {
+                show_error("'{$referenceClass->getClass()}' doesn't have primary key");
+            }
+        }
+
+        $this->join(
+            array($referenceClass->getTableName(), $referenceClass->getAlias()),
+            $referenceClass->getFieldAlias($referenceField).' = '.$this->_model->getFieldAlias($foreignKey)
+        );
         return $this;
     }
 
