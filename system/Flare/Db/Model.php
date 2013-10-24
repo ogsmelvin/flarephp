@@ -30,5 +30,5 @@ abstract class Model
      * 
      * @return int
      */
-    abstract public function remove();
+    abstract public function trash();
 }

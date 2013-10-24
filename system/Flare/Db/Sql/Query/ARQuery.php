@@ -754,8 +754,14 @@ class ARQuery
                 $sql .= 'DISTINCT ';
             }
             $sql .= $this->_select;
+            if ($this->_from) {
+                $sql .= ' FROM '.$this->_from;
+            }
         } elseif ($this->_delete) {
             $sql .= 'DELETE';
+            if ($this->_from) {
+                $sql .= ' FROM '.$this->_from;
+            }
         } elseif ($this->_update) {
             $sql .= $this->_update.' ';
             if ($this->_set) {
@@ -774,9 +780,7 @@ class ARQuery
                 unset($fields);
             }
         }
-        if ($this->_from) {
-            $sql .= ' FROM '.$this->_from;
-        }
+        
         if ($this->_joins) {
             $sql .= ' '.implode(' ', $this->_joins);
         }
@@ -1063,7 +1067,7 @@ class ARQuery
                 $result->setPagination($pagination);
             }
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result[] = with(clone $newRow)->setAttributes($row);
+                $result[] = with(clone $newRow)->setAttributes($row)->setAsNew(false);
             }
             unset($newRow);
             $stmt = null;
@@ -1134,7 +1138,8 @@ class ARQuery
                 } else {
                     $result = clone $model;
                 }
-                $result->setAttributes($row);
+                $result->setAttributes($row)
+                    ->setAsNew(false);
             }
             $stmt = null;
             unset($row);

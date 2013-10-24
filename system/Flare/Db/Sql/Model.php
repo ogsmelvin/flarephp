@@ -34,6 +34,18 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @var string|int
+     */
+    private $id;
+
+    /**
+     * 
+     * @var string
+     */
+    private $idField;
+
+    /**
+     * 
      * @var array
      */
     protected $foreignKeys = array();
@@ -70,15 +82,21 @@ abstract class Model extends ParentModel
 
     /**
      * 
+     * @var boolean
+     */
+    private $new = false;
+
+    /**
+     * 
      * @var array
      */
-    protected static $metaCache = array();
+    private static $metaCache = array();
 
     /**
      * 
      * @param array $data
      */
-    public function __construct(array $data = array())
+    protected function __construct(array $data = array())
     {
         if (!self::$adapter) {
             self::$adapter = self::_getController()->getDatabase();
@@ -87,6 +105,17 @@ abstract class Model extends ParentModel
             }
         }
         $this->_init($data);
+    }
+
+    /**
+     * 
+     * @param boolean $new
+     * @return \Flare\Db\Sql\Model
+     */
+    public function setAsNew($new = true)
+    {
+        $this->new = $new;
+        return $this;
     }
 
     /**
@@ -266,16 +295,28 @@ abstract class Model extends ParentModel
      */
     public function save()
     {
-        return self::$adapter->insert($this->table, $this->attributes, false);
+        if ($this->new) {
+            return self::$adapter->insert($this->table, $this->attributes, false);
+        }
+        
+        if (!($id = $this->getId())) {
+            show_error("Object doesn't have primary key or ID");
+        }
+        return $this->where($this->getIdField(), $id)->update($this->table, $this->attributes);
     }
 
     /**
      * 
      * @return int
      */
-    public function remove()
+    public function trash()
     {
-        return self::$adapter->delete($this->table);
+        if (!($id = $this->getId())) {
+            show_error("Doesn't have a unique ID");
+        }
+        return self::$adapter
+            ->where($this->getPrimaryKey(), $this->getId())
+            ->delete($this->table);
     }
 
     /**
@@ -283,9 +324,9 @@ abstract class Model extends ParentModel
      * @param array $data
      * @return \Flare\Db\Sql\Model
      */
-    public static function create(array $data)
+    public static function create(array $data = array())
     {
-        return new static($data);
+        return with(new static($data))->setAsNew(true);
     }
 
     /**
@@ -314,13 +355,11 @@ abstract class Model extends ParentModel
      */
     public static function find($val, $field = null)
     {
+        $instance = new static;
         if (!$field) {
-            $field = self::primaryKey();
+            $field = $instance->getPrimaryKey();
         }
-
-        $sql = with(new static)->query();
-        return $sql->where($field, $value)
-            ->getCollection();
+        return $instance->query()->where($field, $val)->getCollection();
     }
 
     /**
@@ -331,13 +370,11 @@ abstract class Model extends ParentModel
      */
     public static function findOne($val, $field = null)
     {
+        $instance = new static;
         if (!$field) {
-            $field = self::primaryKey();
+            $field = $instance->getPrimaryKey();
         }
-
-        $sql = with(new static)->query();
-        return $sql->where($field, $value)
-            ->getOne();
+        return $instance->query()->where($field, $val)->getOne();
     }
 
     /**
@@ -350,8 +387,8 @@ abstract class Model extends ParentModel
     {
         if (!$this->fields || in_array($key, $this->fields)) {
             $this->attributes[$key] = $value;
-            if (!empty($this->foreignKeys[$key])) {
-
+            if ($key === $this->getPrimaryKey()) {
+                $this->setId($key);
             }
         }
         return $this;
@@ -402,6 +439,36 @@ abstract class Model extends ParentModel
     public function toJSON()
     {
         return json_encode($this->attributes);
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @return \Flare\Db\Sql\Model
+     */
+    public function setId($field)
+    {
+        $this->id = $this->getAttribute($field);
+        $this->idField = $field;
+        return $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getIdField()
+    {
+        return $this->idField;
+    }
+
+    /**
+     * 
+     * @return string|int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -462,8 +529,6 @@ abstract class Model extends ParentModel
     {
         return new Query($this);
     }
-
-
 
     /**
      * 

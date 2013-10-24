@@ -65,12 +65,16 @@ class Query extends ARQuery
         }
         
         $referenceClass = $this->_model->getNamespace().$referenceClass;
-        $referenceClass = new $referenceClass;
+        $referenceClass = $referenceClass::create();
         if (!$referenceField) {
             $referenceField = $referenceClass->getPrimaryKey();
             if (!$referenceField) {
                 show_error("'{$referenceClass->getClass()}' doesn't have primary key");
             }
+        }
+
+        if ($id = $this->_model->getId()) {
+            $this->where($this->_model->getIdField(), $id);
         }
 
         $this->join(
